@@ -3,17 +3,17 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "source": {
+    "smartadmin-angular-seed": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
-      "prefix": "app",
+      "prefix": "sa",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/source",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -50,18 +50,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "source:build"
+            "browserTarget": "smartadmin-angular-seed:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "source:build:production"
+              "browserTarget": "smartadmin-angular-seed:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "source:build"
+            "browserTarget": "smartadmin-angular-seed:build"
           }
         },
         "test": {
@@ -95,7 +95,7 @@
         }
       }
     },
-    "source-e2e": {
+    "smartadmin-angular-seed-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -103,11 +103,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "source:serve"
+            "devServerTarget": "smartadmin-angular-seed:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "source:serve:production"
+              "devServerTarget": "smartadmin-angular-seed:serve:production"
             }
           }
         },
@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "source"
+  "defaultProject": "smartadmin-angular-seed",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

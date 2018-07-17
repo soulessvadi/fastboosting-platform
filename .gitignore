@@ -1,2 +1,2 @@
-/node_modules
-/.ssh
+node_modules/
+public/source/nodemodules/

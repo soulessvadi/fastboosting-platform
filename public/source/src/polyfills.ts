@@ -78,3 +78,26 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+
+
+declare var $: any;
+declare var System: any;
+declare var require: any;
+
+
+import * as jQuery from 'jquery'
+window['jQuery'] = jQuery
+window['$'] = jQuery
+import 'jquery-ui-npm/jquery-ui.min.js'
+
+
+require('bootstrap/js/tooltip.js'); // required for X-editable
+require('bootstrap/js/popover.js'); // required for X-editable
+require('bootstrap/js/dropdown.js'); // required for bootstrap-colorpicker
+require('bootstrap/js/tab.js'); //
+require('bootstrap/js/modal.js'); //
+
+window['moment'] = require('moment');
+
+require('smartadmin-plugins/notification/SmartNotification.min.js');

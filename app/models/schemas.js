@@ -11,7 +11,7 @@ let UserType = connection.define('users_type', {
 let User = connection.define('user', {
   type: {type: Sequelize.INTEGER, defaultValue: 1},
   privileges: {type: Sequelize.TEXT, defaultValue: ''},
-  login: {type: Sequelize.STRING(64), defaultValue: '', primaryKey: true},
+  login: {type: Sequelize.STRING(64), defaultValue: '', unique: true},
   password: {type: Sequelize.STRING(64), defaultValue: ''},
   first_name: {type: Sequelize.STRING(64), defaultValue: ''},
   last_name: {type: Sequelize.STRING(64), defaultValue: ''},
@@ -26,6 +26,7 @@ let User = connection.define('user', {
   discord: {type: Sequelize.STRING(64), defaultValue: ''},
   is_approved: {type: Sequelize.BOOLEAN, defaultValue: false},
   is_blocked: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_subscribed: {type: Sequelize.BOOLEAN, defaultValue: false},
   ip_address: {type: Sequelize.STRING(64), defaultValue: ''},
 }, {
   underscored: true
@@ -41,4 +42,4 @@ let Order = connection.define('order', {
   underscored: true
 });
 
-module.exports =  { UserType, User, Order };
+module.exports = { UserType, User, Order };

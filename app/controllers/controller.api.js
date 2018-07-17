@@ -1,6 +1,6 @@
-const db = require('../models/sequelize').connection; 
-exports.init = function(req, res, next) {
-     next();
+exports.init = (req, res, next) => {
+	  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+	  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-CSRF, X-XSRF-TOKEN");
+	  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE');
+    next();
 };
-exports.users = require('./controller.users.js')(db);
-exports.base = require('./controller.base.js')(db);

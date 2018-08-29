@@ -1,0 +1,77 @@
+<div *ngIf="!news.list?.length">
+  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Ожидаются горячие новости</h2>
+  <hr>
+</div>
+<div *ngIf="news.list?.length">
+  <ng-container *ngFor="let post of news.list">
+    <div class="row post-item no-margin" [class.open]="post.show_comments">
+      <div class="col-sm-6 col-md-4 col-lg-2">
+        <img src="assets/img/superbox/superbox-full-15.jpg" class="img-responsive" alt="{{ post.title }}">
+        <ul class="list-inline custom">
+          <li> 
+            <span class="txt-color-blue">
+              <i class="fas fa-calendar-alt"></i> 
+              {{ post.published_at | momentFromNow: 'DD.MM.YYYY HH:mm' }}
+            </span>
+          </li>
+          <li> 
+            <a class="txt-color-blue" class="txt-color-blue" (click)="post.show_comments = true">
+              <i class="fas fa-comment-dots"></i> 
+              <span> комментарии: {{ post.comments?.length || 'нет' }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-6 col-md-8 col-lg-10 padding-left-0">
+        <h3 class="margin-top-0 margin-bottom-10">
+          <strong class="txt-color-blue">{{ post.title }}</strong><br>
+          <small class="font-xs"><i>Создатель: <strong class="txt-color-blue">{{ post.author }}</strong></i></small>
+        </h3>
+        <p *ngIf="!post.full_view">{{ post.preview }}</p>
+        <p *ngIf="post.full_view">{{ post.text }}</p>
+        <a class="btn btn-info btn-xs" (click)="post.full_view = true" *ngIf="!post.full_view">читать полностью <i class="fas fa-chevron-down fs-8 va-m"></i></a>
+      </div>
+
+      <div class="col-xs-12 replies" *ngIf="post.show_comments">
+        <div class="chat-body no-padding profile-message">
+          <div class="timeline-seperator text-center"><span>КОММЕНТАРИИ</span></div>
+          <ul *ngIf="!post.comments?.length">
+            <li class="message" style="opacity: 0.5;">
+              <img src="{{_service.store_avatars}}{{_service.user.avatar ? _service.user.avatar : 'mock.png'}}" class="online" alt="{{ _service.user.author }}">
+              <span class="message-text">
+                <a class="username" style="width: 100%;">{{ _service.user.nick_name }}</a>
+                <span>Ваше сообщение будет первым</span>
+              </span>
+            </li>
+          </ul>
+          <ul class="custom-scroll" style="min-height: 20px;max-height: 100vh;">
+            <li class="message" *ngFor="let message of post.comments">
+              <img src="{{_service.store_avatars}}{{message.avatar ? message.avatar : 'mock.png'}}" class="online" alt="{{ message.author }}">
+              <span class="message-text"> 
+                <a class="username" style="width: 100%;">{{ message.author }} 
+                  <time class="text-muted pull-right ultra-light"><i class="fas fa-user-clock"></i>&nbsp; {{ message.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</time>
+                </a> 
+                <span [innerHTML]="message.text"></span>
+              </span>
+              <ul class="list-inline font-xs">
+                <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> Ответить</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="well padding-bottom-10 margin-top-10 chat-form">
+          <textarea rows="2" class="form-control" placeholder="Ваш комментарий, соблюдайте правила приличия." [(ngModel)]="post.new_message" #message></textarea>
+          <div class="note">Обратите внимание, что ваше сообщение не может быть слишком коротким</div>
+          <div class="margin-top-10">
+            <button type="button" class="btn btn-sm btn-warning" (click)="post.show_comments = false">Скрыть</button>
+            <button type="button" class="btn btn-sm btn-primary pull-right" (click)="postMessage($event, post)">Опубликовать</button>
+            <br clear="both">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <hr>
+  </ng-container>  
+</div>

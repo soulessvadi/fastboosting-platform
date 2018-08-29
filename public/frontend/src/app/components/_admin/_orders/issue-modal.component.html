@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">Рапорт о проблеме с аккаунтом</h4>
+</div>
+<div class="modal-body custom-scroll terms-body" style="padding: 0;">
+  <div class="smart-form" id="left" #form>
+    <fieldset>
+      <alert type="info">
+        Это сообщение будет доставлено администрации и клиенту. Если проблема не будет решена в течении 60 минут, заказ автоматически будет снят.
+      </alert>  
+      <section>
+        <label class="label">Описание проблемы</label>
+        <label class="select">
+          <select [(ngModel)]="selectedIssue">
+            <option *ngFor="let issue of issues" [ngValue]="issue">{{ issue.text }}</option>
+          </select><i></i>
+        </label>
+      </section>
+      <section *ngIf="selectedIssue.area">
+        <label class="label">Ваше описание проблемы</label>
+        <label class="textarea">
+          <textarea class="custom-scroll" rows="3" [(ngModel)]="selectedIssue.message" #message></textarea>
+        </label><div class="note">
+        <strong>Важно:</strong> для скорейшего решения проблемы будьте предельно кратки и понятны.</div>
+      </section>
+    </fieldset>   
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send()"> Отправить </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> Отмена </button>
+    </footer> 
+
+    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+      <p [innerHTML]="responseMessage"></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div id="shortcut" [@shortcutState]="state">
+  <ul>
+    <li>
+      <a (click)="shortcutTo(['profile/settings'])" class="jarvismetro-tile big-cubes bg-color-pinkDark"> <span class="iconbox"> <i
+        class="fas fa-user-cog fa-4x"></i> <span>Профиль </span> </span> </a>
+    </li>
+    <li *ngIf="_service._user.is_busy">
+      <a (click)="shortcutTo(['orders/active'])" class="jarvismetro-tile big-cubes bg-color-orangeDark"> <span class="iconbox"> <i
+        class="fa fa-book fa-4x"></i> <span>Активный заказ </span> </span> </a>
+    </li>
+    <li>
+      <a (click)="shortcutTo(['orders'])" class="jarvismetro-tile big-cubes bg-color-blueDark"> <span class="iconbox"> <i
+        class="fa fa-book fa-4x"></i> <span>Заказы </span> </span> </a>
+    </li>
+    <li>
+      <a (click)="shortcutTo(['profile/events'])" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i
+        class="fa fa-envelope fa-4x"></i> <span>События </span> </span> </a>
+    </li>
+  </ul>
+</div>

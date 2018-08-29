@@ -1,0 +1,28 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Заказы', 'Активный заказ #' + order?.system_number]" icon="fas fa-chart-line" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div sa-widget class="well">
+          <div class="active-order-holder edit">
+            <active-boosting *ngIf="order && order.type == 1" 
+            [order]="order" [properties]="properties" 
+            (quit)="quitOrder($event)" (status)="changeStatus()" (dotabuff)="setOrderDotabuff($event)" (report)="reportSaved($event)"></active-boosting>
+            <active-calibration *ngIf="order && order.type == 2" 
+            [order]="order" [properties]="properties" 
+            (quit)="quitOrder($event)" (status)="changeStatus()" (dotabuff)="setOrderDotabuff($event)" (report)="reportSaved($event)"></active-calibration>
+            <active-medal *ngIf="order && order.type == 3" 
+            [order]="order" [properties]="properties" 
+            (quit)="quitOrder($event)" (status)="changeStatus()" (dotabuff)="setOrderDotabuff($event)" (report)="reportSaved($event)"></active-medal>
+            <active-training *ngIf="order && order.type == 4" 
+            [order]="order" [properties]="properties" 
+            (quit)="quitOrder($event)" (status)="changeStatus()" (dotabuff)="setOrderDotabuff($event)" (report)="reportSaved($event)"></active-training>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

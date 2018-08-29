@@ -1,0 +1,62 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Разное', 'Переводы']" icon="fas fa-exchange-alt" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well well-sm">
+        <div class="row">
+          <div class="col-sm-12 col-md-12 col-lg-12">
+            <div class="well well-light shadow-md">
+			    <article class="col-xs-12">
+					<table class="table table-hover table-bordered">
+		              <caption>
+		              	<h1 class="txt-color-teal">
+		              		<span>Словарь переводов</span>
+		              		<button class="btn edit-button pull-right" (click)="save($event)">Сохранить&nbsp;<i class="fas fa-sync-alt"></i></button>
+		              		<button class="btn edit-button pull-right" (click)="add()">Добавить перевод&nbsp;<i class="fas fa-plus"></i></button>
+		              	</h1>
+		              </caption>
+		              <thead>
+		              <tr>
+		              	<th>Зерно</th>
+		              	<th>RU</th>
+		              	<th>US</th>
+		              	<th></th>
+		              </tr>
+		              </thead>
+		              <tbody>
+		              	<ng-container *ngFor="let t of translations">
+			              <tr *ngIf="!t.d">
+			                <td>
+			                	<label class="input w-100">
+			                	<input class="w-100" type="text" [(ngModel)]="t.name" (change)="t.u = 1">
+			                	</label>
+			                </td>
+			                <td>
+			                	<label class="input w-100">
+			                	<input class="w-100" type="text" [(ngModel)]="t.us" (change)="t.u = 1">
+			                	</label>
+			                </td>
+			                <td>
+			                	<label class="input w-100">
+			                	<input class="w-100" type="text" [(ngModel)]="t.ru" (change)="t.u = 1">
+			                	</label>
+			                </td>
+			                <td class="text-center">
+			                	<button class="edit-button" (click)="t.d = 1"><i class="fas fa-trash-alt"></i></button>
+			                </td>
+			              </tr>
+		              	</ng-container>
+		              </tbody>
+		            </table>
+			    </article>       
+			    <br clear="both">      		
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

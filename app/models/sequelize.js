@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const connection = new Sequelize('fbplatform', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
-  logging: false /*console.log*/,
+  logging: false,
   operatorsAliases: false,
   pool: {
     max: 5,
@@ -21,7 +21,19 @@ exports.Sequelize = Sequelize;
 
 exports.connection = connection;
 
+exports.upsert = function (model, values, condition) {
+    return model
+    .findOne({ where: condition })
+    .then(function(obj) {
+      if(obj) 
+        return obj.update(values);
+      else
+        return model.create(values);
+    });
+};
+
 exports.execute = (query, options) => {
+  if(!options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT; 
   return new Promise((resolve, reject) => {
     connection.query(query, options)
     .then((results, meta) => {
@@ -34,6 +46,7 @@ exports.execute = (query, options) => {
 };
 
 exports.executeOne = (query, options) => {
+  if(!options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT;
   return new Promise((resolve, reject) => {
     connection.query(query, options)
     .then((results, meta) => {

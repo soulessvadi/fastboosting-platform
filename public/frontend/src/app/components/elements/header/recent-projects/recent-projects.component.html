@@ -1,0 +1,19 @@
+<div *ngIf="false" class="project-context hidden-xs dropdown" dropdown>
+  <span class="label">{{ 'Projects' | i18n }}:</span>
+  <span class="project-selector dropdown-toggle" dropdownToggle>{{'Recent projects'| i18n}} 
+    <i ng-if="projects.length" class="fa fa-angle-down"></i>
+  </span>
+  <ul *dropdownMenu class="dropdown-menu">
+    <li *ngFor="let project of projects">
+      <a href="{{project.href}}">{{project.title}}</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a (click)="clearProjects()"><i class="fa fa-power-off"></i> Clear</a>
+    </li>
+  </ul>
+</div>
+
+<a routerLink="/orders/active" class="btn btn-labeled btn-md btn-success bg-color-blueDark" style="margin: 8px 10px;" *ngIf="_service.user.is_busy">
+  <span class="btn-label">Активный заказ</span> #{{ _service.user.active_order }}
+</a>

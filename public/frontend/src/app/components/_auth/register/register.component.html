@@ -1,0 +1,121 @@
+<header id="header" class="auth-header">
+
+  <sa-language-selector></sa-language-selector>
+
+  <div id="logo-group">
+    <span id="logo"> <img src="assets/img/logo-blue.png" alt="logo"> </span>
+  </div>
+
+  <span id="extr-page-header-space">
+    <span class="hidden-mobile hiddex-xs">Есть аккаунт?</span> 
+    <a routerLink="/auth/login" class="btn btn-danger">{{ 'Login' | i18n }}</a> 
+  </span>
+
+</header>
+
+<div id="main" role="main" class="animated fadeInDown">
+
+  <!-- MAIN CONTENT -->
+  <div id="content" class="container">
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
+        <h1 class="txt-color-red login-header-big">Lorem ipsum</h1>
+        <div class="hero">
+
+          <div class="pull-left login-desc-box-l">
+            <h4 class="paragraph-header">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi accusantium explicabo assumenda, commodi porro consequatur nobis incidunt asperiores odio id odit alias voluptas aspernatur magni error? Sed, itaque assumenda vel!</h4>
+            <div class="login-app-icons">
+              <a href="#" class="btn btn-danger btn-sm">Lorem ipsum</a>
+            </div>
+          </div>
+
+          <img src="assets/img/axe.png" alt="" class="pull-right" style="width:50%">
+
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <h5 class="about-heading">Lorem ipsum</h5>
+            <p>
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa.
+            </p>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <h5 class="about-heading">Lorem ipsum</h5>
+            <p>
+              Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi voluptatem accusantium!
+            </p>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+        <div class="well no-padding">
+
+          <form id="smart-form-register" class="smart-form client-form" #form>
+            <header>
+              Новый пользователь
+            </header>
+
+            <fieldset>
+              <section>
+                <label class="input"> <i class="icon-append fa fa-envelope"></i>
+                  <input type="email" placeholder="Email" [(ngModel)]="user.login" name="email" #email (keydown.enter)="register($event)">
+                  <b class="tooltip tooltip-bottom-right">Логин для входа в систему, восстановления доступа, оповещений.</b> </label>
+              </section>
+
+              <section>
+                <label class="input"> <i class="icon-append fa fa-user"></i>
+                  <input type="text" placeholder="Имя пользователя" [(ngModel)]="user.nick_name" name="username" #username (keydown.enter)="register($event)">
+                  <b class="tooltip tooltip-bottom-right">Никнейм для отображения в чатах, заказах.</b> </label>
+              </section>
+
+              <section>
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                  <input type="password" placeholder="Пароль" id="password" [(ngModel)]="user.password" name="password" #password (keydown.enter)="register($event)" autocomplete="false">
+                  <b class="tooltip tooltip-bottom-right">Пароль должен содержать не менее 8 символов</b> </label>
+              </section>
+
+              <section>
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                  <input type="password" placeholder="Подтверждение пароля" [(ngModel)]="user.passwordConfirm" name="passwordConfirm" #passwordConfirm (keydown.enter)="register($event)" autocomplete="false">
+                  <b class="tooltip tooltip-bottom-right">Контрольное подтверждение пароля</b> </label>
+              </section>
+            </fieldset>
+
+            <fieldset>
+              <section>
+                <label class="checkbox">
+                  <input type="checkbox" name="subscription" [(ngModel)]="user.subscribe">
+                  <i></i>Я хочу получать рассылку о событиях в системе</label>
+                <label class="checkbox">
+                  <input type="checkbox" name="terms" id="terms" [(ngModel)]="user.termsAgreed">
+                  <i></i>Я соглашаюсь с<a href="#" (click)="openModal($event, termsModal)"> Правилами пользования системой </a></label>
+              </section>
+            </fieldset>
+
+            <footer>
+              <button (click)="register($event)" class="btn btn-primary">
+                Создать аккаунт
+              </button>
+            </footer>
+
+            <div class="message" [class.error]="!responseSuccess">
+              <i class="fas fa-check" *ngIf="responseSuccess"></i>
+              <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+              <p [innerHTML]="responseMessage"></p>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-container  *ngComponentOutlet="TermsModalComponent"></ng-container> -->
+
+<ng-template #termsModal>
+  <smart-terms-modal (agree)="onTermsAgree()" (close)="onTermsClose()"></smart-terms-modal>
+</ng-template>

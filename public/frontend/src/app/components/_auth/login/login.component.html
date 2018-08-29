@@ -1,0 +1,98 @@
+<header id="header" class="auth-header">
+
+  <sa-language-selector></sa-language-selector>
+
+  <div id="logo-group">
+    <span id="logo"> <img src="assets/img/logo-blue.png" alt="logo"> </span>
+  </div>
+
+  <span id="extr-page-header-space"> 
+    <span class="hidden-mobile hiddex-xs">Еще не зарегистрирован?</span> 
+    <a routerLink="/auth/register" class="btn btn-danger">Создать аккаунт</a> 
+  </span>
+
+</header>
+
+<div id="main" role="main" class="animated fadeInDown">
+
+  <div id="content" class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
+        <h1 class="txt-color-red login-header-big">Lorem ipsum</h1>
+
+        <div class="hero">
+          <div class="pull-left login-desc-box-l">
+            <h4 class="paragraph-header">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque iste quam explicabo recusandae ab ea qui aut aspernatur veritatis illum possimus quo quas ipsa enim, voluptas quaerat natus, consequuntur, at.</h4>
+
+            <div class="login-app-icons">
+              <a href="#" class="btn btn-danger btn-sm">Lorem ipsum</a>
+            </div>
+          </div>
+          <img src="assets/img/axe.png" class="pull-right" alt="" style="width:50%">
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <h5 class="about-heading">Lorem ipsum</h5>
+            <p>
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+              laudantium, totam rem aperiam, eaque ipsa.
+            </p>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <h5 class="about-heading">Lorem ipsum</h5>
+            <p>
+              Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
+              nobis est eligendi voluptatem accusantium!
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+        <div class="well no-padding">
+          <form class="smart-form client-form" #form>
+
+            <header>
+              Вход в систему
+            </header>
+            <fieldset>
+              <section>
+                <label class="label">Имя пользователя</label>
+                <label class="input"> <i class="icon-append fa fa-user"></i>
+                  <input type="text" name="login" [(ngModel)]="user.login" (keydown.enter)="login($event)" #username>
+                  <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Имя пользователя должно содержать мин. 5 символов</b>
+                </label>
+              </section>
+              <section>
+                <label class="label">Пароль</label>
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                  <input type="password" name="password" [(ngModel)]="user.password" (keydown.enter)="login($event)" autocomplete="false" #password>
+                  <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Пароль от аккаунта (мин. 8 символов)</b> 
+                </label>
+                <div class="note">
+                  <a routerLink="/auth/forgot">Забыл пароль?</a>
+                </div>
+              </section>
+              <section>
+                <label class="checkbox">
+                  <input type="checkbox" name="remember" [(ngModel)]="user.rememberMe">
+                  <i></i>Запомнить меня</label>
+              </section>
+            </fieldset>
+            <footer>
+              <button (click)="login($event)" class="btn btn-primary">
+                Войти
+              </button>
+            </footer>
+
+            <div class="message" [class.error]="!responseSuccess">
+              <i class="fas fa-check" *ngIf="responseSuccess"></i>
+              <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+              <p [innerHTML]="responseMessage"></p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

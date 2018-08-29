@@ -1,0 +1,75 @@
+<span id="activity" class="activity-dropdown" (click)="onToggle()">
+  <i class="fa fa-user"></i>
+  <b class="badge bg-color-red">{{count}}</b>
+</span>
+
+<div class="ajax-dropdown" #dropdown>
+  <div class="btn-group btn-group-justified" data-toggle="buttons">
+    <label class="btn btn-default fs-11" [class.active]="currentActivity == 1" (click)="currentActivity = 1">
+      <input type="radio" name="activity"/> Новости <sup>({{news?.length}})</sup>
+    </label>
+    <label class="btn btn-default fs-11" [class.active]="currentActivity == 2" (click)="currentActivity = 2">
+      <input type="radio" name="activity"/> Напоминания <sup>({{reminders?.length}})</sup>
+    </label>
+    <label class="btn btn-default fs-11" [class.active]="currentActivity == 3" (click)="currentActivity = 3">
+      <input type="radio" name="activity"/> Чаты <sup>({{messages?.length}})</sup>
+    </label>
+  </div>
+
+   <div class="ajax-notifications custom-scroll">
+      <ul class="notification-body" *ngIf="currentActivity" >
+        <li *ngIf="currentActivity == 1">
+          <span *ngFor="let item of news" class="padding-10">
+            <div class="padding-5 no-border-radius bg-color-blueLight pull-left margin-right-5 text-center w-25" [class.badge]="item.cover && item.cover?.length">
+              <img *ngIf="item.cover && item.cover?.length" src="{{ _service.store_shared }}{{ item.cover }}" alt="{{item.title}}" class="img-responsive">
+              <i *ngIf="!item.cover && item.cover?.length" class="fas fa-newspaper fs-20"></i>
+            </div>
+            <span>
+              <a routerLink="/profile/events/news" class="txt-color-teal">{{item.title}}</a><br/>
+              <span class="pull-right font-xs text-muted"><i>{{ item.published_at | momentFromNow : 'DD.MM.YY HH:mm'}}</i></span>
+            </span>
+          </span>
+        </li>
+        <li *ngIf="currentActivity == 2">
+          <span *ngFor="let item of reminders">
+            <div class="bar-holder no-padding">
+              <p class="no-margin">
+                <a routerLink="/profile/events/notifications" class="txt-color-teal"> 
+                  <i class="fas fa-exclamation-circle" *ngIf="item.type != 'success' && item.type != 'info'" 
+                  [ngClass]="{'txt-color-yellow': item.type == 'warning', 'txt-color-red': item.type == 'danger'}"></i>
+                  <strong> {{item.title}}. </strong> {{item.note}}
+                </a>
+              </p>
+              <div class="note no-margin text-right">создано {{ item.created_at | moment: "DD.MM.YYYY, hh:mm" }}</div>
+              <div class="progress progress-xs">
+                <div [ngClass]="{
+                    'progress-bar': true,
+                    'bg-color-green': item.type == 'success',
+                    'bg-color-yellow': item.type == 'warning',
+                    'bg-color-red': item.type == 'danger'
+                  }" style="width: 100%;"></div>
+              </div>
+            </div>
+          </span>          
+        </li>
+        <li *ngIf="currentActivity == 3">
+          <span *ngFor="let item of messages" class="{{item.type}}">
+            <a class="msg">
+              <img src={{item.avatar}} alt="" class="air air-top-left margin-top-5" width="40" height="40"/>
+              <span class="from">{{item.author}}</span>
+              <span class="msg-body">{{item.text}}</span>
+              <time>{{item.created_at | momentFromNow : 'HH:mm DD.MM.YY'}}</time>
+            </a>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <span> 
+      <em>Обновлено {{ lastUpdate | momentFromNow: "HH:mm:ss" }}</em>
+      <button type="button" (click)="update()" class="btn btn-xs btn-default pull-right">
+          <i class="fas fa-sync-alt" *ngIf="!loading"></i>
+          <i class="fas fa-sync-alt fa-spin" *ngIf="loading"></i>
+      </button>
+    </span>
+</div>

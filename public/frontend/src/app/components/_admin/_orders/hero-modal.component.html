@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{ title | i18n }}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body">
+
+  <div id="left">
+    <ul class="list-inline friends-list heroes-list">
+      <li *ngFor="let hero of heroes">
+        <input type="checkbox" name="heroes[]" id="hero_{{ hero.id }}" value="{{ hero.id }}" [checked]="selected?.includes(hero.id)" (change)="check(hero, $event)">
+        <label for="hero_{{ hero.id }}">
+          <img src="{{ _service.store_heroes }}{{ hero.id }}_sm.png" title="{{ hero.localized_name }}">
+        </label>
+      </li>
+    </ul>
+  </div>
+
+</div>

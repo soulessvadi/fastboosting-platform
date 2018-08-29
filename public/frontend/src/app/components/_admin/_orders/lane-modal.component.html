@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{ title | i18n }}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body">
+
+  <div id="left">
+    <ul class="list-inline friends-list heroes-list text-center">
+      <li *ngFor="let lane of lanes">
+        <input type="checkbox" name="lanes[]" id="lane_{{ lane.id }}" value="{{ lane.id }}" [checked]="selected?.includes(lane.id)" (change)="check(lane, $event)">
+        <label for="lane_{{ lane.id }}">
+          <div class="img">{{ lane.name }}</div>
+        </label>
+      </li>
+    </ul>
+  </div>
+
+</div>

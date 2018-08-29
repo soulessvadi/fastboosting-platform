@@ -1,0 +1,70 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Профиль', 'События']" icon="fas fa-calendar-alt" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      
+      	<div class="well well-light well-lg shadow-md">
+
+			<div class="tabs-layout">
+				<ul class="nav nav-tabs bordered">
+				    <li [class.active]="activeTab == 1">
+				      <a (click)="activeTab = 1">
+				      	<i class="fa-fw fa-lg fas fa-newspaper"></i> 
+				      	<strong class="fs-16"> Новости администрации</strong>
+				      	<span class="badge bg-color-teal txt-color-white fs-14 no-radius">{{ news.list?.length }}</span>
+				      </a>
+				    </li>
+				    <li [class.active]="activeTab == 2">
+				      <a (click)="activeTab = 2">
+				      	<i class="fa-fw fa-lg fas fa-comment-alt"></i> 
+				      	<strong class="fs-16"> Ответы на тикеты</strong>
+				      	<span class="badge bg-color-teal txt-color-white fs-14 no-radius">{{ tickets.list?.length }}</span>
+				      </a>
+				    </li>
+				    <li [class.active]="activeTab == 3">
+				      <a (click)="activeTab = 3">
+				      	<i class="fa-fw fa-lg fas fa-bell"></i> 
+				      	<strong class="fs-16"> Напоминания по заказам</strong>
+				      	<span class="badge bg-color-teal txt-color-white fs-14 no-radius" [class.blinking]="alerts.list?.length && activeTab != 3">{{ alerts.list?.length }}</span>
+				      </a>
+				    </li>
+				  </ul>
+
+				  <tabset>
+				    <tab [active]="activeTab == 1">
+				    	<div class="tap-overlay app-news">
+							<app-news [news]="news"></app-news>
+				    	</div>
+				    </tab>
+				    <tab [active]="activeTab == 2">
+				    	<div class="tap-overlay">	
+							<app-replies [tickets]="tickets"></app-replies>		   		
+				    	</div>
+				    </tab>
+				    <tab [active]="activeTab == 3">
+				    	<div class="tap-overlay">
+				    		<div *ngIf="!alerts.list?.length">
+							  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Нет напоминаний</h2><hr>
+							</div>
+	                        <div class="row" *ngIf="alerts.list?.length">
+	                        	<div class="col-xs-12">
+							        <alert *ngFor="let alert of alerts.list" type="{{ alert.type }}">
+							          <h4 class="alert-heading">{{ alert.title }} 
+							          	<time class="pull-right fs-12">{{ alert.created_at | momentFromNow : 'HH:mm:ss D.MM.YY' }}</time>
+							          </h4>
+							          <strong *ngIf="alert.order_number">#{{ alert.order_number }}</strong> {{ alert.note }}
+							        </alert>	                        		
+	                        	</div>
+	                        </div>	
+				    	</div>
+				    </tab>
+
+				</tabset> 			
+			</div>
+		</div>
+    </div>
+  </div>
+</div>

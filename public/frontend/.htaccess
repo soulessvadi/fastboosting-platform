@@ -1,0 +1,18 @@
+RewriteEngine on
+
+RewriteBase /
+
+RewriteCond %{HTTP_HOST} ^(www.)?vda.daricvety.com.ua$ [NC]
+RewriteCond %{REQUEST_URI} !^/fastboosting/
+RewriteCond %{REQUEST_URI} !^/platform/
+RewriteCond %{REQUEST_URI} !^/shevchenkovo/
+RewriteCond %{REQUEST_URI} !^/mk5/
+RewriteCond %{REQUEST_URI} !^/mk/
+RewriteCond %{REQUEST_URI} !^/ng/
+RewriteCond %{REQUEST_URI} !^/delice/
+RewriteCond %{REQUEST_URI} !^/webparts/
+RewriteCond %{REQUEST_URI} !^/stream/
+RewriteCond %{REQUEST_URI} !^/manheim_parse/
+RewriteCond %{REQUEST_URI} !^/boosters/
+RewriteRule ^(.*)$ /z3ddota.com/public_html/$1
+

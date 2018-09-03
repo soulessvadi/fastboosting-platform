@@ -3,9 +3,6 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BootstrapModule } from "@app/shared/bootstrap.module";
-import { ElementsModule } from "./elements";
-import { ProfileComponent } from "./_profile/profile.component";
-import { OrdersComponent } from "./_orders/orders.component";
 
 
 @NgModule({
@@ -13,17 +10,13 @@ import { OrdersComponent } from "./_orders/orders.component";
     CommonModule,
     FormsModule,
     RouterModule,
-    ElementsModule,
   ],
   declarations: [
-    ProfileComponent,
-    OrdersComponent,
   ],
   exports: [
     CommonModule,
     FormsModule,
     RouterModule,
-    ElementsModule,
   ]
 })
 

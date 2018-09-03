@@ -1,68 +1,51 @@
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const sharp = require('sharp');
 const keys = {
 	private: fs.readFileSync(path.join(path.dirname(require.main.filename), 'auth_priv.pem')),
 	public: fs.readFileSync(path.join(path.dirname(require.main.filename), 'auth_pub.pem')),
 };
 
-Date.prototype.addHours = function(hours) {
-    let date = this;
-    date.setHours( date.getHours() + hours );
-    return date;
-};
-
-String.prototype.hexval = function(prefixed) {
-	prefixed = prefixed || false;
-	let r = [];
-	for (let n = 0, l = this.length; n < l; n ++) {
-		r.push(Number(this.charCodeAt(n)).toString(16));
-	}
-	return prefixed ? '0x' + r.join('') : r.join('');
-}
-
-if (!Object.keys) {
-  Object.keys = (function() {
-    'use strict';
-    var hasOwnProperty = Object.prototype.hasOwnProperty,
-        hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
-        dontEnums = [
-          'toString',
-          'toLocaleString',
-          'valueOf',
-          'hasOwnProperty',
-          'isPrototypeOf',
-          'propertyIsEnumerable',
-          'constructor'
-        ],
-        dontEnumsLength = dontEnums.length;
-
-    return function(obj) {
-      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
-        throw new TypeError('Object.keys called on non-object');
-      }
-
-      var result = [], prop, i;
-
-      for (prop in obj) {
-        if (hasOwnProperty.call(obj, prop)) {
-          result.push(prop);
-        }
-      }
-
-      if (hasDontEnumBug) {
-        for (i = 0; i < dontEnumsLength; i++) {
-          if (hasOwnProperty.call(obj, dontEnums[i])) {
-            result.push(dontEnums[i]);
-          }
-        }
-      }
-      return result;
-    };
-  }());
-}
-
 module.exports = {
+	image: (file) => {
+		return {
+			resize: (...args) => {
+				let x = 0, y = 0;
+				if(args.length) {
+					if(args[0] == 'avatar') x = 84, y = 84;
+					else x = args[0], y = args[1];
+				}
+				return sharp(file).resize(x, y).toBuffer((err, buffer) => fs.writeFileSync(file, buffer));
+			}
+		}
+	},
+	jsonEncode: function(mixed) {
+		let results;
+		if(typeof mixed == 'object') {
+		    try {
+		        results = JSON.stringify(mixed);
+		    } catch (e) {
+		        results = null;
+		    }
+		} else {
+			results = mixed;
+		}
+	    return results;
+	},
+	jsonDecode: function(mixed) {
+		let results;
+		if(typeof mixed == 'object') {
+			results = mixed;
+		} else {
+		    try {
+		        results = JSON.parse(mixed);
+		    } catch (e) {
+		        results = null;
+		    }
+		}
+	    return results;
+	},
 	isEmail: function(mixed) {
 	    let regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     	return regex.test(mixed);
@@ -124,3 +107,62 @@ module.exports = {
 	    return array;
 	}
 };
+
+
+
+
+Date.prototype.addHours = function(hours) {
+    let date = this;
+    date.setHours( date.getHours() + hours );
+    return date;
+};
+
+String.prototype.hexval = function(prefixed) {
+	prefixed = prefixed || false;
+	let r = [];
+	for (let n = 0, l = this.length; n < l; n ++) {
+		r.push(Number(this.charCodeAt(n)).toString(16));
+	}
+	return prefixed ? '0x' + r.join('') : r.join('');
+}
+
+if (!Object.keys) {
+  Object.keys = (function() {
+    'use strict';
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
+        dontEnums = [
+          'toString',
+          'toLocaleString',
+          'valueOf',
+          'hasOwnProperty',
+          'isPrototypeOf',
+          'propertyIsEnumerable',
+          'constructor'
+        ],
+        dontEnumsLength = dontEnums.length;
+
+    return function(obj) {
+      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+        throw new TypeError('Object.keys called on non-object');
+      }
+
+      var result = [], prop, i;
+
+      for (prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) {
+          result.push(prop);
+        }
+      }
+
+      if (hasDontEnumBug) {
+        for (i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) {
+            result.push(dontEnums[i]);
+          }
+        }
+      }
+      return result;
+    };
+  }());
+}

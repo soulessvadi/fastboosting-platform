@@ -1,0 +1,125 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Партнеры', 'Статистика']" icon="fas fa-chart-area" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+
+      		<div class="flex">
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm blue">
+						<span class="title">{{ 'Партнеров в системе' | i18n }}</span>
+						<span class="count fs-16">{{ statistics.partners_total }}</span>
+					</div>
+				</div> 
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm green">
+						<span class="title">{{ 'Активных партнеров' | i18n }}</span>
+						<span class="count fs-16">{{ statistics.partners_active }}</span>
+					</div>
+				</div>
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm orange">
+						<span class="title">{{ 'Заказы от партнеров' | i18n }}</span>
+						<span class="count fs-16">
+						{{ statistics.orders_count }}
+						</span>
+					</div>
+				</div>
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm red">
+						<span class="title">{{ 'Сумма по заказам' | i18n }}</span>
+						<span class="count fs-16">
+						{{ Math.abs(statistics.orders_amount_rub)?.toFixed(2) }}₽ /
+						{{ Math.abs(statistics.orders_amount_usd)?.toFixed(2) }}$
+						</span>
+					</div>
+				</div>  
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm violet">
+						<span class="title">{{ 'Оплачено по заказам' | i18n }}</span>
+						<span class="count fs-16">
+						{{ Math.abs(statistics.orders_amount_rub)?.toFixed(2) }}₽ /
+						{{ Math.abs(statistics.orders_amount_usd)?.toFixed(2) }}$
+						</span>
+					</div>
+				</div>     			
+      		</div>
+
+      		<div class="padding-5 margin-top-10">
+      		  <h4 class="txt-color-teal">{{ 'Топ по количеству заказов' | i18n }}</h4>
+              <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover" role="grid">
+                 <thead>
+                    <tr role="row">
+                       <th class="sorting_disabled" tabindex="0">ID</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Имя' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Домен' | i18n }} </th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Кол-во заказов' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Сумма по заказам' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Оплачено по заказам' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Активность' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"></th>
+                    </tr>
+                 </thead>
+                 <tbody *ngIf="topOrdersAmount">
+                    <tr *ngFor="let user of topOrdersAmount" role="row" class="odd">
+                       <td>{{ user.id }}</td>
+                       <td>{{ user.name }}</td>
+                       <td><a class="label label-info" href="{{ user.domain }}" target="_blank">{{ user.domain }}</a></td>
+                       <td>{{ (user.orders_count || 0) }}</td>
+                       <td>{{ (user.orders_amount_rub || 0) | number : '1.2-2' }}₽ / {{ (user.orders_amount_usd || 0) | number : '1.2-2' }}$</td>
+                       <td>{{ (user.orders_amount_paid_rub || 0) | number : '1.2-2' }}₽ / {{ (user.orders_amount_paid_usd || 0) | number : '1.2-2' }}$</td>
+                       <td class="w-50px"><a class="label block" [class.label-danger]="!user.is_active" [class.label-success]="user.is_active" style="padding:.7em;">&nbsp;</a></td>
+                       <td class="w-75px"><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/partners/{{ user.id }}"><i class="fas fa-user-cog"></i></a></td>
+                    </tr>
+                 </tbody>
+                 <tbody *ngIf="!topOrdersAmount?.length">
+                   <tr>
+                     <td colspan="9"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет данных' | i18n }}</h4></td>
+                   </tr>
+                 </tbody>
+              </table>
+      		</div>
+
+      		<div class="padding-5 margin-top-10">
+      		  <h4 class="txt-color-teal">{{ 'Топ по оплатам' | i18n }}</h4>
+              <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover" role="grid">
+                 <thead>
+                    <tr role="row">
+                       <th class="sorting_disabled" tabindex="0">ID</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Имя' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Домен' | i18n }} </th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Кол-во заказов' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Сумма по заказам' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Оплачено по заказам' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Активность' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"></th>
+                    </tr>
+                 </thead>
+                 <tbody *ngIf="topOrdersCount">
+                    <tr *ngFor="let user of topOrdersCount" role="row" class="odd">
+                       <td>{{ user.id }}</td>
+                       <td>{{ user.name }}</td>
+                       <td><a class="label label-info" href="{{ user.domain }}" target="_blank">{{ user.domain }}</a></td>
+                       <td>{{ (user.orders_count || 0) }}</td>
+                       <td>{{ (user.orders_amount_rub || 0) | number : '1.2-2' }}₽ / {{ (user.orders_amount_usd || 0) | number : '1.2-2' }}$</td>
+                       <td>{{ (user.orders_amount_paid_rub || 0) | number : '1.2-2' }}₽ / {{ (user.orders_amount_paid_usd || 0) | number : '1.2-2' }}$</td>
+                       <td class="w-50px"><a class="label block" [class.label-danger]="!user.is_active" [class.label-success]="user.is_active" style="padding:.7em;">&nbsp;</a></td>
+                       <td class="w-75px"><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/partners/{{ user.id }}"><i class="fas fa-user-cog"></i></a></td>
+                    </tr>
+                 </tbody>
+                 <tbody *ngIf="!topOrdersCount?.length">
+                   <tr>
+                     <td colspan="8"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет данных' | i18n }}</h4></td>
+                   </tr>
+                 </tbody>
+              </table>
+      		</div>
+
+		</div>
+    </div>
+  </div>
+</div>

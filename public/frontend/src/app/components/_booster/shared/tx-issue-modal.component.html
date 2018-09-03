@@ -1,0 +1,45 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{'Вопрос о трансакции'|i18n}}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body" style="padding: 0;">
+  <div class="smart-form" id="left" #form>
+    <fieldset>
+      <section class="col-xs-12">
+        <div>
+          <label class="label font-md">{{'Номер трансакции'|i18n}}</label>
+          <label class="input">
+            <input class="input-md" type="text" [(ngModel)]="ticket.tx_number" #tx_number>
+          </label>
+        </div>
+      </section>
+      <br clear="both">
+      <section>
+        <label class="label font-md">{{'Тема обращения'|i18n}}</label>
+        <label class="textarea">
+          <textarea class="custom-scroll" rows="1" [(ngModel)]="ticket.theme" #theme></textarea>
+        </label>
+        <div class="note">{{'Тема обращения должна быть краткой но давать представление о класификации вашего вопроса'|i18n}}</div>
+      </section>
+      <section>
+        <label class="label font-md">{{'Описание проблемы'|i18n}}</label>
+        <label class="textarea">
+          <textarea class="custom-scroll" rows="3" [(ngModel)]="ticket.description" #description></textarea>
+        </label>
+        <div class="note"><strong>{{'Важно'|i18n}}:</strong> {{'полномерно опишите, с чем у вас возникли проблемы или вопросы'|i18n}}</div>
+      </section>
+    </fieldset>   
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send($event)"> {{'Отправить'|i18n}} </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> {{'Отмена'|i18n}} </button>
+    </footer> 
+
+    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+      <p>{{responseMessage|i18n}}</p>
+    </div>
+  </div>
+</div>

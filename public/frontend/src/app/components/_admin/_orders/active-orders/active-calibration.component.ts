@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, TemplateRef,
 import { Router } from '@angular/router';
 import { ComponentService } from '@app/components/components.service';
 import { SocketService, SocketEvent, Message } from '@app/components/socketio.service';
-import { DatePipe } from '@angular/common';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { NotificationService } from '@app/core/services';
@@ -37,7 +36,6 @@ export class CalibrationComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificationService: NotificationService,
     private socketio: SocketService, 
-    private datePipe: DatePipe, 
     private modalService: BsModalService, 
     private el: ElementRef,
   ) { }
@@ -58,6 +56,30 @@ export class CalibrationComponent implements OnInit, OnDestroy {
       if(res.status == 200) this.responseMessage = 'Сохранено';
       setTimeout(() => { $('#save-btn').removeClass('loading'); this.responseMessage = null; }, 1000);
     })
+  }
+
+  public heroesChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes.push(hero.id);
+    else if (this.order.heroes.indexOf(hero.id) !== -1)
+      this.order.heroes.splice(this.order.heroes.indexOf(hero.id), 1);
+  }
+
+  public heroesBanChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes_ban.push(hero.id);
+    else if (this.order.heroes_ban.indexOf(hero.id) !== -1)
+      this.order.heroes_ban.splice(this.order.heroes_ban.indexOf(hero.id), 1);
+  }
+
+  public lanesChanged(lane) {
+    if(lane.checked) this.order.lanes.push(lane.id);
+    else this.order.lanes = this.order.lanes.filter(e => e != lane.id);
+  }
+
+  public serversChanged(server) {
+    if(server.checked) this.order.servers.push(server.id);
+    else this.order.servers = this.order.servers.filter(e => e != server.id);
   }
 
   public changeStatus() {
@@ -141,6 +163,10 @@ export class CalibrationComponent implements OnInit, OnDestroy {
     this.bsModalRef.hide();
   }
 
+  public setDeadline($event) {
+    this.order.deadline = moment($event, 'DD.MM.YYYY').toISOString();
+  }
+
   private renderChart() {
     let datasets = [];
     let dates = [];
@@ -196,13 +222,12 @@ export class CalibrationComponent implements OnInit, OnDestroy {
             labelString: 'Data'
           },
           ticks: {
-              min: 0,
-              beginAtZero: true,
-              callback: function(value, index, values) {
-                  if (Math.floor(value) === value) {
-                      return value;
-                  }
-              }
+            min: 0,
+            suggestedMin: 0,
+            beginAtZero: true,
+            callback: function(value, index, values) {
+              if (Math.floor(value) === value) return value;
+            }
           }
         }]
       },

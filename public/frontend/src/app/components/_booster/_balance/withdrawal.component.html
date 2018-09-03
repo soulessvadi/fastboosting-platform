@@ -1,0 +1,165 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Баланс бустера', 'Запрос на вывод средств']" icon="fas fa-hand-holding-usd" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+
+			<div class="tabs-layout">
+				<ul class="nav nav-tabs bordered">
+				    <li [class.active]="activeTab == 1">
+				      <a (click)="activeTab = 1">
+				      	<i class="fa-fw fa-lg fas fa-file-invoice-dollar"></i> <strong class="fs-16">{{ 'Создать запрос' | i18n }}</strong>
+				      </a>
+				    </li>
+				    <li [class.active]="activeTab == 2">
+				      <a (click)="activeTab = 2">
+				      	<i class="fa-fw fa-lg fas fa-th-list"></i> <strong class="fs-16">{{ 'История запросов' | i18n }}</strong>
+				      	<span class="badge bg-color-teal txt-color-white fs-14 no-radius">{{ userPayouts?.length }}</span>
+				      </a>
+				    </li>
+				  </ul>
+
+				  <tabset>
+				    <tab [active]="activeTab == 1">
+						<div class="smart-form" #form>
+						    <fieldset>
+						      <alert type="info">
+						       	<h4 class="alert-heading">{{ 'Важно' | i18n }}</h4> 
+						       	{{ 'После создания запроса на ваш email будет отправлено письмо с инструкцией по подтверждению' | i18n }}.
+						       	{{ 'Cредства будут перечислены на ваш счет после рассмотрения заявки ответственным службы поддержки' | i18n }}
+						      </alert> 
+						      <section>
+						       	<h4 class="txt-color-teal">{{ 'Доступно к выводу' | i18n }} <strong>{{ userBalance.amount?.toFixed(2) }} {{ userBalance.currency }}</strong></h4>  
+						      </section>
+						      <section class="col-xs-12">
+						        <label class="label font-md">{{ 'Ваш платежный реквизит' | i18n }}</label>
+						        <div class="inline-group" *ngIf="userProps">
+						        	<label class="radio" *ngFor="let prop of userProps"><input name="radio-inline" type="radio" (change)="propSelected(prop)"><i></i>{{ prop.method }} - {{ prop.prop }}</label>
+						        </div>
+						        <alert type="warning" dismissible="true" *ngIf="!userProps?.length">
+						       		<strong>
+						       			{{ 'Вы не добавили свои платежные реквизиты. Для удобства мы рекомендуем' | i18n }} <a routerLink="/profile/settings">&laquo;{{ 'добавить счета' | i18n }}&raquo;</a>
+						       		</strong>
+						      	</alert> 
+						      </section>
+						      <section class="col-xs-3">
+						      	<div>
+						      		<label class="label font-md"><strong>{{ 'Способ оплаты' | i18n }}</strong> <sup class="fas fa-asterisk fs-8"></sup></label>
+							        <label class="select">
+							          <select [(ngModel)]="request.method_id" class="input-md">
+							            <option *ngFor="let method of payMethods" [ngValue]="method.id" #method_id>{{ method.name }}</option>
+							          </select><i></i>
+							        </label>
+						      	</div>
+						      </section>
+						      <section class="col-xs-3">
+						      	<div>
+						      		<label class="label font-md"><strong>{{ 'Реквизит' | i18n }}</strong> <sup class="fas fa-asterisk fs-8"></sup></label>
+						      		<label class="input">
+						      			<input class="input-md" type="text" [(ngModel)]="request.prop" #prop>
+						      		</label>
+						      	</div>
+						      </section>
+						      <section class="col-xs-3">
+						      	<div>
+						      		<label class="label font-md">{{ 'Страна' | i18n }}</label>
+						      		<label class="input">
+						      			<input type="text" list="list" [(ngModel)]="request.country">
+						      			<datalist id="list"><option *ngFor="let country of _service.countries" value="{{country.name}}">{{country.name}}</option></datalist>
+						      		</label>
+						      	</div>
+						      </section>
+						      <section class="col-xs-3">
+						      	<div>
+						      		<label class="label font-md"><strong>{{ 'Сумма для вывода' | i18n }}</strong> <sup class="fas fa-asterisk fs-8"></sup></label>
+						      		<label class="input">
+						      			<input class="input-md" type="number" [(ngModel)]="request.amount" max="{{userBalance.amount}}" #amount>
+						      		</label>
+						      	</div>
+						      </section>
+						      <br clear="both">
+						      <section>
+						        <label class="label font-md">{{ 'Комментарий' | i18n }}</label>
+						        <label class="textarea">
+						          <textarea class="custom-scroll" rows="2" [(ngModel)]="request.comment" #comment></textarea>
+						        </label>
+						        <div class="note">{{ 'Если у вас есть дополнительные пожелания вы можете изложить их в комментарии к запросу' | i18n }}</div>
+						      </section>
+						    </fieldset>   
+						    <footer>
+				        		<button class="btn btn-lg btn-primary" (click)="agreement($event, payoutModal)">{{ 'Подтвердить' | i18n }}</button>
+						    </footer> 
+
+						    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+						      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+						      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+						      <p>{{ responseMessage | i18n }}</p>
+						    </div>
+					  	</div> 
+				    </tab>
+				    <tab [active]="activeTab == 2">
+						<div class="smart-form" #form>
+						    <fieldset>
+								<alert type="info" *ngIf="userPayouts?.length">
+									<h4 class="alert-heading">{{ 'Внимание' | i18n }}</h4> 
+									{{ 'Если у вас возникли вопросы о статусе запроса вы можете' | i18n }} <a routerLink="/support/newissue">&laquo;{{ 'создать тикет' | i18n }}&raquo;</a>
+								</alert> 
+								<alert type="info" *ngIf="!userPayouts?.length">
+									<h4 class="alert-heading">{{ 'У вас нет запросов на вывод средств' | i18n }}</h4> 
+									<strong>{{ userBalance.amount?.toFixed(2) }} {{ userBalance.currency }}</strong> {{ 'доступно к выводу' | i18n }}
+								</alert>
+					            <div class="table-responsive" *ngIf="userPayouts?.length">
+					              <table class="table table-hover table-bordereds table-tx">
+					                <thead>
+					                <tr>
+					                  <th>{{ 'Номер запроса' | i18n }}</th>
+					                  <th><i class="fas fa-money-check-alt"></i> {{ 'Реквизит' | i18n }}</th>
+					                  <th><i class="fas fa-dollar-sign"></i> {{ 'Сумма' | i18n }}</th>
+					                  <th><i class="fas fa-comment-dots"></i> {{ 'Комментарий' | i18n }}</th>
+					                  <th><i class="fas fa-calendar-alt"></i> {{ 'Дата' | i18n }}</th>
+					                  <th><i class="glyphicon glyphicon-send"></i> {{ 'Статус' | i18n }}</th>
+					                  <th><i class="fas fa-exchange"></i> {{ 'Трансакция' | i18n }}</th>
+					                </tr>
+					                </thead>
+					                <tbody>
+					                <tr *ngFor="let req of userPayouts; let i = index" [class.warning]="req.status==1" [class.danger]="req.status==2" [class.success]="req.status==3">
+					                  <td>{{ req.id }}</td>
+					                  <td>
+					                  	{{ req.method }}
+					                  	{{ req.prop }}
+					                  	{{ req.country }}
+					                  </td>
+					                  <td>{{ req.amount?.toFixed(2) }} {{ req.currency }}</td>
+					                  <td>{{ req.comment }}</td>
+					                  <td>{{ req.created_at | moment: 'DD.MM.YY HH:mm:ss' }}</td>
+					                  <td>{{ req.status_name }}</td>
+					                  <td>
+					                  	<button *ngIf="req.tx_number" class="btn btn-success btn-block" routerLink="/balance/txs/{{ req.tx_number }}">{{ req.tx_number }}</button>
+					                  	<button *ngIf="!req.tx_number" class="btn btn-success btn-block disabled" disabled><i class="fas fa-ban"></i></button>
+					                  </td>
+					                </tr>
+					                </tbody>
+					              </table>
+					              <div class="dt-toolbar-footer">
+					              	<div class="col-sm-6 col-xs-12 hidden-xs">
+					              	 	<div class="dataTables_info">{{ 'Запросов найдено' | i18n }}: {{ userPayouts?.length }}</div>
+					              	</div>
+					          	  </div>
+					            </div>
+						    </fieldset>
+					   </div>
+				    </tab>
+				</tabset> 			
+			</div>
+		</div>
+    </div>
+  </div>
+</div>
+
+<ng-template #payoutModal>
+  <payout-info-modal (agree)="agreed()" (close)="closed()" [request]="request"></payout-info-modal>
+</ng-template>

@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{'Рапорт о проблеме с аккаунтом'|i18n}}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body" style="padding: 0;">
+  <div class="smart-form" id="left" #form>
+    <fieldset>
+      <alert type="info">
+       {{ 'Это сообщение будет доставлено администрации и клиенту.'|i18n}} {{'Если проблема не будет решена в течении 60 минут, заказ автоматически будет снят.'|i18n}}
+      </alert>  
+      <section>
+        <label class="label">{{'Спецификация проблемы'|i18n}}</label>
+        <label class="select">
+          <select [(ngModel)]="selectedIssue">
+            <option *ngFor="let issue of issues" [ngValue]="issue">{{ issue.text }}</option>
+          </select><i></i>
+        </label>
+      </section>
+      <section *ngIf="selectedIssue.area">
+        <label class="label">{{'Ваше описание проблемы'|i18n}}</label>
+        <label class="textarea">
+          <textarea class="custom-scroll" rows="3" [(ngModel)]="selectedIssue.message" #message></textarea>
+        </label><div class="note">
+        <strong>{{'Важно'|i18n}}:</strong> {{'для скорейшего решения проблемы будьте предельно кратки и понятны'|i18n}}</div>
+      </section>
+    </fieldset>   
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send()"> {{'Отправить'|i18n}} </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> {{'Отмена'|i18n}} </button>
+    </footer> 
+
+    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+      <p>{{responseMessage|i18n}}</p>
+    </div>
+  </div>
+</div>

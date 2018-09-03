@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{ 'Порядок начисления и комиссия' | i18n }}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body">
+
+  <div id="left">
+    <h1>{{ 'Условия комиссии за вывод средств' | i18n }}</h1>
+    <p [innerHTML]="'Текст условий комиссии за вывод средств' | i18n"></p>
+  </div>
+
+</div>
+<div class="modal-footer">
+  <div class="pull-left">
+    <h4>{{ 'Сумма к выводу' | i18n }} <strong class="txt-color-teal">{{ request.amount?.toFixed(2) }} {{ request.currency }}</strong></h4>  
+  </div>
+  <button type="button" class="btn btn-success" id="i-agree" (click)="agree.emit(true)">
+    <i class="fa fa-check"></i> {{ 'Подтвердить' | i18n }}
+  </button>
+  <button type="button" class="btn btn-default" (click)="close.emit(true)">
+    <i class="fa fa-times"></i> {{ 'Отмена' | i18n }}
+  </button>
+</div>

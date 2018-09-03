@@ -23,4 +23,8 @@ provider.getServers = function() {
 	return Schemas.OrderServer.findAll({ attributes: ['id', 'name'], order: ['id'], raw: true });
 };
 
+provider.getMedals = function() {
+	return Schemas.BoosterPricelistMedal.findAll({ attributes: ['id', 'title', 'rank', 'image'], order: ['id'], raw: true });
+};
+
 module.exports = provider;

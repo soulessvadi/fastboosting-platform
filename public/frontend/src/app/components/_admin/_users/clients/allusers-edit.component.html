@@ -1,0 +1,627 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Пользователи', 'Все пользователи', '#' + user?.id + ' ' + user?.first_name  + ' ' + user?.last_name]" icon="fas fa-user-cog" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div sa-widget class="well">
+          <div class="active-order-holder user-edit">
+            <div class="widget-body no-padding">
+              <div class="well">
+                <div class="row" style="margin:0;">
+                  <div class="col-xs-12">
+                    <div class="carousel fade profile-carousel">
+                      <div class="air air-top-left padding-10">
+                        <h4 class="txt-color-white font-md"> {{ 'Зарегистрирован' | i18n }}
+                          <strong *ngIf="user">{{ user?.created_at | momentFromNow : "D.MM.YYYY HH:mm" }}</strong>
+                        </h4>                          
+                      </div>
+                      <div class="air air-top-right padding-10">
+                        <h4 class="txt-color-white font-md">
+                          <span class="inline-block va-t w-100px margin-right-10 ">{{ 'Баланс' | i18n }}</span>
+                          <strong *ngIf="user">{{ (user.balance || 0) | number : '1.2-2' }}
+                            <ng-container *ngFor="let currency of currencies">
+                              <span *ngIf="currency.id == user.currency_id">{{ currency.name }}</span>
+                            </ng-container>
+                          </strong>
+                        </h4>
+                        <h4 class="txt-color-white font-md">
+                          <span class="inline-block va-t w-100px margin-right-10 ">{{ 'Депозит' | i18n }}</span>
+                          <strong *ngIf="user">{{ (user.deposit || 0) | number : '1.2-2' }}
+                            <ng-container *ngFor="let currency of currencies">
+                              <span *ngIf="currency.id == user.currency_id">{{ currency.name }}</span>
+                            </ng-container>
+                          </strong>
+                        </h4>
+                        <a *ngIf="user?.active_order" class="btn btn-md btn-danger do-order-btn margin-top-10" routerLink="/govt/orders/{{ user.active_order }}">
+                          {{ 'Активный заказ' | i18n }} #{{ user.active_order }}
+                        </a>
+                      </div>
+                      <div class="carousel-inner">
+                        <div class="item active">     
+                          <div class="gradientist night" style="width: 100%; height: 100px;"></div>
+                        </div>
+                        <div class="profile-pic col-xs-6 col-sm-3">
+                          <label>
+                            <img src="{{_service.store_avatars}}{{user?.avatar ? user?.avatar : 'mock.png'}}" [alt]="user?.nick_name" #avatarimg>
+                            <i class="fas fa-pen"></i><input type="file" (change)="onimgloaded($event)">
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>             
+                  <article class="col-xs-12 margin-top-10">
+                    <div class="widget-body">
+                      <ul id="myTab1" class="nav nav-tabs bordered">
+                        <li [class.active]="activeTab == 0">
+                          <a (click)="activeTab = 0">
+                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Настройки аккаунта' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 1">
+                          <a (click)="activeTab = 1">
+                            <i class="fas fa-fw fa-lg fa-key"></i> {{ 'Права доступа' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 2">
+                          <a (click)="activeTab = 2">
+                            <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Трансакции' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="txs?.length">{{ txs?.length }}</span> 
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 3" *ngIf="user?.type == 3">
+                          <a (click)="activeTab = 3">
+                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'История заказов бустера' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="orders?.length">{{ orders?.length }}</span> 
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 4" *ngIf="user?.type == 4">
+                          <a (click)="activeTab = 4">
+                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'История заказов клиента' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="orders?.length">{{ orders?.length }}</span> 
+                          </a>
+                        </li>
+                      </ul>
+
+                      <tabset class="padding-10" *ngIf="user">
+                        <tab [active]="activeTab == 0">
+                          <div class="row">
+                            <div class="radio-select fs-14 padding-13">
+                              <label *ngFor="let type of types">
+                                <input type="radio" name="type" [(ngModel)]="user.type" [value]="type.id"><b>{{ type.name }}</b>
+                              </label>
+                            </div>
+                            <div class="table-responsive col-xs-6">
+                              <table class="table table-bordered table-striped table-hover va-m">
+                                <tbody>
+                                  <tr>
+                                    <th>{{ 'Имя' | i18n }} {{ 'Фамилия' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-sm-6 col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.first_name">
+                                        </label>
+                                        <label class="input col-sm-6 col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.last_name">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Никнеим' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.nick_name">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'E-mail' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.email">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Телефон' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.phone">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Skype' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.skype">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Discord' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.discord">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'vkontakte' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.vkontakte">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'facebook' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.facebook">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'instagram' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.instagram">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'youtube' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.youtube">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'twitter' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.twitter">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'dotabuff' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.dotabuff">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div> 
+                            <div class="table-responsive col-xs-6">
+                              <table class="table table-bordered table-striped table-hover va-m">
+                                <tbody>
+                                  <tr>
+                                    <th>{{ 'Подтвержден' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="ezswitch" *ngIf="user"><input type="checkbox" [(ngModel)]="user.is_approved"><div></div></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Заблокировать' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="ezswitch" *ngIf="user"><input type="checkbox" [(ngModel)]="user.is_blocked"><div class="red"></div></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Депозит' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="number" [(ngModel)]="user.deposit" step="100" min="0">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Рейтинг' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="number" [(ngModel)]="user.rating" step="0.1" min="0">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Группа цен' | i18n }}</th>
+                                    <td>
+                                      <div class="flex">
+                                        <div class="radio-select column shrink fs-10">
+                                          <label *ngFor="let rating of ratings">
+                                            <input type="radio" name="rating" [(ngModel)]="user.rating_id" [value]="rating.id" (change)="user.rating = rating.from"><b>{{ rating.name }}</b>
+                                          </label>
+                                        </div>
+                                        <div class="column">
+                                          <span class="padding-0-10 lh-24px">
+                                            {{ 'множитель оплаты' }}
+                                            <ng-container *ngFor="let rating of ratings">
+                                              <strong *ngIf="rating.id == user.rating_id">x{{ rating.factor | number: '1.1-1' }}</strong>
+                                            </ng-container>
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'MMR' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="number" [(ngModel)]="user.mmr_solo" step="100" min="0">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Герои' | i18n }} <button class="edit-button" (click)="openModal($event, heroPickModal)"><i class="fas fa-pen"></i></button></th>
+                                    <td>
+                                      <div class="project-members heroes">
+                                        <a *ngFor="let hero of user.heroes" href="javascript:void(0)">
+                                          <img src="{{ _service.store_heroes }}{{ hero }}_sm.png" class="online" alt="hero_{{hero.id}}">
+                                        </a> 
+                                      </div> 
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Линии' | i18n }} <button class="edit-button" (click)="openModal($event, lanesModal)"><i class="fas fa-pen"></i></button></th>
+                                    <td>
+                                      <div class="project-members lanes">
+                                        <a *ngFor="let olane of user.lanes" href="javascript:void(0)">
+                                          <ng-container *ngFor="let lane of lanes">
+                                            <span *ngIf="lane.id == olane">{{ lane.name }}</span>
+                                          </ng-container>
+                                        </a> 
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Страна' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" list="list" [(ngModel)]="user.country">
+                                          <datalist id="list"><option *ngFor="let country of countries" value="{{country.name}}">{{country.name}}</option></datalist>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Дата рождения' | i18n }}</th>
+                                    <td>
+                                      <div class="input-group col-xs-12">
+                                        <input class="form-control datepicker" [saUiDatepicker]="{ dateFormat: 'yy-mm-dd'}" 
+                                        value="{{ user.birth_date | moment : 'YYYY-MM-DD' }}" (change)="user.birth_date = $event">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Логин' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="user.login">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Новый пароль' | i18n }}</th>
+                                    <td>
+                                      <div class="row">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" placeholder="********" type="password" [(ngModel)]="user.password">
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>   
+                          </div>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="save()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>                        
+                        </tab>
+                        <tab [active]="activeTab == 1">
+                          <div class="row">
+                            <div class="table-responsive col-xs-12">
+                              <table class="table table-bordered table-striped table-hover va-m td-h-auto">
+                                <tbody>
+                                  <tr>
+                                    <th>{{ 'Тип заказа' | i18n }}</th>
+                                    <td>
+                                      <div class="radio-select column shrink fs-11">
+                                        <label *ngFor="let type of otypes">
+                                          <input type="checkbox" name="type" [checked]="user.order_permissions?.type?.includes(type.id)" 
+                                          [value]="type.id" (change)="permissionsTypeChanged($event)"><b>{{ type.name }}</b>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Источник заказа' | i18n }}</th>
+                                    <td>
+                                      <div class="radio-select column shrink fs-11">
+                                        <label *ngFor="let source of osources">
+                                          <input type="checkbox" name="source" [checked]="user.order_permissions?.source_id?.includes(source.id)" 
+                                          [value]="source.id" (change)="permissionsSourceChanged($event)"><b>{{ source.name }}</b>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. MMR' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="input"><input class="form-control" type="number" [(ngModel)]="user.order_permissions.mmr_finish" step="100" min="0"></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. стоимость заказа' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="input"><input class="form-control" type="number" [(ngModel)]="user.order_permissions.amount"></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. медаль' | i18n }}</th>
+                                    <td>
+                                      <div class="medals-selector row">
+                                        <div class="item">
+                                          <div class="medal le-dr-selector">
+                                            <div class="medal-rank driven">
+                                              <div class="list">
+                                                <div data-le="1" class="active">
+                                                  <div *ngFor="let medal of medals; let i = index" [class.active]="medal.id == (user.order_permissions.medal_finish || 1)" [attr.data-dr]="medal.id"><img src="{{_service.store_medals}}{{medal.image}}">
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="controlls">
+                                                <span class="prev" (click)="user.order_permissions.medal_finish = user.order_permissions.medal_finish > 1 ? user.order_permissions.medal_finish - 1 : medals[medals?.length - 1].id;"><i class="fas fa-chevron-left"></i></span>
+                                                <span class="next" (click)="user.order_permissions.medal_finish = user.order_permissions.medal_finish < medals?.length ? user.order_permissions.medal_finish + 1 : 1;"><i class="fas fa-chevron-right"></i></span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div> 
+                            <div class="col-xs-12">
+                              <div role="alert" class="alert alert-info margin-top-10">
+                                <h4 class="alert-heading fs-14">
+                                  {{ 'Ниже приведены права на доступ пользователя к определенным пунктам меню в системе' | i18n }}
+                                </h4>
+                              </div>
+                              <div class="flex">
+                                <div class="column shrink mw-20" *ngFor="let menu of menus; let i = index">
+                                  <div class="padding-10 h-100" [class.odd]="i % 2" [class.even]="!(i % 2)">
+                                    <div class="flex">
+                                      <label class="column fw-900">{{ menu.name | i18n }}</label>
+                                      <label class="column shrink ezswitch"><input type="checkbox" [value]="menu.id" [checked]="user.permissions[menu.id]" (change)="permissionMenuChanged($event)"><div></div></label>
+                                    </div>
+                                    <div class="flex padding-0-10" *ngFor="let nest of menu.nestings">
+                                      <label class="column">{{ nest.name | i18n }}</label>
+                                      <label class="column shrink ezswitch"><input type="checkbox" [value]="nest.id" [checked]="user.permissions[nest.id]" (change)="permissionMenuChanged($event)"><div></div></label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>  
+                          </div>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="save()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div> 
+                        </tab>
+                        <tab [active]="activeTab == 2">
+                          <div class="table-responsive">
+                            <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover table-tx td-h-auto">
+                              <thead>
+                              <tr>
+                                <th><i class="text-muted fas fa-hashtag"></i> {{ 'Номер трансакции' | i18n }}</th>
+                                <th>{{ 'Тип' | i18n }}</th>
+                                <th><i class="text-muted fas fa-dollar-sign"></i> {{ 'Сумма' | i18n }}</th>
+                                <th><i class="text-muted fas fa-calendar-alt"></i> {{ 'Дата' | i18n }}</th>
+                                <th><i class="text-muted glyphicon glyphicon-send"></i> {{ 'Статус' | i18n }}</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr *ngFor="let tx of txs" [class.warning]="tx.status==1" [class.danger]="tx.status==2" [class.success]="tx.status==3">
+                                <td>{{ tx.system_number }}</td>
+                                <td>{{ tx.type_name }}</td>
+                                <td> 
+                                  <div class="changes">
+                                    <i *ngIf="tx.status==3 && tx.amount > 0" class="fas fa-angle-up"></i> 
+                                    <i *ngIf="tx.status==3 && tx.amount < 0" class="fas fa-angle-down"></i> 
+                                  </div>
+                                  {{ Math.abs(tx.amount)?.toFixed(2) }} {{ tx.currency_name }}
+                                </td>
+                                <td>{{ tx.created_at | moment: 'D.MM.YY HH:mm:ss' }}</td>
+                                <td>
+                                  <span class="label label-default fs-11" *ngIf="tx.status == 1">{{ tx.status_name }}</span>  
+                                  <span class="label label-danger fs-11"  *ngIf="tx.status == 2">{{ tx.status_name }}</span>  
+                                  <span class="label label-success fs-11" *ngIf="tx.status == 3">{{ tx.status_name }}</span>  
+                                </td>
+                              </tr>
+                              </tbody>
+                               <tbody *ngIf="!txs?.length">
+                                 <tr>
+                                   <td colspan="5"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет данных' | i18n }}</h4></td>
+                                 </tr>
+                               </tbody>
+                            </table>
+                          </div>
+                        </tab>
+                        <tab [active]="activeTab == 3" *ngIf="user?.type == 3">
+                          <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover td-h-auto">
+                             <thead>
+                                <tr role="row">
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-hashtag text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Номер заказа' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-list-ul text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Тип' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe-africa text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Клиент' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe-africa text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Источник' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-dollar-sign text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Стоимость' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-dollar-sign text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Оплата бустеру' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Создан' | i18n }} </th>
+                                   <th class="sorting_disabled" tabindex="0"></th>
+                                   <th class="sorting_disabled" tabindex="0"></th>
+                                </tr>
+                             </thead>
+                             <tbody *ngIf="orders">
+                                <tr *ngFor="let order of orders" role="row" class="odd">
+                                   <td><a class="txt-color-blue" routerLink="/govt/orders/{{ order.system_number }}">{{ order.system_number }}</a></td>
+                                   <td>{{ order.type_name }}</td>
+                                   <td>
+                                    <a class="label label-success" routerLink="/govt/users/{{order.client_id}}">
+                                    <i class="fas fa-eye fw-500"></i> {{ order.client_name }}</a>
+                                   </td>
+                                   <td>
+                                    <a class="label label-success" routerLink="/govt/partners/{{order.partner_id}}">
+                                    <i class="fas fa-eye fw-500"></i> {{ order.partner_name }}</a>
+                                   </td>
+                                   <td>
+                                    <span [class.txt-color-red]="order.amount_paid < order.amount" [class.txt-color-green]="order.amount_paid >= order.amount">
+                                      {{ order.amount_paid | number : '1.2-2' }} / {{ order.amount | number : '1.2-2' }} {{ order.currency_name }}
+                                    </span>
+                                   </td>
+                                   <td>{{ order.salary | number : '1.2-2' }} {{ order.currency_name }}</td>
+                                   <td>{{ order.created_at | momentFromNow: 'DD.MM.YY HH:mm'}}</td>
+                                   <td class="text-center">
+                                      <span class="label label-default" *ngIf="[1]?.includes(order.status)">{{ order.status_name | i18n }}</span>  
+                                      <span class="label label-warning" *ngIf="[2,3]?.includes(order.status)">{{ order.status_name | i18n }}</span>  
+                                      <span class="label label-primary" *ngIf="[4,5]?.includes(order.status)">{{ order.status_name | i18n }}</span>  
+                                      <span class="label label-success" *ngIf="[6,7,8]?.includes(order.status)">{{ order.status_name | i18n }}</span>  
+                                      <span class="label label-danger"  *ngIf="[9,10]?.includes(order.status)">{{ order.status_name | i18n }}</span>  
+                                      <a class="label label-info" *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}">
+                                        <i class="fas fa-user-edit"></i>{{ order.worker_name }}</a>
+                                   </td>
+                                   <td><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/orders/{{ order.system_number }}"><i class="fas fa-cogs"></i></a></td>
+                                </tr>
+                             </tbody>
+                             <tbody *ngIf="!orders?.length">
+                               <tr>
+                                 <td colspan="9"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет данных' | i18n }}</h4></td>
+                               </tr>
+                             </tbody>
+                          </table>
+                        </tab>
+                        <tab [active]="activeTab == 4" *ngIf="user?.type == 4">
+                          <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover td-h-auto">
+                             <thead>
+                                <tr role="row">
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-hashtag text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Номер заказа' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-list-ul text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Тип' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe-africa text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Источник' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-dollar-sign text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Оплата' | i18n }}</th>
+                                   <th class="sorting_disabled" tabindex="0"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Создан' | i18n }} </th>
+                                   <th class="sorting_disabled" tabindex="0"></th>
+                                   <th class="sorting_disabled" tabindex="0"></th>
+                                </tr>
+                             </thead>
+                             <tbody *ngIf="ordersc">
+                                <tr *ngFor="let order of ordersc" role="row" class="odd">
+                                   <td><a class="txt-color-blue" routerLink="/govt/orders/{{ order.system_number }}">{{ order.system_number }}</a></td>
+                                   <td>{{ order.type_name }}</td>
+                                   <td>
+                                    <a class="label label-success" routerLink="/govt/partners/{{order.partner_id}}">
+                                    <i class="fas fa-eye fw-500"></i> {{ order.partner_name }}</a>
+                                   </td>
+                                   <td>
+                                    <span [class.txt-color-red]="order.amount_paid < order.amount" [class.txt-color-green]="order.amount_paid >= order.amount">
+                                      {{ order.amount_paid | number : '1.2-2' }} / {{ order.amount | number : '1.2-2' }} {{ order.currency_name }}
+                                    </span>
+                                   </td>
+                                   <td>{{ order.created_at | momentFromNow: 'DD.MM.YY HH:mm'}}</td>
+                                   <td class="text-center">
+                                      <span class="label label-default" *ngIf="[1]?.includes(order.status)">{{ order.status_name }}</span>  
+                                      <span class="label label-warning" *ngIf="[2,3]?.includes(order.status)">{{ order.status_name }}</span>  
+                                      <span class="label label-primary" *ngIf="[4,5]?.includes(order.status)">{{ order.status_name }}</span>  
+                                      <span class="label label-success" *ngIf="[6,7,8]?.includes(order.status)">{{ order.status_name }}</span>  
+                                      <span class="label label-danger"  *ngIf="[9,10]?.includes(order.status)">{{ order.status_name }}</span>  
+                                      <a class="label label-info" *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}">
+                                        <i class="fas fa-user-edit"></i>{{ order.worker_name }}</a>
+                                   </td>
+                                   <td><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/orders/{{ order.system_number }}"><i class="fas fa-cogs"></i></a></td>
+                                </tr>
+                             </tbody>
+                             <tbody *ngIf="!ordersc?.length">
+                               <tr>
+                                 <td colspan="7"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет данных' | i18n }}</h4></td>
+                               </tr>
+                             </tbody>
+                          </table>
+                        </tab>
+                      </tabset>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<ng-template #heroPickModal>
+  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes" [selected]="user.heroes" title="Выбор героев"></hero-modal>
+</ng-template>
+
+<ng-template #lanesModal>
+  <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes" [selected]="user.lanes" title="Выбор линий"></lane-modal>
+</ng-template>

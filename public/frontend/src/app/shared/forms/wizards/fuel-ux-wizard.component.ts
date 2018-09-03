@@ -18,6 +18,7 @@ import "script-loader!fuelux/js/wizard.js";
 })
 export class FuelUxWizardComponent implements OnInit {
   @Output() complete = new EventEmitter();
+  @Output() changed = new EventEmitter();
 
   constructor(private el: ElementRef) {}
 
@@ -34,6 +35,10 @@ export class FuelUxWizardComponent implements OnInit {
           e.preventDefault();
         }
       }
+    });
+    
+    wizard.on("changed.fu.wizard", (e, data) => {
+      this.changed.emit(data);
     });
 
     wizard.on("finished.fu.wizard", (e, data) => {

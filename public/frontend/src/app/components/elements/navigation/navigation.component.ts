@@ -9,7 +9,7 @@ import { ComponentService } from '@app/components/components.service';
 
 export class NavigationComponent implements OnInit {
 
-  public devMenu = 1;
+  public devMenu = 0;
   public menus = null;
 
   constructor(private layoutService: LayoutService, public _service: ComponentService) {
@@ -23,7 +23,7 @@ export class NavigationComponent implements OnInit {
   }
 
   toggleShortcut() {
-    this.layoutService.onShortcutToggle()
+    this.layoutService.onShortcutToggle();
   }
 
 }

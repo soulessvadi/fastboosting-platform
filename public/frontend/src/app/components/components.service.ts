@@ -15,7 +15,9 @@ export class ComponentService {
   public store_medals: string = this.cdn_endpoint + 'ranks/';
   public store_avatars: string = this.cdn_endpoint + 'avatars/';
   public store_shared: string = this.cdn_endpoint + 'shared/';
+  public store_screenshots: string = this.cdn_endpoint + 'reports/';
   public user: any = {};
+  public medals: any = null;
   public heroes: any = null;
   public lanes: any = null;
   public servers: any = null;
@@ -62,7 +64,7 @@ export class ComponentService {
 
   get _heroes() {
     return new Promise((resolve, reject) => {
-      if(!this.heroes) {
+      if(!this.heroes || !this.heroes.length) {
         this.http.get(`${this.endpoint}/interface/heroes/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
           if(res.status == 200) {
             this.heroes = res.body;
@@ -75,9 +77,24 @@ export class ComponentService {
     })
   }
 
+  get _medals() {
+    return new Promise((resolve, reject) => {
+      if(!this.medals || !this.medals.length) {
+        this.http.get(`${this.endpoint}/interface/medals/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
+          if(res.status == 200) {
+            this.medals = res.body;
+            resolve(this.medals);
+          }
+        });
+      } else {
+        resolve(this.medals);
+      }
+    })
+  }
+
   get _lanes() {
     return new Promise((resolve, reject) => {
-      if(!this.lanes) {
+      if(!this.lanes || !this.lanes.length) {
         this.http.get(`${this.endpoint}/interface/lanes/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
           if(res.status == 200) {
             this.lanes = res.body;
@@ -92,7 +109,7 @@ export class ComponentService {
 
   get _servers() {
     return new Promise((resolve, reject) => {
-      if(!this.servers) {
+      if(!this.servers || !this.servers.length) {
         this.http.get(`${this.endpoint}/interface/servers/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
           if(res.status == 200) {
             this.servers = res.body;
@@ -107,7 +124,7 @@ export class ComponentService {
 
   get _countries() {
     return new Promise((resolve, reject) => {
-      if(!this.countries) {
+      if(!this.countries || !this.countries.length) {
         this.http.get(`${this.endpoint}/interface/countries/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
           if(res.status == 200) {
             this.countries = res.body;
@@ -122,7 +139,7 @@ export class ComponentService {
 
   get _paymethods() {
     return new Promise((resolve, reject) => {
-      if(!this.paymethods) {
+      if(!this.paymethods || !this.paymethods.length) {
         this.http.get(`${this.endpoint}/interface/paymethods/`, { observe: 'response', headers: this._auth }).subscribe((res) => {
           if(res.status == 200) {
             this.paymethods = res.body;
@@ -201,8 +218,33 @@ export class ComponentService {
     })
   }
 
+  get user_types() {
+    return new Promise((resolve, reject) => {
+      this.http.get(`${this.endpoint}/interface/userTypes`, { observe: 'response', headers: this._auth }).subscribe((res: any) => {
+        resolve(res.body);
+      });
+    })
+  }
+
   constructor(private http: HttpClient) {
 
+  }
+
+  public smallBox(data, cb?) {
+    $.smallBox(data, cb)
+  }
+
+  public bigBox(data, cb?) {
+    $.bigBox(data, cb)
+  }
+
+  public smartMessageBox(data, cb?) {
+    $.SmartMessageBox(data, cb)
+  }
+
+  isEmail(mixed) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(mixed);
   }
 
   public getDatesRange(start, end) {
@@ -341,6 +383,14 @@ export class ComponentService {
     return this.http.post(`${this.endpoint}/orders/active/report`, formData, { observe: 'response', headers: this._auth });
   }
 
+  public saveOrderReport(report_id, formData: object): Observable<any>  {
+    return this.http.put(`${this.endpoint}/orders/reports/${report_id}`, formData, { observe: 'response', headers: this._auth });
+  }
+
+  public removeScreenshot(filename): Observable<any>  {
+    return this.http.delete(`${this.endpoint}/orders/reports/screenshot/${filename}`, { observe: 'response', headers: this._auth });
+  }
+
   public setWorkerStatus(status: object): Observable<any>  {
     return this.http.post(`${this.endpoint}/orders/active/workerStatus`, status, { observe: 'response', headers: this._auth });
   }
@@ -381,32 +431,207 @@ export class ComponentService {
     return this.http.post(`${this.endpoint}/tickets/new`, issue, { observe: 'response', headers: this._auth });
   }
 
-  public getAllOrders(params) {
+  public getAllOrders(params): Observable<any> {
     return this.http.get(`${this.endpoint}/orders/all`, { params: params, observe: 'response', headers: this._auth });
   }
 
-  public getProblematicOrders(params) {
+  public getProblematicOrders(params): Observable<any> {
     return this.http.get(`${this.endpoint}/orders/problematic`, { params: params, observe: 'response', headers: this._auth });
   }
 
-  public getOrderByNumber(system_number) {
+  public getOrderByNumber(system_number): Observable<any> {
     return this.http.get(`${this.endpoint}/orders/${system_number}`, { observe: 'response', headers: this._auth });
   }
 
-  public saveOrder(system_number, data) {
+  public saveOrder(system_number, data): Observable<any> {
     return this.http.post(`${this.endpoint}/orders/${system_number}`, data, { observe: 'response', headers: this._auth });
   }
 
-  public getAllTickets(data: any): Observable<any>  {
+  public getAllTickets(data: any): Observable<any> {
     return this.http.get(`${this.endpoint}/tickets/all`, { params: data,  observe: 'response', headers: this._auth });
   }
 
-  public getTicketByNumber(system_number) {
+  public getTicketByNumber(system_number): Observable<any> {
     return this.http.get(`${this.endpoint}/tickets/${system_number}`, { observe: 'response', headers: this._auth });
   }
 
-  public saveTicket(system_number, data) {
+  public saveTicket(system_number, data): Observable<any> {
     return this.http.post(`${this.endpoint}/tickets/${system_number}`, data, { observe: 'response', headers: this._auth });
   }
 
+  public getPartners(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/partners/`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getPartner(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/partners/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public savePartnerBoostPricelist(user_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/partners/${user_id}/pricelists/boost`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public createPartner(user_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/partners`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public savePartner(partner_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/partners/${partner_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public approvePartner(params): Observable<any> {
+    return this.http.put(`${this.endpoint}/partners/approve`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public blockPartner(params): Observable<any> {
+    return this.http.put(`${this.endpoint}/partners/block`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public removePartner(user_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/partners/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public getPartnersStatistics(): Observable<any> {
+    return this.http.get(`${this.endpoint}/partners/statistics`, { observe: 'response', headers: this._auth });
+  }
+
+  public generateApiKey(): Observable<any> {
+    return this.http.get(`${this.endpoint}/partners/keygen`, { observe: 'response', headers: this._auth });
+  }
+
+  public getClients(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/clients`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getClient(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/clients/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveClient(user_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/clients/${user_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public createClient(user_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/users/clients`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public getBoosters(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/boosters`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getBooster(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/boosters/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveBooster(user_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/boosters/${user_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public createBooster(user_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/users/boosters`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public getUsersTypes(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/types`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getType(type_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/types/${type_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveType(type_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/types/${type_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public createType(type_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/users/types`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public removeType(type_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/users/types/${type_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public getAllUsers(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/users`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getUser(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public createUser(user_id, data): Observable<any> {
+    return this.http.post(`${this.endpoint}/users`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public saveUser(user_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/${user_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public removeUser(user_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/users/${user_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public approveUser(params): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/approve`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public blockUser(params): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/block`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public getBoostersStatistics(): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/boosters/statistics`, { observe: 'response', headers: this._auth });
+  }
+
+  public getTxs(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/txs/`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getPayoutRequests(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/payoff`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public getPayoutRequest(id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/payoff/${id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public savePayoutRequest(id, params): Observable<any> {
+    return this.http.put(`${this.endpoint}/users/payoff/${id}`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public removePayoutRequest(id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/users/payoff/${id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public removeTx(tx_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/txs/${tx_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveTx(tx_id, data): Observable<any> {
+    return this.http.put(`${this.endpoint}/txs/${tx_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public getReports(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/orders/reports`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public removeReport(tx_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/orders/reports/${tx_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public getPricelists(): Observable<any>  {
+    return this.http.get(`${this.endpoint}/interface/pricelists`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveBoostPricelist(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/boost`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public saveMedalPricelist(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/medal`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public savePricelistCategories(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/categories`, data, { observe: 'response', headers: this._auth });
+  }
 }

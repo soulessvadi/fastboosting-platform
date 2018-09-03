@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const connection = new Sequelize('fbplatform', 'root', '', {
+const connection = new Sequelize('fbplatform', 'root', '', { // 'zboost', 'u_zboost', '1m2SbBV6Lp20',
   host: 'localhost',
   dialect: 'mysql',
   logging: false,
@@ -33,7 +33,7 @@ exports.upsert = function (model, values, condition) {
 };
 
 exports.execute = (query, options) => {
-  if(!options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT; 
+  if(typeof options == 'object' && !options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT; 
   return new Promise((resolve, reject) => {
     connection.query(query, options)
     .then((results, meta) => {
@@ -46,7 +46,7 @@ exports.execute = (query, options) => {
 };
 
 exports.executeOne = (query, options) => {
-  if(!options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT;
+  if(typeof options == 'object' && !options.hasOwnProperty('type')) options.type = Sequelize.QueryTypes.SELECT; 
   return new Promise((resolve, reject) => {
     connection.query(query, options)
     .then((results, meta) => {

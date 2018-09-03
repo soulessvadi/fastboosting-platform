@@ -68,61 +68,57 @@
 
 		          <tabset class="padding-10">
 		            <tab [active]="activeTab == 1">
-		              <div class="row">
-		                <div class="col-xs-12">
-							<div class="smart-form" [class.submitted]="responseMessage">
-							    <fieldset style="padding: 5px 15px 5px;">
-							    	<div class="row">
-								        <section class="col col-6">
-		                            	<label class="label">{{ 'Автор тикета' | i18n }}</label>
-			                            <label class="select">
-			                              <select class="input-sm" [(ngModel)]="ticket.user_id" (change)="ticket.author_name = getUserName()">
-			                                <option *ngFor="let user of authors" [ngValue]="user.id">{{ user.nick_name }} [{{ user.type }}] [ID {{ user.id }}]</option>
-			                              </select>
-			                              <i></i>
-			                            </label>
-								        </section>								    		
-								        <section class="col col-6">
-								            <label class="label">{{ 'Статус тикета' | i18n }}</label>
-								            <div class="radio-select pull-left">
-							                    <label *ngFor="let status of statuses">
-							                    	<input type="radio" name="name" [(ngModel)]="ticket.status" [value]="status.id" 
-							                    	(change)="ticket.status_name = status.name"><b>{{ status.name | i18n }}</b>
-							                    </label>
-								            </div>
-							        		<button class="btn btn-primary btn-md pull-right padding-5-10" [class.btn-warning]="ticket.pinned" 
-							        		(click)="ticket.pinned = !ticket.pinned"><i class="glyphicon glyphicon-pushpin"></i>	
-							        		{{ (ticket.pinned ? 'Снять отметку важный' : 'Отметить как важный') | i18n }}
-							        		</button>
-								        </section>		
-							    	</div>					    		
-							        <section>
-							            <label class="label">{{ 'Тема тикета' | i18n }}</label>
-							            <label class="textarea textarea-resizable">
-							                <textarea class="custom-scroll" rows="2" [(ngModel)]="ticket.theme"></textarea>
-							            </label>
-							        </section>
-							        <section>
-							            <label class="label">{{ 'Подробности' | i18n }}</label>
-							            <label class="textarea textarea-resizable">
-							                <textarea class="custom-scroll" rows="3" [(ngModel)]="ticket.description"></textarea>
-							            </label>
-							        </section>
-							    </fieldset>
-					            <div class="message">
-					            	<div class="appearance">
-						              	<i class="fas fa-check"></i>
-						              	<p [innerHTML]="responseMessage"></p>
-					            	</div>
-					            </div>
-							</div>
-							<div class="smart-form">
-							    <footer>
-							        <button class="btn btn-success" type="button" (click)="save()" id="save-btn"><i class="fas fa-sync-alt"></i> {{ 'Сохранить' | i18n }} </button>
-							    </footer>
-							</div>
-		                </div>                            
-		              </div>
+						<div class="smart-form" [class.submitted]="responseMessage">
+						    <fieldset style="padding: 5px 15px 5px;">
+						    	<div class="row">
+							        <section class="col col-6">
+	                            	<label class="label">{{ 'Автор тикета' | i18n }}</label>
+		                            <label class="select">
+		                              <select class="input-sm" [(ngModel)]="ticket.user_id" (change)="ticket.author_name = getUserName()">
+		                                <option *ngFor="let user of authors" [ngValue]="user.id">{{ user.nick_name }} [{{ user.type }}] [ID {{ user.id }}]</option>
+		                              </select>
+		                              <i></i>
+		                            </label>
+							        </section>								    		
+							        <section class="col col-6">
+							            <label class="label">{{ 'Статус тикета' | i18n }}</label>
+							            <div class="radio-select pull-left">
+						                    <label *ngFor="let status of statuses">
+						                    	<input type="radio" name="name" [(ngModel)]="ticket.status" [value]="status.id" 
+						                    	(change)="ticket.status_name = status.name"><b>{{ status.name | i18n }}</b>
+						                    </label>
+							            </div>
+						        		<button class="btn btn-primary btn-md pull-right padding-5-10" [class.btn-warning]="ticket.pinned" 
+						        		(click)="ticket.pinned = !ticket.pinned"><i class="glyphicon glyphicon-pushpin"></i>	
+						        		{{ (ticket.pinned ? 'Снять отметку важный' : 'Отметить как важный') | i18n }}
+						        		</button>
+							        </section>		
+						    	</div>					    		
+						        <section>
+						            <label class="label">{{ 'Тема тикета' | i18n }}</label>
+						            <label class="textarea textarea-resizable">
+						                <textarea class="custom-scroll" rows="2" [(ngModel)]="ticket.theme"></textarea>
+						            </label>
+						        </section>
+						        <section>
+						            <label class="label">{{ 'Подробности' | i18n }}</label>
+						            <label class="textarea textarea-resizable">
+						                <textarea class="custom-scroll" rows="3" [(ngModel)]="ticket.description"></textarea>
+						            </label>
+						        </section>
+						    </fieldset>
+				            <div class="message">
+				            	<div class="appearance">
+					              	<i class="fas fa-check"></i>
+					              	<p [innerHTML]="responseMessage"></p>
+				            	</div>
+				            </div>
+						</div>
+						<div class="smart-form margin-top-5">
+						    <footer>
+						        <button class="btn btn-success" type="button" (click)="save()" id="save-btn"><i class="fas fa-sync-alt"></i> {{ 'Сохранить' | i18n }} </button>
+						    </footer>
+						</div>
 		            </tab>
 		            <tab [active]="activeTab == 2">
 		              <div class="row">

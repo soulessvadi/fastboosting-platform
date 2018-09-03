@@ -54,7 +54,13 @@
         </li>
         <li *ngIf="currentActivity == 3">
           <span *ngFor="let item of messages" class="{{item.type}}">
-            <a class="msg">
+            <a class="msg" *ngIf="item.type == 'order'" routerLink="/govt/orders/{{item.system_number}}">
+              <img src={{item.avatar}} alt="" class="air air-top-left margin-top-5" width="40" height="40"/>
+              <span class="from">{{item.author}}</span>
+              <span class="msg-body">{{item.text}}</span>
+              <time>{{item.created_at | momentFromNow : 'HH:mm DD.MM.YY'}}</time>
+            </a>
+            <a class="msg" *ngIf="item.type == 'ticket'" routerLink="/govt/support/{{item.system_number}}">
               <img src={{item.avatar}} alt="" class="air air-top-left margin-top-5" width="40" height="40"/>
               <span class="from">{{item.author}}</span>
               <span class="msg-body">{{item.text}}</span>

@@ -38,8 +38,8 @@ import {UtilsModule} from "../utils/utils.module";
     RouteBreadcrumbsComponent,
   ],
   exports:[
-    HeaderModule,
     NavigationModule,
+    HeaderModule,
     FooterComponent,
     RibbonComponent,
     ShortcutComponent,

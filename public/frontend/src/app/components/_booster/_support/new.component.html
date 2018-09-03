@@ -1,0 +1,71 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Поддержка бустера', 'Новый тикет']" icon="fas fa-ambulance" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+			<div class="smart-form" id="left" #form>
+			    <fieldset>
+				  <h2 class="text-center txt-color-blueDark font-lg" style="margin-bottom: 20px;">{{'Новое обращение в службу технической поддержки'|i18n}}</h2>
+			      <alert type="info">
+			        <strong>
+			        {{'Это сообщение будет доставлено в техническую поддержку, после рассмотрения вы будете уведомлены о статусе заявки'|i18n}}.
+			        {{'Для скорейшего решения, максимально детально опишите вашу проблему'|i18n}}.
+			    	{{'Если ваше обращение связано с заказом или переводом средств - выберите соответствующую спецификацию и укажите номер заказа или трансакции, в противном случае заявка будет отменена'|i18n}}.
+			    	</strong> 
+			      </alert>  
+			      <section class="col-xs-6">
+			        <label class="label font-md">{{'Спецификация'|i18n}} <small>({{'с чем связана проблема'|i18n}})</small></label>
+			        <label class="select">
+			          <select [(ngModel)]="selectedIssue" class="input-lg">
+			            <option *ngFor="let issue of issues" [ngValue]="issue">{{ issue.text }}</option>
+			          </select><i></i>
+			        </label>
+			      </section>
+			      <section class="col-xs-6">
+			      	<div *ngIf="selectedIssue.order_input">
+			      		<label class="label font-md">{{'Укажите номер проблемного заказа'|i18n}}</label>
+			      		<label class="input">
+			      			<input class="input-lg" type="text" [(ngModel)]="ticket.order_number" #order_number>
+			      		</label>
+			      	</div>
+			      	<div *ngIf="selectedIssue.tx_input">
+			      		<label class="label font-md">{{'Укажите код проблемной трансакции'|i18n}}</label>
+			      		<label class="input">
+			      			<input class="input-lg" type="text" [(ngModel)]="ticket.tx_number" #tx_number>
+			      		</label>
+			      	</div>
+			      </section>
+			      <br clear="both">
+			      <section>
+			        <label class="label font-md">{{'Тема обращения'|i18n}}</label>
+			        <label class="textarea">
+			          <textarea class="custom-scroll" rows="2" [(ngModel)]="ticket.theme" #theme></textarea>
+			        </label>
+			        <div class="note">{{'Тема обращения должна быть краткой но давать представление о класификации вашего вопроса'|i18n}}</div>
+			      </section>
+			      <section>
+			        <label class="label font-md">{{'Описание проблемы'|i18n}}</label>
+			        <label class="textarea">
+			          <textarea class="custom-scroll" rows="5" [(ngModel)]="ticket.description" #description></textarea>
+			        </label>
+			        <div class="note"><strong>{{'Важно'|i18n}}:</strong> {{'полномерно опишите, с чем у вас возникли проблемы или вопросы'|i18n}}</div>
+			      </section>
+			    </fieldset>   
+			    <footer>
+	        		<button class="btn btn-lg btn-primary" (click)="send($event)"><i class="fas fa-sync-alt"></i> {{'Отправить'|i18n}}</button>
+			    </footer> 
+
+			    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+			      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+			      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+			      <p>{{responseMessage|i18n}}</p>
+			    </div>
+		  	</div>    		
+		</div>
+    </div>
+  </div>
+</div>

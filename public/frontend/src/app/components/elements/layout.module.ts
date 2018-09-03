@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { TooltipModule, BsDropdownModule } from "ngx-bootstrap";
 
 import { HeaderModule } from "./header/header.module";
 import { FooterComponent } from "./footer/footer.component";
@@ -11,10 +12,10 @@ import { ShortcutComponent } from "./shortcut/shortcut.component";
 import { LayoutSwitcherComponent } from "./layout-switcher.component";
 import { MainLayoutComponent  } from './layouts/main-layout.component';
 import { AdminLayoutComponent } from "./layouts/admin-layout.component";
+import { EmptyLayoutComponent } from "./layouts/empty-layout.component";
 import { AuthLayoutComponent  } from './layouts/auth-layout.component';
-import { TooltipModule, BsDropdownModule } from "ngx-bootstrap";
 import { RouteBreadcrumbsComponent  } from './ribbon/route-breadcrumbs.component';
-import { PipesModule  } from '@app/shared/pipes/pipes.module';
+import { PipesModule } from '@app/shared/pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -35,9 +36,11 @@ import { PipesModule  } from '@app/shared/pipes/pipes.module';
     MainLayoutComponent,
     AdminLayoutComponent,
     AuthLayoutComponent,
+    EmptyLayoutComponent,
     RouteBreadcrumbsComponent,
   ],
   exports:[
+    FormsModule,
     HeaderModule,
     NavigationModule,
     FooterComponent,
@@ -48,3 +51,4 @@ import { PipesModule  } from '@app/shared/pipes/pipes.module';
 })
 
 export class ElementsModule {}
+

@@ -18,7 +18,7 @@ export class FooterComponent implements OnInit {
 
   ngOnInit() {
   	var self = this;
-	document.addEventListener('click', function (event) {
+	  document.addEventListener('click', function (event) {
 		self.last_activity = new Date();
 	}, false);
   }

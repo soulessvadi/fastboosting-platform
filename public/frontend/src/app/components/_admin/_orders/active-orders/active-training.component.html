@@ -12,7 +12,7 @@
         <div class="powerswitch pull-right">
           <label>
             <input type="checkbox" [(ngModel)]="order.worker_status" (change)="changeStatus()">
-            <div><span class="on">В работе</span><span class="off">Свободен</span></div>  
+            <div><span class="on">{{ 'В работе' | i18n }}</span><span class="off">{{ 'Свободен' | i18n }}</span></div>  
             <i></i>
           </label>
         </div>
@@ -21,20 +21,24 @@
     <div class="row" style="margin:0;">
       <div class="col-xs-7">
         <div class="widget-body">
-          <h3 style="margin: 7px 12px;">Времени осталось:</h3>
+          <h3 style="margin: 7px 12px;">{{ 'Времени осталось' | i18n }}</h3>
             <div class="order-timer flex center" style="margin: 7px 12px;">
             <div class="timer column shrink">
-              <div class="time"><span class="h">{{ timer.h }}</span><span class="desc">ЧАСОВ</span></div>
+              <div class="time"><span class="h">{{ timer.h }}</span><span class="desc">{{ 'Часов' | i18n }}</span></div>
               <div class="time dots">:</div>
-              <div class="time"><span class="m">{{ timer.m }}</span><span class="desc">МИНУТ</span></div>
+              <div class="time"><span class="m">{{ timer.m }}</span><span class="desc">{{ 'Минут' | i18n }}</span></div>
               <div class="time dots">:</div>
-              <div class="time red"><span class="s">{{ timer.s }}</span><span class="desc">СЕКУНД</span></div>
+              <div class="time red"><span class="s">{{ timer.s }}</span><span class="desc">{{ 'Секунд' | i18n }}</span></div>
             </div>
             <div class="buttons column shrink">
-              <button class="btn pause" [class.stopped]="timer.stopped" (click)="pause()">
-                <i class="fas fa-stop" *ngIf="timer.stopped"></i>
-                <i class="fas fa-pause" *ngIf="!timer.stopped && timer.paused"></i>
-                <i class="fas fa-play" *ngIf="!timer.stopped && !timer.paused"></i>
+              <button class="btn pause" (click)="pause()">
+                <i class="fas fa-play" *ngIf="timer.stopped || timer.paused"></i>
+                <i class="fas fa-pause" *ngIf="!timer.stopped && !timer.paused"></i>
+              </button>
+            </div>
+            <div class="buttons column shrink">
+              <button class="btn pause stopped" (click)="stop()">
+                <i class="fas fa-stop"></i>
               </button>
             </div>
           </div>         
@@ -42,31 +46,36 @@
       </div>
       <div class="col-xs-5">
           <div class="row">
-            <div class="col-xs-12 col-sm-5">
-              <button class="btn btn-danger btn-md btn-block" (click)="quitOrder()">Отклонить заказ</button>
-            </div>
-            <div class="col-xs-12 col-sm-7">
-              <button class="btn btn-primary btn-md btn-block" (click)="openModal($event, reportModal)">
-                <i class="fas fa-file-signature"></i> Добавить отчет
+            <div class="col-xs-12 col-sm-6">
+              <button class="btn btn-primary btn-md btn-block fs-12" (click)="openModal($event, reportModal)">
+                <i class="fas fa-file-signature"></i> {{ 'Добавить отчет' | i18n }}
               </button>
             </div>
+            <div class="col-xs-12 col-sm-6">
+              <button class="btn btn-warning btn-md btn-block fs-12" (click)="openModal($event, issueModal)">
+                <i class="fas fa-life-ring"></i> {{ 'Создать тикет' | i18n }}
+              </button>
+            </div>  
           </div>
           <div class="sparks-info">
-            <h5>Номер заказа <span class="pull-right txt-color-blue">{{ order.system_number }}</span></h5>
+            <h5>{{ 'Номер заказа' | i18n }} <span class="pull-right">{{ order.system_number }}</span></h5>
           </div>
           <div class="sparks-info">
-            <h5>Герои для освоения
-              <span class="pull-right txt-color-blue">
-                <div class="project-members heroes">
-                  <a *ngFor="let hero of order.heroes" href="javascript:void(0)">
-                    <img src="{{ _service.store_heroes }}{{ hero }}_sm.png" class="online" alt="hero_{{hero.id}}">
-                  </a> 
-                </div> 
+            <h5>
+              {{ 'Оплачено / стоимость' | i18n }} 
+              <span class="pull-right" [ngClass]="{'txt-color-red':order.amount_paid < order.amount, 'txt-color-green': order.amount_paid >= order.amount}">
+                {{ order.amount_paid }} / {{ order.amount }} {{ order.currency_name }}
               </span>
             </h5>
           </div>
           <div class="sparks-info">
-            <h5>Игровых часов заказано / использовано<span class="pull-right txt-color-blue">{{ order.training_hours }} / <strong>{{ order.training_hours_done }}</strong></span></h5>
+            <h5>{{ 'Часов использовано / заказано' | i18n }} <span class="pull-right txt-color-blue">{{ order.training_hours_done }} / <strong>{{ order.training_hours }}</strong></span></h5>
+          </div>
+          <div class="sparks-info">
+            <h5>{{ 'Создан' | i18n }} <span class="pull-right">{{order.created_at | momentFromNow : 'DD.MM.YYYY HH:mm'}}</span></h5>
+          </div>
+          <div class="sparks-info">
+            <h5>{{ 'Дедлайн' | i18n }} <span class="pull-right">{{ order.deadline | moment : 'DD.MM.YYYY' }}</span></h5>
           </div>
       </div>
     </div>
@@ -76,93 +85,164 @@
           <ul id="myTab1" class="nav nav-tabs bordered">
             <li [class.active]="tabs.active == 0">
               <a (click)="tabs.active = 0">
-                <i class="fas fa-fw fa-lg fa-cogs"></i> Детали заказа
+                <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Детали заказа' | i18n }}
               </a>
             </li>
             <li [class.active]="tabs.active == 1">
               <a (click)="tabs.active = 1">
-                <i class="fas fa-fw fa-lg fa-chart-line"></i> Статистика
+                <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Статистика' | i18n }}
               </a>
             </li>
             <li [class.active]="tabs.active == 2">
               <a (click)="tabs.active = 2;">
                 <i class="fas fa-fw fa-lg fa-comments" *ngIf="!chat.unread"></i>
                 <span class="badge blink bg-color-blue txt-color-white" *ngIf="chat.unread">{{ chat.unread }}</span> 
-                Сообщения
+                {{ 'Сообщения' | i18n }}
               </a>
             </li>
           </ul>
 
           <tabset class="padding-10">
             <tab [active]="tabs.active == 0">
-              <div class="row">
-                <div class="col-xs-12">
-                  <alert type="info" dismissible="true">
-                    <span style="font-size: 15px;"><i class="fa-fw fas fa-exclamation-triangle"></i>&nbsp; <strong>Внимание!</strong> Перед началом работы проверьте доступы к аккаунту клиента <span *ngIf="!order.dotabuff?.length">и зарегистрируйте его в системе <a target="_blank" href="https://www.dotabuff.com">dotabuff</a></span></span>
-                  </alert>                           
-                </div>
-                <div class="col-xs-6">
-                  <div class="input-group">
-                    <input class="form-control" placeholder="https://www.dotabuff.com/players/91460772" type="text" [(ngModel)]="order.dotabuff">
-                    <div class="input-group-btn">
-                      <button class="btn btn-default btn-primary" type="button" (click)="setDotabuff($event)">
-                        <i class="fas fa-sync-alt"></i> Сохранить 
-                      </button>
-                    </div>
-                  </div>                              
-                </div>
-                <div class="col-xs-6">
-                  <button class="btn btn-default btn-primary" type="button" (click)="openModal($event, admissionModal)">Доступы к аккаунту <i class="fas fa-eye-slash"></i></button>&nbsp;&nbsp;
-                  <button class="btn btn-default btn-warning" type="button" (click)="openModal($event, issueModal)">Проблемы с аккаунтом</button>
-                </div>                            
-              </div>
               <div class="row" style="margin-top: 15px;">
                 <div class="table-responsive col-xs-6">
-                  <table class="table table-bordered table-striped table-hover">
+                  <table class="table table-bordered table-striped table-hover va-m">
                     <tbody>
                       <tr>
-                        <th>Тип заказа</th>
+                        <th>{{ 'Партнер' | i18n }}</th>
                         <td>
-                        <ng-container *ngFor="let type of properties.types">
-                          <span *ngIf="type.id == order.type">{{ type.name }}</span>
-                        </ng-container>
+                          <div class="input-group flex">
+                            <label class="select no-margin column">
+                              <select class="input-sm w-100" [(ngModel)]="order.partner_id">
+                                <option *ngFor="let partner of properties.partners" [ngValue]="partner.id">{{ partner.name }}</option>
+                              </select>
+                              <i></i>
+                            </label>
+                            <a *ngIf="order.client_id" routerLink="/govt/partners/{{order.partner_id}}" class="input-group-addon w-30px column shrink">
+                              <i class="fas fa-eye"></i>
+                            </a>                            
+                          </div>
                         </td>
                       </tr>
                       <tr>
-                        <th>Комментарий клиента</th>
-                        <td>{{ order.client_comment }}</td>
+                        <th>{{ 'Клиент' | i18n }}</th>
+                        <td>
+                          <div class="input-group flex">
+                            <label class="select no-margin column">
+                              <select class="input-sm w-100" [(ngModel)]="order.client_id">
+                                <option *ngFor="let user of properties.users" [ngValue]="user.id">{{user.id}} {{ user.nick_name }} [{{ user.type_name }}]</option>
+                              </select>
+                              <i></i>
+                            </label>
+                            <a *ngIf="order.client_id" routerLink="/govt/users/{{order.client_id}}" class="input-group-addon w-30px column shrink">
+                              <i class="fas fa-eye"></i>
+                            </a>                            
+                          </div>
+                        </td>
                       </tr>
                       <tr>
-                        <th>Начало работы</th>
-                        <td>{{ order.joined_at | date: 'd.MM.yyyy HH:mm' }}</td>
+                        <th>{{ 'Статус' | i18n }}</th>
+                        <td>
+                          <label class="select no-margin w-100">
+                            <select class="input-sm w-100" [(ngModel)]="order.status">
+                              <option *ngFor="let status of properties.statuses" [ngValue]="status.id">{{ status.name | i18n }}</option>
+                            </select>
+                            <i></i>
+                          </label>
+                        </td>
                       </tr>
                       <tr>
-                        <th>Игровых часов заказано</th>
-                        <td>{{ order.training_hours }}</td>
+                        <th>{{ 'Тип заказа' | i18n }}</th>
+                        <td>
+                          <div class="radio-select pull-left">
+                            <label *ngFor="let type of properties.types">
+                              <input type="radio" name="type" [(ngModel)]="order.type" [value]="type.id"><b>{{ type.name | i18n }}</b>
+                            </label>
+                          </div>
+                        </td>
                       </tr>
                       <tr>
-                        <th>Игровых часов использовано</th>
-                        <td><strong>{{ order.training_hours_done }}</strong></td>
+                        <th>{{ 'Дотабаф' | i18n }}</th>
+                        <td><input class="form-control" placeholder="https://www.dotabuff.com/players/91460772" type="text" [(ngModel)]="order.dotabuff"></td>
                       </tr>
                       <tr>
-                        <th>Оплата</th>
-                        <td>{{ order.amount | number : '1.2-2' }} {{ order.currency_name }}</td>
+                        <th>{{ 'Комментарий клиента' | i18n }}</th>
+                        <td><input class="form-control" type="text" [(ngModel)]="order.client_comment"></td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Стоимость' | i18n }}</th>
+                        <td><input class="form-control" type="number" [(ngModel)]="order.amount"></td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Оплачено' | i18n }}</th>
+                        <td><input class="form-control" type="number" [(ngModel)]="order.amount_paid"></td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Оплата бустеру' | i18n }} RUB/USD</th>
+                        <td>
+                          <div class="row">
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="number" [(ngModel)]="order.salary_rub">
+                            </label>
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="number" [(ngModel)]="order.salary_usd">
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Логин и пароль' | i18n }}</th>
+                        <td>
+                          <div class="row">
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="text" [(ngModel)]="order.account_login">
+                            </label>
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="text" [(ngModel)]="order.account_pass">
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Дедлайн' | i18n }}</th>
+                        <td>
+                          <div class="input-group">
+                            <input class="form-control datepicker" [saUiDatepicker]="{ dateFormat: 'dd.mm.yy'}" value="{{ order.deadline | moment : 'DD.MM.YYYY' }}" (change)="setDeadline($event)">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                          </div>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div> 
                 <div class="table-responsive col-xs-6">
-                  <table class="table table-bordered table-striped table-hover">
+                  <table class="table table-bordered table-striped table-hover va-m">
                     <tbody>
-                      <tr *ngFor="let service of properties.services">
-                          <th>{{service.name}}</th>
-                          <td>
-                            <i class="fas fa-check txt-color-green" *ngIf="order.training_services?.includes(service.id)"></i>
-                            <i class="fas fa-times txt-color-red" *ngIf="!order.training_services?.includes(service.id)"></i>
-                          </td>
+                      <tr>
+                        <th>{{ 'Бустер' | i18n }}</th>
+                        <td>
+                          <div class="input-group flex">
+                            <label class="select no-margin column">
+                              <select class="input-sm w-100" [(ngModel)]="order.worker_id">
+                                <option [ngValue]="0">{{ 'Не назначен' | i18n }}</option>
+                                <ng-container *ngFor="let user of properties.users">
+                                  <option *ngIf="user.type == 3" [ngValue]="user.id">{{user.id}} {{ user.nick_name }} [{{ user.type_name }}]</option>
+                                </ng-container>
+                              </select>
+                              <i></i>
+                            </label>
+                            <a *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}" class="input-group-addon w-30px column shrink">
+                              <i class="fas fa-eye"></i>
+                            </a>                            
+                          </div>
+                        </td>
                       </tr>
                       <tr>
-                        <th>Выбор героев</th>
+                        <th>{{ 'Игровых часов' | i18n }}</th>
+                        <td><input class="form-control" type="number" [(ngModel)]="order.training_hours"></td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Выбор героев' | i18n }} <button class="edit-button" (click)="openModal($event, heroPickModal)"><i class="fas fa-pen"></i></button></th>
                         <td>
                           <div class="project-members heroes">
                             <a *ngFor="let hero of order.heroes" href="javascript:void(0)">
@@ -171,15 +251,33 @@
                           </div> 
                         </td>
                       </tr>
+                      <tr *ngFor="let service of properties.services">
+                          <th>{{service.name}}</th>
+                          <td>
+                            <label class="ezswitch">
+                              <input name="service.name" type="checkbox" [checked]="order.training_services?.includes(service.id)" (change)="serviceCanged(service, $event)"><div></div>
+                            </label>
+                          </td>
+                      </tr>
                     </tbody>
                   </table>
-                </div>                           
+                </div>   
               </div>
+              <div class="smart-form">
+                <footer>
+                  <button class="btn btn-success" type="button" (click)="save()" id="save-btn"><i class="fas fa-sync-alt"></i> 
+                    {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                  </button>
+                </footer>
+              </div>                        
             </tab>
             <tab [active]="tabs.active == 1">
               <div class="row statistic-box">
                 <div class="col-xs-12 col-sm-6 fill-height custom-scroll">
                   <div class="well">
+                    <h5 class="text-center padding-20" *ngIf="!order.reports?.length">
+                      {{ 'Нет данных' | i18n }}
+                    </h5>
                     <div *ngFor="let report of order.reports; let i = index">
                       <div class="col-xs-3 col-sm-2">
                         <time datetime="2014-09-20" class="icon">
@@ -188,9 +286,9 @@
                         </time>
                       </div>
                       <div class="col-xs-9 col-sm-10">
-                        <h6 class="no-margin"><strong class="txt-color-green">{{ report.creator }}</strong>: отчет #{{ report.id }}</h6>
-                        <p class="no-margin" *ngIf="report.comment"><strong>Комментарий:</strong> &laquo;{{ report.comment }}&raquo; </p>
-                        <p class="no-margin"><strong>Часов использовано:</strong> {{ report.hours }}</p>
+                        <h6 class="no-margin"><strong class="txt-color-green">{{ report.creator }}</strong>: {{ 'отчет' | i18n }} #{{ report.id }}</h6>
+                        <p class="no-margin" *ngIf="report.comment"><strong>{{ 'Комментарий' | i18n }}:</strong> &laquo;{{ report.comment }}&raquo; </p>
+                        <p class="no-margin" *ngIf="report.mmr"><strong>{{ 'Итог' | i18n }}:</strong> {{ report.mmr }} MMR</p>
                       </div>
                       <div class="col-sm-12" *ngIf="i + 1 < order.reports?.length"><hr></div>
                     </div>  
@@ -199,6 +297,9 @@
                 </div>
                 <div class="col-xs-12 col-sm-6 fill-height custom-scroll">
                   <div class="well">
+                    <h5 class="text-center padding-20" *ngIf="!order.logs?.length">
+                      {{ 'Нет данных' | i18n }}
+                    </h5>
                     <table class="table table-striped table-forum">
                       <tbody>
                         <tr *ngFor="let log of order.logs; let i = index">
@@ -245,13 +346,13 @@
                         <div class="chat-footer">
                           <div class="textarea-div">
                             <div class="typearea">
-                              <textarea placeholder="Будьте вежливы" id="textarea-expand" (keyup.enter)="sendMessage($event)" class="custom-scroll" [(ngModel)]="chat.message"></textarea>
+                              <textarea placeholder="{{ 'Ваше сообщение' | i18n }}" id="textarea-expand" (keyup.enter)="sendMessage($event)" class="custom-scroll" [(ngModel)]="chat.message"></textarea>
                             </div>
                           </div>
                           <span class="textarea-controls">
-                            <button class="btn btn-md btn-primary pull-right" (click)="sendMessage($event)">Отправить</button>
+                            <button class="btn btn-md btn-primary pull-right" (click)="sendMessage($event)">{{ 'Отправить' | i18n }}</button>
                             <span class="pull-right smart-form" style="margin-top: 3px; margin-right: 10px;"> 
-                              <label class="checkbox pull-right">Используйте shift + enter для сброса строки</label>
+                              <label class="checkbox pull-right">{{ 'Используйте shift + enter для сброса строки' | i18n }}</label>
                             </span> 
                           </span>
                         </div>
@@ -264,6 +365,7 @@
             </tab>
           </tabset>
 
+
         </div>
       </article>
     </div>
@@ -272,4 +374,16 @@
 
 <ng-template #admissionModal>
   <admission-modal (close)="modalClose()" [order]="order"></admission-modal>
+</ng-template>
+
+<ng-template #issueModal>
+  <issue-modal (close)="modalClose()" [order]="order"></issue-modal>
+</ng-template>
+
+<ng-template #reportModal>
+  <report-modal (close)="modalClose()" (reportSaved)="reportSaved($event)" [order]="order"></report-modal>
+</ng-template>
+
+<ng-template #heroPickModal>
+  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes" [selected]="order.heroes" title="Выбор героев"></hero-modal>
 </ng-template>

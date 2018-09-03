@@ -23,7 +23,7 @@ export class ListComponent implements OnInit {
   public authors: any = [];
   public types: any = [];
   public filters = {
-    show: 0,
+    show: false,
     page: 1,
     asc: 0,
     status: 0,

@@ -153,6 +153,25 @@
                   <table class="table table-bordered table-striped table-hover va-m">
                     <tbody>
                       <tr>
+                        <th>{{ 'Бустер' | i18n }}</th>
+                        <td>
+                          <div class="input-group flex">
+                            <label class="select no-margin column">
+                              <select class="input-sm w-100" [(ngModel)]="order.worker_id">
+                                <option [ngValue]="0">{{ 'Не назначен' | i18n }}</option>
+                                <ng-container *ngFor="let user of properties.users">
+                                  <option *ngIf="user.type == 3" [ngValue]="user.id">{{user.id}} {{ user.nick_name }} [{{ user.type_name }}]</option>
+                                </ng-container>
+                              </select>
+                              <i></i>
+                            </label>
+                            <a *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}" class="input-group-addon w-30px column shrink">
+                              <i class="fas fa-eye"></i>
+                            </a>                            
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
                         <th>{{ 'Партнер' | i18n }}</th>
                         <td>
                           <div class="input-group flex">
@@ -178,7 +197,7 @@
                               </select>
                               <i></i>
                             </label>
-                            <a *ngIf="order.client_id" routerLink="/govt/boosters/{{order.client_id}}" class="input-group-addon w-30px column shrink">
+                            <a *ngIf="order.client_id" routerLink="/govt/users/{{order.client_id}}" class="input-group-addon w-30px column shrink">
                               <i class="fas fa-eye"></i>
                             </a>                            
                           </div>
@@ -194,25 +213,6 @@
                             <label class="input col-sm-6 col-xs-12">
                               <input class="form-control" type="text" [(ngModel)]="order.account_pass">
                             </label>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>{{ 'Бустер' | i18n }}</th>
-                        <td>
-                          <div class="input-group flex">
-                            <label class="select no-margin column">
-                              <select class="input-sm w-100" [(ngModel)]="order.worker_id">
-                                <option [ngValue]="0">{{ 'Не назначен' | i18n }}</option>
-                                <ng-container *ngFor="let user of properties.users">
-                                  <option *ngIf="user.type == 3" [ngValue]="user.id">{{user.id}} {{ user.nick_name }} [{{ user.type_name }}]</option>
-                                </ng-container>
-                              </select>
-                              <i></i>
-                            </label>
-                            <a *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}" class="input-group-addon w-30px column shrink">
-                              <i class="fas fa-eye"></i>
-                            </a>                            
                           </div>
                         </td>
                       </tr>

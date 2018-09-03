@@ -41,9 +41,13 @@ export class I18nService {
 
   setLanguage(language){
     this.currentLanguage = language;
-    this.fetch(language.key)
+    localStorage.setItem('locale', this.currentLanguage.key);
+    this.fetch(this.currentLanguage.key);
   }
 
+  refresh() {
+    this.fetch(this.currentLanguage.key);
+  }
 
   subscribe(sub:any, err:any) {
     return this.state.subscribe(sub, err)

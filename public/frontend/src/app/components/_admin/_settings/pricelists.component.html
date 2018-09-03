@@ -1,0 +1,301 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Настройки', 'Прайслисты']" icon="fas fa-user-cog" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div sa-widget class="well">
+          <div class="active-order-holder user-edit">
+            <div class="widget-body no-padding">
+              <div class="well">
+                <div class="row" style="margin:0;">
+                  <article class="col-xs-12 margin-top-10">
+                    <div class="widget-body">
+                      <ul id="myTab1" class="nav nav-tabs bordered">
+                        <li [class.active]="activeTab == 0">
+                          <a (click)="activeTab = 0">
+                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Рейтинги бустеров' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 1">
+                          <a (click)="activeTab = 1">
+                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Буст MMR' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 2">
+                          <a (click)="activeTab = 2">
+                            <i class="fas fa-fw fa-lg fa-key"></i> {{ 'Буст медали' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 3">
+                          <a (click)="activeTab = 3">
+                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'Калибровка' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 4">
+                          <a (click)="activeTab = 4">
+                            <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Тренинг' | i18n }}
+                          </a>
+                        </li>
+                      </ul>
+
+                      <tabset class="padding-10">
+                        <tab [active]="activeTab == 0">
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto">
+                              <thead>
+                                <tr>
+                                  <td colspan="5">
+                                    <div class="flex">
+                                      <div class="column shrink">
+                                        <h4 class="fs-21 fw-500 lh-30 padding-0-10">{{ 'Рейтинг' | i18n }}</h4>
+                                      </div>
+                                      <div class="column shrink">
+                                        <div class="radio-select">
+                                          <label *ngFor="let category of categories">
+                                            <input type="radio" name="category1" [(ngModel)]="cat_calc.factor" [value]="category.factor"><b class="h-29px">{{ category.name | i18n }}</b>
+                                          </label>
+                                        </div>
+                                      </div>
+                                      <div class="column shrink">
+                                        <label class="input">
+                                          <input type="number" class="form-control h-29px" step="100" placeholder="{{ 'Стоимость заказа' | i18n }}" [(ngModel)]="cat_calc.price">
+                                        </label>
+                                      </div>
+                                      <div class="column">
+                                        <h4 class="text-center txt-color-teal fs-30 fw-700">
+                                          <small class="txt-color-teal fs-12">{{cat_calc.price | number : '1.2-2'}} * {{cat_calc.factor | number : '1.1-1'}} </small>&nbsp;
+                                          {{ cat_calc.factor * cat_calc.price | number : '1.2-2'}}
+                                        </h4>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="catReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Группа' | i18n }}</th>
+                                  <th>{{ 'Рейтинг' | i18n }}</th>
+                                  <th>{{ 'Коэф. оплаты' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="catAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of categories;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td><label class="input"><input type="text" class="form-control padding-6" [(ngModel)]="item.name" placeholder="Название группы"></label></td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.from" step="0.1" min="0"></label> 
+                                    <strong> &ndash; </strong> 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.till" step="0.1" min="0"></label>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.factor" step="0.1" min="0"></label>                                
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="catRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </article>  
+                          <div class="smart-form margin-top-5">                          
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="catSave()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>                        
+                        </tab>
+                        <tab [active]="activeTab == 1">
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto">
+                              <thead>
+                                <tr>
+                                  <td colspan="4">
+                                    <div class="margin-top-10">
+                                      <div class="form-group" style="padding: 0px 10px;">
+                                        <input *ngIf="pricelists.boosting?.length" ionSlider type="text" data-type="double" data-postfix=" MMR" data-hasgrid="true" data-min_interval="25" data-min="0" data-max="8000" data-from="0" data-to="8000" data-step="25" (change)="onSlide($event)">
+                                      </div>
+                                    </div>
+                                    <div class="flex">
+                                      <div class="column shrink">
+                                        <h4 class="fs-21 fw-500 lh-30 padding-0-10">{{ 'Рейтинг' | i18n }}</h4>
+                                      </div>
+                                      <div class="column">
+                                        <div class="radio-select">
+                                          <label *ngFor="let category of categories">
+                                            <input type="radio" name="category" [(ngModel)]="factor" [value]="category.factor"><b>{{ category.name | i18n }}</b>
+                                          </label>
+                                        </div>
+                                      </div>
+                                      <div class="column">
+                                        <div class="flex">
+                                          <h4 class="text-center txt-color-teal fs-30 fw-700 column" *ngFor="let price of boosting_prices">
+                                            {{price.v | number : '1.2-2'}}{{price.c}} <sup style="font-size:.5em;top: -.75em;">{{price.v * factor | number : '1.2-2'}}</sup>
+                                          </h4>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="boostingReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Рейтинг' | i18n }}</th>
+                                  <th>{{ 'Цена' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="boostingAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of pricelists.boosting;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.from" step="100"></label> <strong> &ndash; </strong> 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.till" step="100"></label> <strong> MMR </strong>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.rub"></label> <strong> RUB </strong> &nbsp; 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.usd"></label> <strong> USD </strong> &nbsp;  
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.volume"></label> <strong> MMR </strong>                                      
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="boostingRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </article>  
+                          <div class="smart-form margin-top-5">                          
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="boostingSave()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>                        
+                        </tab>
+                        <tab [active]="activeTab == 2">
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto">
+                              <thead>
+                                <tr>
+                                  <th colspan="3">
+                                    <div class="flex">
+                                      <div class="column shrink">
+                                        <div class="medals-selector no-margin">
+                                          <div class="item">
+                                            <div class="medal le-dr-selector">
+                                              <div class="medal-rank driven">
+                                                <div class="list">
+                                                  <div data-le="1" class="active">
+                                                    <div *ngFor="let medal of pricelists.medal_boost; let i = index" [class.active]="i == medal_from" data-dr="1">
+                                                      <img src="{{_service.store_medals}}{{medal.image}}">
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="controlls">
+                                                  <span class="prev" (click)="medal_from = medal_from > 0 ? medal_from - 1 : pricelists.medal_boost?.length - 1; medalPrice()"><i class="fas fa-chevron-left"></i></span>
+                                                  <span class="next" (click)="medal_from = medal_from < pricelists.medal_boost?.length - 1 ? medal_from + 1 : 0; medalPrice()"><i class="fas fa-chevron-right"></i></span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <i class="fas fa-chevron-right hidden-xs hidden-sm" style="line-height: 64px;"></i>
+                                          <div class="item">
+                                            <div class="medal le-dr-selector">
+                                              <div class="medal-rank driven">
+                                                <div class="list">
+                                                  <div data-le="1" class="active">
+                                                    <div *ngFor="let medal of pricelists.medal_boost; let i = index" [class.active]="i == medal_till" data-dr="1">
+                                                      <img src="{{_service.store_medals}}{{medal.image}}">
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="controlls">
+                                                  <span class="prev" (click)="medal_till = medal_till > 0 ? medal_till - 1 : pricelists.medal_boost?.length - 1; medalPrice()"><i class="fas fa-chevron-left"></i></span>
+                                                  <span class="next" (click)="medal_till = medal_till < pricelists.medal_boost?.length - 1 ? medal_till + 1 : 0; medalPrice()"><i class="fas fa-chevron-right"></i></span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="column shrink">
+                                        <h4 class="fs-21 fw-500 lh-30 padding-0-10">{{ 'Рейтинг' | i18n }}</h4>
+                                      </div>
+                                      <div class="column">
+                                        <div class="radio-select">
+                                          <label *ngFor="let category of categories">
+                                            <input type="radio" name="category3" [(ngModel)]="factor" [value]="category.factor"><b>{{ category.name | i18n }}</b>
+                                          </label>
+                                        </div>
+                                      </div>
+                                      <div class="column">
+                                        <div class="flex">
+                                          <h4 class="text-center txt-color-teal fs-30 fw-700 column" *ngFor="let price of medal_price">
+                                            {{price.v | number : '1.2-2'}}{{price.c}} <sup style="font-size:.5em;top: -.75em;">{{price.v * factor | number : '1.2-2'}}</sup>
+                                          </h4>
+                                        </div>
+                                      </div>                      
+                                    </div>                        
+                                  </th>
+                                </tr>
+                                <tr>
+                                  <th>#</th>
+                                  <th>{{ 'Медаль' | i18n }}</th>
+                                  <th>{{ 'Стоимость' | i18n }}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of pricelists.medal_boost; let i = index">
+                                  <td class="w-50px">{{ i + 1 }}</td>
+                                  <td class="no-padding"> 
+                                    <img src="{{_service.store_medals}}{{item.image}}" style="width: 50px;"> {{ item.title }} <sup>{{ item.rank }}</sup>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.rub"></label> <strong> RUB </strong> &nbsp; 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.usd"></label> <strong> USD </strong> &nbsp; 
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </article>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="medalSave()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div> 
+                        </tab>
+                        <tab [active]="activeTab == 3">
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>    
+                        </tab>
+                        <tab [active]="activeTab == 4">
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>    
+                        </tab>
+                      </tabset>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

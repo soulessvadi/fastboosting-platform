@@ -1,0 +1,89 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close.emit(true)">
+    &times;
+  </button>
+  <h4 class="modal-title" id="myModalLabel">{{'Отчет о выполненной работе'|i18n}}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body" class="no-padding">
+  <div id="left" class="smart-form" #form>
+    <fieldset>
+      <alert type="info">
+        {{'Если у вас возникли проблемы со входом, воспользуйтесь соответствующей формой или оповестите клиента лично через чат'|i18n}}
+      </alert>  
+      <section>
+        <label class="toggle">
+          <input name="checkbox-toggle" type="checkbox" [(ngModel)]="report.finisher"><i data-swchoff-text="НЕТ" data-swchon-text="ДА"></i>
+          {{'Заказ выполнен'|i18n}}
+        </label>
+      </section>
+      <section *ngIf="order.type == 2">
+        <label class="label">{{'Игр сыграно'|i18n}} <sup>({{'сейчас'|i18n}}: {{ order.cali_games_done }})</sup></label>
+        <label class="input"><i class="icon-append fas fa-exclamation-circle"></i>
+          <input type="number" value="0" [(ngModel)]="report.games_done">
+          <b class="tooltip tooltip-top-right">{{'Количество сыгранных игр в процессе выполнения'|i18n}}</b>
+        </label>
+      </section>
+      <section *ngIf="order.type == 1 || (order.type == 2 && report.finisher)">
+        <label class="label">{{'Результат MMR'|i18n}} <sup>({{'текущий'|i18n}}: {{ order.mmr_start + order.mmr_boosted }})</sup></label>
+        <label class="input"><i class="icon-append fas fa-exclamation-circle"></i>
+          <input type="number" value="0" [(ngModel)]="report.mmr">
+          <b class="tooltip tooltip-top-right">{{'MMR аккаунта клиента на момент создания отчета'|i18n}}</b>
+        </label>
+      </section>
+      <section *ngIf="order.type == 3">
+        <label class="label">{{'Текущая медаль'|i18n}}</label>
+        <div class="medals-selector">
+          <div class="item">
+            <div class="medal le-dr-selector">
+              <div class="medal-rank driven">
+                <div class="list">
+                  <div data-le="1" class="active">
+                    <div *ngFor="let medal of medals; let i = index" [class.active]="medal.id == report.medal" [attr.data-dr]="medal.id">
+                      <span class="title">{{medal.title}} {{medal.rank}}</span>
+                      <img src="{{_service.store_medals}}{{medal.image}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="controlls">
+                  <span class="prev" (click)="report.medal = report.medal > 1 ? report.medal - 1 : medals[medals?.length - 1].id"><i class="fas fa-chevron-left"></i></span>
+                  <span class="next" (click)="report.medal = report.medal < medals?.length ? report.medal + 1 : 1"><i class="fas fa-chevron-right"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section *ngIf="order.type == 4">
+        <label class="label">{{'Часов сыграно'|i18n}} <sup>({{'сейчас'|i18n}}: {{ order.training_hours_done }})</sup></label>
+        <label class="input"><i class="icon-append fas fa-exclamation-circle"></i>
+          <input type="number" value="0" [(ngModel)]="report.hours_done">
+          <b class="tooltip tooltip-top-right">{{'Часов сыграно за отчетный период'|i18n}}</b>
+        </label>
+      </section>
+      <section>
+        <label class="label">{{'Комментарий к отчету'|i18n}} <sup>({{'опционально'|i18n}})</sup></label>
+        <label class="textarea textarea-resizable">
+          <textarea class="custom-scroll" rows="3" [(ngModel)]="report.comment"></textarea>
+        </label>
+      </section>
+      <section *ngIf="report.finisher">
+        <div class="input input-file">
+          <span class="button">
+            <input type="file" multiple (change)="onimgloaded($event)" #screenshots>{{'Обзор'|i18n}}</span>
+            <input [attr.placeholder]="'Прикрепите 2 скриншота (.jpeg .jpg .gif .png)'|i18n" type="text" readonly>
+          </div>
+      </section>
+    </fieldset> 
+
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send()"> {{'Добавить'|i18n}} </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> {{'Отмена'|i18n}} </button>
+    </footer> 
+
+    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+      <p>{{responseMessage|i18n}}</p>
+    </div>
+  </div>
+</div>

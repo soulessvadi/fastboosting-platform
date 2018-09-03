@@ -173,7 +173,7 @@
                               </select>
                               <i></i>
                             </label>
-                            <a *ngIf="order.client_id" routerLink="/govt/boosters/{{order.client_id}}" class="input-group-addon w-30px column shrink">
+                            <a *ngIf="order.client_id" routerLink="/govt/users/{{order.client_id}}" class="input-group-addon w-30px column shrink">
                               <i class="fas fa-eye"></i>
                             </a>                            
                           </div>
@@ -236,19 +236,6 @@
                   <table class="table table-bordered table-striped table-hover va-m">
                     <tbody>
                       <tr>
-                        <th>{{ 'Логин и пароль' | i18n }}</th>
-                        <td>
-                          <div class="row">
-                            <label class="input col-sm-6 col-xs-12">
-                              <input class="form-control" type="text" [(ngModel)]="order.account_login">
-                            </label>
-                            <label class="input col-sm-6 col-xs-12">
-                              <input class="form-control" type="text" [(ngModel)]="order.account_pass">
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
                         <th>{{ 'Бустер' | i18n }}</th>
                         <td>
                           <div class="input-group flex">
@@ -264,6 +251,19 @@
                             <a *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}" class="input-group-addon w-30px column shrink">
                               <i class="fas fa-eye"></i>
                             </a>                            
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>{{ 'Логин и пароль' | i18n }}</th>
+                        <td>
+                          <div class="row">
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="text" [(ngModel)]="order.account_login">
+                            </label>
+                            <label class="input col-sm-6 col-xs-12">
+                              <input class="form-control" type="text" [(ngModel)]="order.account_pass">
+                            </label>
                           </div>
                         </td>
                       </tr>

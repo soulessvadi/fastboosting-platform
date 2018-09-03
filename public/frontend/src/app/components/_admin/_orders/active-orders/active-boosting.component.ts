@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, TemplateRef,
 import { Router } from '@angular/router';
 import { ComponentService } from '@app/components/components.service';
 import { SocketService, SocketEvent, Message } from '@app/components/socketio.service';
-import { DatePipe } from '@angular/common';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { NotificationService } from '@app/core/services';
@@ -42,7 +41,6 @@ export class BoostingComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificationService: NotificationService,
     private socketio: SocketService, 
-    private datePipe: DatePipe, 
     private modalService: BsModalService, 
     private el: ElementRef,
   ) { }
@@ -224,6 +222,14 @@ export class BoostingComponent implements OnInit, OnDestroy {
         }],
         yAxes: [{
           display: true,
+          ticks: {
+            min: 0,
+            suggestedMin: 0,
+            beginAtZero: true,
+            callback: function(value, index, values) {
+              if (Math.floor(value) === value) return value;
+            }
+          },
           scaleLabel: {
             show: false,
             labelString: 'Data'

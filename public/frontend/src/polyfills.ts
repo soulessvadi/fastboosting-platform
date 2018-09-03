@@ -99,7 +99,8 @@ require('bootstrap/js/tab.js'); //
 require('bootstrap/js/modal.js'); //
 
 window['moment'] = require('moment');
+// require('smartadmin-plugins/notification/SmartNotification.min.js');
+require('smartadmin-plugins/notification/alerty.js');
 
-require('smartadmin-plugins/notification/SmartNotification.min.js');
 
 (window as any).global = window;

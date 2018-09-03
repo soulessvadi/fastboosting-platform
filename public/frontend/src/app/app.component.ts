@@ -14,9 +14,11 @@ export class AppComponent {
     var self = this;
 		this.socketio.connect();
     this.socketio.emit(SocketEvent.CONNECT, { t: this._service._token });
-    this.socketio.onEvent(SocketEvent.PROPERTYFAILURE).subscribe((data) => {
+    this.socketio.onEvent(SocketEvent.AUTHFAILURE).subscribe((data) => {
+      if(this.authcheckenabled) {
         _service.logout();
         router.navigate(['auth/login']);
+      }
     });
     this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
@@ -27,9 +29,5 @@ export class AppComponent {
             self.authcheckenabled = true;
         }
     });
-    setInterval(() => {
-      if(this.authcheckenabled)
-        this.socketio.emit(SocketEvent.PROPERTYCHECK, { t: this._service._token });
-    }, 5000);
 	}
 }

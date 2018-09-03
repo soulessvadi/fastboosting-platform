@@ -13,14 +13,14 @@
 					<table class="table table-hover table-bordered">
 		              <caption>
 		              	<h1 class="txt-color-teal">
-		              		<span>Словарь переводов</span>
-		              		<button class="btn edit-button pull-right" (click)="save($event)">Сохранить&nbsp;<i class="fas fa-sync-alt"></i></button>
-		              		<button class="btn edit-button pull-right" (click)="add()">Добавить перевод&nbsp;<i class="fas fa-plus"></i></button>
+		              		<span>{{ 'Словарь переводов' | i18n }}</span>
+		              		<button class="btn edit-button pull-right" (click)="save($event)">{{ 'Сохранить' | i18n }}&nbsp;<i class="fas fa-sync-alt"></i></button>
+		              		<button class="btn edit-button pull-right" (click)="add()">{{ 'Добавить перевод' | i18n }}&nbsp;<i class="fas fa-plus"></i></button>
 		              	</h1>
 		              </caption>
 		              <thead>
 		              <tr>
-		              	<th>Зерно</th>
+		              	<th>{{ 'Зерно' | i18n }}</th>
 		              	<th>RU</th>
 		              	<th>US</th>
 		              	<th></th>
@@ -36,12 +36,12 @@
 			                </td>
 			                <td>
 			                	<label class="input w-100">
-			                	<input class="w-100" type="text" [(ngModel)]="t.us" (change)="t.u = 1">
+			                	<input class="w-100" type="text" [(ngModel)]="t.ru" (change)="t.u = 1">
 			                	</label>
 			                </td>
 			                <td>
 			                	<label class="input w-100">
-			                	<input class="w-100" type="text" [(ngModel)]="t.ru" (change)="t.u = 1">
+			                	<input class="w-100" type="text" [(ngModel)]="t.us" (change)="t.u = 1">
 			                	</label>
 			                </td>
 			                <td class="text-center">

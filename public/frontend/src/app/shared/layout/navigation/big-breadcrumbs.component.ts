@@ -9,7 +9,7 @@ import {Location} from '@angular/common';
     <h1 class="page-title txt-color-blueDark">
     <i class="fa-fw {{icon}}"></i> {{items[0]}} 
     <span *ngFor="let item of items.slice(1)">> {{item}} </span>
-    <button *ngIf="back" class="btn btn-icon pull-right" (click)="location.back()" title="back"><i class="fas fa-undo-alt"></i></button>
+    <button *ngIf="back" class="btn btn-icon pull-right" (click)="location.back()" title="back"><i class="fas fa-undo-alt"></i> shared</button>
     </h1>
     </div>
   `,

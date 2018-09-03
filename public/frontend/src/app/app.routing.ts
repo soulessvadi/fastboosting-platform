@@ -14,55 +14,39 @@ const routes: Routes = [
     path: "govt",
     component: AdminLayoutComponent,
     canActivate: [ AuthGuard ],
-    data: { pageTitle: "Правительство" },
-    children: [{
-      path: "",
-      redirectTo: "support",
-      pathMatch: "full"
-    },{
-      path: "support",
-      loadChildren: "./components/_admin/_support/support.module#SupportModule",
-      data: { pageTitle: "Поддержка" }
-    },{
-      path: "sundry",
-      loadChildren: "./components/_admin/_sundries/sundries.module#SundriesModule",
-      data: { pageTitle: "Разное" }
-    },{
-      path: "orders",
-      loadChildren: "./components/_admin/_orders/orders.module#OrdersModule",
-      data: { pageTitle: "Разное" }
-    }]
+    data: { pageTitle: "Администрация" },
+    loadChildren: "./components/_admin/admin.module#AdminModule"
   },{
     path: "",
     component: MainLayoutComponent,
     canActivate: [ AuthGuard ],
     data: { pageTitle: "Платформа" },
-    children: [{
+    children: [
+    {
       path: "",
       redirectTo: "profile",
       pathMatch: "full"
     },{
       path: "profile",
-      loadChildren: "./components/_profile/profile.module#ProfileModule",
+      loadChildren: "./components/_booster/_profile/profile.module#ProfileModule",
       data: { pageTitle: "Профиль" }
     },{
       path: "orders",
-      loadChildren: "./components/_orders/orders.module#OrdersModule",
+      loadChildren: "./components/_booster/_orders/work.module#WorkModule",
       data: { pageTitle: "Заказы" }
     },{
       path: "conditions",
-      loadChildren: "./components/_conditions/conditions.module#ConditionsModule",
+      loadChildren: "./components/_booster/_conditions/conditions.module#ConditionsModule",
       data: { pageTitle: "Условия работы" }
     },{
       path: "support",
-      loadChildren: "./components/_support/support.module#SupportModule",
+      loadChildren: "./components/_booster/_support/support.module#BoosterSupportModule",
       data: { pageTitle: "Поддержка бустеров" }
     },{
       path: "balance",
-      loadChildren: "./components/_balance/balance.module#BalanceModule",
+      loadChildren: "./components/_booster/_balance/balance.module#BalanceModule",
       data: { pageTitle: "Баланс пользователя" }
     },
-
     {
       path: "dashboard",
       loadChildren: "./features/dashboard/dashboard.module#DashboardModule",

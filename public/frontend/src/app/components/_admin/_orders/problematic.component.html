@@ -4,7 +4,7 @@
   </div>
     <div class="row">
       <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div sa-widget class="well">
+        <div class="well">
           <div>
             <div class="widget-body no-padding" data-sparkline-container="">
                  <div id="DataTables_Table_5_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
@@ -33,57 +33,57 @@
                       <div class="smart-form orders-form" *ngIf="filters.show">
                         <div class="orders-form-filters">
                           <section class="col-xs-2">
-                            <label class="label">Тип</label>
+                            <label class="label">{{ 'Тип' | i18n }}</label>
                             <label class="select">
                               <select class="input-sm" [(ngModel)]="filters.type">
-                                <option [ngValue]="0">Любой</option>
+                                <option [ngValue]="0">{{ 'Любой' | i18n }}</option>
                                 <option *ngFor="let type of orders_types" [ngValue]="type.id">{{ type.name | i18n }}</option>
                               </select>
                               <i></i>
                             </label>
                           </section>
                           <section class="col-xs-2">
-                            <label class="label">Статус</label>
+                            <label class="label">{{ 'Статус' | i18n }}</label>
                             <label class="select">
                               <select class="input-sm" [(ngModel)]="filters.status">
-                                <option [ngValue]="0">Любой</option>
+                                <option [ngValue]="0">{{ 'Любой' | i18n }}</option>
                                 <option *ngFor="let status of statuses" [ngValue]="status.id">{{ status.name | i18n }}</option>
                               </select>
                               <i></i>
                             </label>
                           </section>
                           <section class="col-xs-2">
-                            <label class="label">Источник</label>
+                            <label class="label">{{ 'Источник' | i18n }}</label>
                             <label class="select">
                               <select class="input-sm" [(ngModel)]="filters.partner">
-                                <option [ngValue]="0">Любой</option>
+                                <option [ngValue]="0">{{ 'Любой' | i18n }}</option>
                                 <option *ngFor="let partner of partners" [ngValue]="partner.id">{{ partner.name | i18n }}</option>
                               </select>
                               <i></i>
                             </label>
                           </section>
                           <section class="col-xs-2">
-                            <label class="label">Клиент</label>
+                            <label class="label">{{ 'Клиент' | i18n }}</label>
                             <label class="select">
                               <select class="input-sm" [(ngModel)]="filters.client">
-                                <option [ngValue]="0">Любой</option>
+                                <option [ngValue]="0">{{ 'Любой' | i18n }}</option>
                                 <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.nick_name | i18n }}</option>
                               </select>
                               <i></i>
                             </label>
                           </section>
                           <section class="col-xs-2">
-                            <label class="label">Бустер</label>
+                            <label class="label">{{ 'Бустер' | i18n }}</label>
                             <label class="select">
                               <select class="input-sm" [(ngModel)]="filters.booster">
-                                <option [ngValue]="0">Любой</option>
+                                <option [ngValue]="0">{{ 'Любой' | i18n }}</option>
                                 <option *ngFor="let booster of boosters" [ngValue]="booster.id">{{ booster.nick_name | i18n }}</option>
                               </select>
                               <i></i>
                             </label>
                           </section>
                           <section class="col-xs-2">
-                            <label class="label">Сортировка</label>
+                            <label class="label">{{ 'Сортировка' | i18n }}</label>
                             <div class="flex">
                               <label class="select column">
                                 <select class="input-sm" [(ngModel)]="filters.sort">
@@ -105,13 +105,13 @@
                        <thead>
                           <tr role="row">
                              <th class="sorting_disabled details-control"></th>
-                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-hashtag text-muted hidden-md hidden-sm hidden-xs"></i> Номер заказа</th>
-                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-list-ul text-muted hidden-md hidden-sm hidden-xs"></i> Тип</th>
-                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe-africa text-muted hidden-md hidden-sm hidden-xs"></i> Источник</th>
-                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-user text-muted hidden-md hidden-sm hidden-xs"></i> Клиент</th>
-                             <th class="sorting_disabled" tabindex="0">Оплачено / Стоимость</th>
-                             <th class="sorting_disabled" tabindex="0">Оплата бустеру RUB / USD</th>
-                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> Создан </th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-hashtag text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Номер заказа' | i18n }}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-list-ul text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Тип' | i18n }}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-globe-africa text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Источник' | i18n }}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-user text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Клиент' | i18n }}</th>
+                             <th class="sorting_disabled" tabindex="0">{{ 'Оплачено / Стоимость' | i18n }}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Создан' | i18n }} </th>
+                             <th class="sorting_disabled" tabindex="0"><i class="far fa-life-ring text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Тикет' | i18n }} </th>
                              <th class="sorting_disabled" tabindex="0"></th>
                              <th class="sorting_disabled" tabindex="0"></th>
                           </tr>
@@ -138,29 +138,34 @@
                                 {{ order.amount_paid | number : '1.2-2' }} / {{ order.amount | number : '1.2-2' }} {{ order.currency_name }}
                               </span>
                              </td>
-                             <td>{{ order.salary_rub | number : '1.2-2' }} / {{ order.salary_usd | number : '1.2-2' }}</td>
                              <td>{{ order.created_at | momentFromNow: 'DD.MM.YY HH:mm'}}</td>
-                             <td class="text-center">
+                              <td>
+                                <a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/support/{{ order.ticket_number }}">{{ order.ticket_number }}</a>
+                              </td>
+                              <td class="text-center">
                                 <span class="label label-default" *ngIf="[1]?.includes(order.status)">{{ order.status_name }}</span>  
                                 <span class="label label-warning" *ngIf="[2,3]?.includes(order.status)">{{ order.status_name }}</span>  
                                 <span class="label label-primary" *ngIf="[4,5]?.includes(order.status)">{{ order.status_name }}</span>  
                                 <span class="label label-success" *ngIf="[6,7,8]?.includes(order.status)">{{ order.status_name }}</span>  
                                 <span class="label label-danger"  *ngIf="[9,10]?.includes(order.status)">{{ order.status_name }}</span>  
                                 <a class="label label-info" *ngIf="order.worker_id" routerLink="/govt/boosters/{{order.worker_id}}">
-                                  <i class="fas fa-user-edit"></i>{{ order.worker_name }}</a>
-                             </td>
-                             <td><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/orders/{{ order.system_number }}"><i class="fas fa-cogs"></i></a></td>
+                                  <i class="fas fa-user-edit"></i>{{ order.worker_name }}
+                                </a>
+                              </td>
+                              <td>
+                                <a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/orders/{{ order.system_number }}"><i class="fas fa-cogs"></i></a>
+                              </td>
                           </tr>
                        </tbody>
                        <tbody *ngIf="!orders?.length">
                          <tr>
-                           <td colspan="10"><h4 class="text-center txt-color-teal fs-18 fw-500">Проблемных заказов нет</h4></td>
+                           <td colspan="10"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Проблемных заказов нет' | i18n }}</h4></td>
                          </tr>
                        </tbody>
                     </table>
                     <div class="dt-toolbar-footer">
                        <div class="col-sm-6 col-xs-12 hidden-xs">
-                          <div class="dataTables_info">Показано результатов {{ orders?.length }}</div>
+                          <div class="dataTables_info">{{ 'Показано результатов' | i18n }} {{ orders?.length }}</div>
                        </div>
                     </div>
                  </div>

@@ -1,0 +1,46 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Баланс бустера', 'Статистика по балансу']" icon="fas fa-balance-scale" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+      		<div class="row">
+				<div class="col-xs-3">
+					<div class="stat-info blue">
+						<span class="title">{{ 'Депозит' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.deposit)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div> 
+				<div class="col-xs-3">
+					<div class="stat-info green">
+						<span class="title">{{ 'Доступно к выводу' | i18n }}
+			       			<a *ngIf="balance.balance > 0" class="btn btn-success btn-xs pull-right" routerLink="/balance/withdrawal">{{ 'Вывод средств' | i18n }}</a>
+						</span>
+						<span class="count">{{ Math.abs(balance.balance)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="stat-info orange">
+						<span class="title">{{ 'Всего заработал' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.earned)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="stat-info red">
+						<span class="title">{{ 'Всего выведено' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.deduced)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>     			
+      		</div>
+
+            <div class="stat-chart">
+				<h2> {{ 'Динамика баланса за период' | i18n }} <strong *ngIf="balance_period.from">{{ balance_period.from }} - {{ balance_period.till }}</strong></h2>
+              	<sa-chart-js *ngIf="balance.progress" type="line" [options]="chart.options" [data]="chart.data"></sa-chart-js>
+            </div>
+		</div>
+    </div>
+  </div>
+</div>

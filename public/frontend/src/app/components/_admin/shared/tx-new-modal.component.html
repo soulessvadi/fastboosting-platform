@@ -1,0 +1,75 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="myModalLabel">{{ 'Трансакция' | i18n }} #{{ tx.system_number }}</h4>
+</div>
+<div class="modal-body custom-scroll terms-body no-padding">
+  <div class="smart-form" id="left" #form>
+    <fieldset>  
+      <section>
+        <div class="flex">
+          <div class="column">
+            <label class="label">{{ 'Клиент' | i18n }}</label>
+            <label class="input">
+              <input type="text" [(ngModel)]="tx.user_name" readonly disabled>
+            </label>
+          </div>
+          <div class="column">
+            <div class="flex">
+              <div class="column shrink padding-left-10">
+                <label class="label">{{ 'Сумма' | i18n }}</label>
+                <label class="input">
+                  <input type="number" [(ngModel)]="tx.amount" step="100">
+                </label>
+              </div>
+              <div class="column shrink padding-left-10">
+                <label class="label">{{ 'Валюта' | i18n }}</label>
+                <div class="radio-select">
+                  <label *ngFor="let currency of currencies">
+                    <input type="radio" name="currency" [(ngModel)]="tx.currency_id" [value]="currency.id" (change)="tx.currency_name = currency.name"><b>{{ currency.name | i18n }}</b>
+                  </label>
+                </div>          
+              </div>              
+            </div>              
+          </div>        
+        </div>
+      </section>
+      <section>
+        <div class="flex">
+          <div class="column">
+            <label class="label">{{ 'Статус' | i18n }}</label>
+            <div class="radio-select">
+              <label *ngFor="let status of statuses">
+                <input type="radio" name="status" [(ngModel)]="tx.status" [value]="status.id" (change)="tx.status_name = status.name"><b>{{ status.name | i18n }}</b>
+              </label>
+            </div>            
+          </div>
+          <div class="column padding-left-10">
+            <label class="label">{{ 'Тип' | i18n }}</label>
+            <div class="radio-select">
+              <label *ngFor="let type of types">
+                <input type="radio" name="type" [(ngModel)]="tx.type" [value]="type.id" (change)="tx.type_name = type.name"><b>{{ type.name | i18n }}</b>
+              </label>
+            </div>            
+          </div>
+        </div>
+      </section>
+      <section>
+        <div>
+          <label class="label">{{ 'Комметарий' | i18n }}</label>
+          <label class="textarea">
+            <textarea rows="2" #message [(ngModel)]="tx.comment"></textarea>
+          </label>
+        </div>
+      </section>
+    </fieldset>   
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send()"> {{ 'Сохранить' | i18n }} </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> {{ 'Закрыть' | i18n }}  </button>
+    </footer> 
+
+    <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+      <i class="fas fa-check" *ngIf="responseSuccess"></i>
+      <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+      <p>{{ responseMessage | i18n }}</p>
+    </div>
+  </div>
+</div>

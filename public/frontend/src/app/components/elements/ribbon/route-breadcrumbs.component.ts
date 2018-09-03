@@ -6,11 +6,12 @@ import { filter } from 'rxjs/operators';
   selector: 'sa-route-breadcrumbs',
   template: `
         <ol class="breadcrumb">
-           <li *ngFor="let item of items">{{item}}</li>
+           <li *ngFor="let item of items">{{item | i18n}}</li>
         </ol>
   `,
   styles: []
 })
+
 export class RouteBreadcrumbsComponent implements OnInit, OnDestroy {
 
   public items: Array<string> = [];

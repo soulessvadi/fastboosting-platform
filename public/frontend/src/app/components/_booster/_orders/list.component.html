@@ -1,0 +1,97 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Заказы', 'Ожидают выполнения']" icon="fas fa-th-list" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="alert alert-info">
+          <strong>{{'Внмание'|i18n}}:</strong> {{'заказы подобраны под ваши права доступа, для их расширения свяжитесь с администрацией'|i18n}}
+        </div>
+        <div sa-widget class="well">
+          <div>
+            <div class="widget-body no-padding" data-sparkline-container="">
+                 <div id="DataTables_Table_5_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                    <div class="dt-toolbar">
+                       <div class="col-xs-12 col-sm-8">
+                          <div class="dataTables_filter">
+                            <div class="pull-right" *ngIf="false">
+                              <label>
+                                <span class="input-group-addon">
+                                  <i class="glyphicon glyphicon-search"></i>
+                                </span> 
+                                <input type="search" class="form-control input-md" placeholder="">
+                              </label>                              
+                            </div>
+                            <div class="smart-form pull-left orders-form">
+                              <label class="toggle col-xs-6" *ngFor="let type of orders_types">
+                                <input type="checkbox" (change)="typeSwitch($event, type.id)">
+                                <i [attr.data-swchon-text]="'Да'|i18n" [attr.data-swchoff-text]="'Нет'|i18n"></i>{{ type.name | i18n }}
+                              </label>
+                            </div>
+                          </div>
+                       </div>
+                       <div class="col-sm-4 hidden-xs text-right"></div>
+                       <div class="text-right"><img src="assets/img/logo-blue.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>
+                    </div>
+                    <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover" role="grid">
+                       <thead>
+                          <tr role="row">
+                             <th class="sorting_disabled details-control"></th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-fw fa-hashtag text-muted hidden-md hidden-sm hidden-xs"></i> {{'Номер заказа'|i18n}}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-fw fa-list-ul text-muted hidden-md hidden-sm hidden-xs"></i> {{'Тип'|i18n}}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-fw fa-check-double text-muted hidden-md hidden-sm hidden-xs"></i> {{'Выбор героев'|i18n}}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-fw fa-times-circle text-muted hidden-md hidden-sm hidden-xs"></i> {{'Баны героев'|i18n}}</th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-dollar-sign text-muted hidden-md hidden-sm hidden-xs"></i> {{'Оплата'|i18n}} </th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{'Дата'|i18n}} </th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-user-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{'Дедлайн'|i18n}} </th>
+                             <th class="sorting_disabled" tabindex="0"><i class="fas fa-user-plus text-muted hidden-md hidden-sm hidden-xs"></i> {{'Взять в работу'|i18n}} </th>
+                          </tr>
+                       </thead>
+                       <tbody *ngIf="orders">
+                          <tr *ngFor="let order of orders" role="row" class="odd">
+                             <td class=" details-control" tabindex="0" (click)="showDetails($event, order)"></td>
+                             <td>{{ order.system_number }}</td>
+                             <td>
+                                <ng-container *ngFor="let type of orders_types">
+                                  <span *ngIf="type.id == order.type">{{ type.name | i18n }}</span>
+                                </ng-container>
+                             </td>
+                             <td>
+                                <div class="project-members heroes">
+                                  <a *ngFor="let hero of order.heroes" href="javascript:void(0)">
+                                    <img src="{{ _service.store_heroes }}{{ hero }}_sm.png" class="online" alt="hero_{{hero.id}}">
+                                  </a> 
+                                </div>                               
+                             </td>
+                             <td>
+                                <div class="project-members heroes">
+                                  <a *ngFor="let hero of order.heroes_ban" href="javascript:void(0)">
+                                    <img src="{{ _service.store_heroes }}{{ hero }}_sm.png" class="online" alt="hero_{{hero.id}}">
+                                  </a> 
+                                </div>
+                             </td>
+                             <td>{{ order.amount | number : '1.2-2' }}</td>
+                             <td>{{ order.created_at | date: 'd.MM.yyyy HH:mm'}}</td>
+                             <td>{{ getDeadline(order.urgency_hours) }}</td>
+                             <td><a class="btn btn-xs btn-primary do-order-btn" (click)="joinOrder(order)"><i class="fas fa-users-cog"></i></a></td>
+                          </tr>
+                       </tbody>
+                       <tbody *ngIf="!orders">
+                         <tr>
+                           <td colspan="9"><h4 class="text-center txt-color-teal fs-18 fw-700">{{'Нет доступных для работы заказов'|i18n}}</h4></td>
+                         </tr>
+                       </tbody>
+                    </table>
+                    <div class="dt-toolbar-footer">
+                       <div class="col-sm-6 col-xs-12 hidden-xs">
+                          <div class="dataTables_info">{{'Показано заказов'|i18n}} {{ orders?.length }}</div>
+                       </div>
+                    </div>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+</div>

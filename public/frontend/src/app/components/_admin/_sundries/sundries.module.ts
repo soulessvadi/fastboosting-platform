@@ -5,18 +5,14 @@ import { RoutingModule } from './routing.module';
 import { ContactsComponent } from './contacts.component';
 import { TranslationsComponent } from './translations.component';
 import { Error404Component } from './error404.component';
-import { StatsModule } from '@app/shared/stats/stats.module';
-import { SmartadminLayoutModule } from '@app/shared/layout';
-import { BootstrapModule } from "@app/shared/bootstrap.module";
+import { SharedModule } from "@app/components/_admin/shared/shared.module";
 
 @NgModule({
   imports: [
     CommonModule,
-    SmartadminLayoutModule,
-    StatsModule,
     RoutingModule,
-    BootstrapModule,
     FormsModule,
+    SharedModule,
   ],
   declarations: [ 
     ContactsComponent,

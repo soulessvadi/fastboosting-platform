@@ -1,0 +1,132 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Пользователи', 'Бустеры', 'Статистика']" icon="fas fa-chart-area" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+
+      		<div class="flex">
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm blue">
+						<span class="title">{{ 'Бустеров в системе' | i18n }}</span>
+						<span class="count fs-16">{{ statistics.boosters_total }}</span>
+					</div>
+				</div> 
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm green">
+						<span class="title">{{ 'Активные бустеры' | i18n }}</span>
+						<span class="count fs-16">{{ statistics.boosters_active }}</span>
+					</div>
+				</div>
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm orange">
+						<span class="title">{{ 'Всего на балансе' | i18n }}</span>
+						<span class="count fs-16">
+						{{ Math.abs(statistics.total_balance_rub)?.toFixed(2) }}₽ /
+						{{ Math.abs(statistics.total_balance_usd)?.toFixed(2) }}$
+						</span>
+					</div>
+				</div>
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm red">
+						<span class="title">{{ 'Всего заработано' | i18n }}</span>
+						<span class="count fs-16">
+						{{ Math.abs(statistics.total_earned_rub)?.toFixed(2) }}₽ /
+						{{ Math.abs(statistics.total_earned_usd)?.toFixed(2) }}$
+						</span>
+					</div>
+				</div>  
+				<div class="column padding-5">
+					<div class="stat-info stat-info-sm violet">
+						<span class="title">{{ 'Всего выведено' | i18n }}</span>
+						<span class="count fs-16">
+						{{ Math.abs(statistics.total_deduced_rub)?.toFixed(2) }}₽ /
+						{{ Math.abs(statistics.total_deduced_usd)?.toFixed(2) }}$
+						</span>
+					</div>
+				</div>     			
+      		</div>
+
+      		<div class="padding-5 margin-top-10">
+      		  <h4 class="txt-color-teal">{{ 'Активные бустеры' | i18n }}</h4>
+              <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover" role="grid">
+                 <thead>
+                    <tr role="row">
+                       <th class="sorting_disabled" tabindex="0">ID</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Имя пользователя' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-envelope text-muted hidden-md hidden-sm hidden-xs"></i> E-mail </th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Баланс' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Заработал' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Рейтинг' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'MMR' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-shopping-cart text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Активный заказ' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"></th>
+                    </tr>
+                 </thead>
+                 <tbody *ngIf="boostersActive">
+                    <tr *ngFor="let user of boostersActive" role="row" class="odd">
+                       <td>{{ user.id }}</td>
+                       <td>{{ user.first_name }} {{ user.last_name }} [<span class="txt-color-teal">{{ user.nick_name }}</span>]</td>
+                       <td><a class="txt-color-blue" href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                       <td>{{ (user.balance || 0) | number : '1.2-2' }} {{ user.currency }}</td>
+                       <td>{{ (user.earned || 0) | number : '1.2-2' }} {{ user.currency }}</td>
+                       <td>{{ (user.rating || 0) }}</td>
+                       <td>{{ (user.mmr_solo || 0) }}</td>
+                       <td>
+                          <a *ngIf="user.active_order" class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/orders/{{ user.active_order }}">
+                          {{ user.active_order }}</a>
+                          <a *ngIf="!user.active_order" class="btn btn-xs btn-primary do-order-btn disabled"><i class="fas fa-ban"></i></a>
+                        </td>
+                       <td class="w-75px"><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/boosters/{{ user.id }}"><i class="fas fa-user-cog"></i></a></td>
+                    </tr>
+                 </tbody>
+                 <tbody *ngIf="!boostersActive?.length">
+                   <tr>
+                     <td colspan="9"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет активных бустеров' | i18n }}</h4></td>
+                   </tr>
+                 </tbody>
+              </table>
+      		</div>
+
+      		<div class="padding-5 margin-top-10">
+      		  <h4 class="txt-color-teal">{{ 'Свободные бустеры' | i18n }}</h4>
+              <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover" role="grid">
+                 <thead>
+                    <tr role="row">
+                       <th class="sorting_disabled" tabindex="0">ID</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Имя пользователя' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-envelope text-muted hidden-md hidden-sm hidden-xs"></i> E-mail </th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Баланс' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"><i class="fas fa-balance-scale text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Заработал' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'Рейтинг' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0">{{ 'MMR' | i18n }}</th>
+                       <th class="sorting_disabled" tabindex="0"></th>
+                    </tr>
+                 </thead>
+                 <tbody *ngIf="boostersFree">
+                    <tr *ngFor="let user of boostersFree" role="row" class="odd">
+                       <td>{{ user.id }}</td>
+                       <td>{{ user.first_name }} {{ user.last_name }} [<span class="txt-color-teal">{{ user.nick_name }}</span>]</td>
+                       <td><a class="txt-color-blue" href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                       <td>{{ (user.balance || 0) | number : '1.2-2' }} {{ user.currency }}</td>
+                       <td>{{ (user.earned || 0) | number : '1.2-2' }} {{ user.currency }}</td>
+                       <td>{{ (user.rating || 0) }}</td>
+                       <td>{{ (user.mmr_solo || 0) }}</td>
+                       <td class="w-75px"><a class="btn btn-xs btn-primary do-order-btn" routerLink="/govt/boosters/{{ user.id }}"><i class="fas fa-user-cog"></i></a></td>
+                    </tr>
+                 </tbody>
+                 <tbody *ngIf="!boostersFree?.length">
+                   <tr>
+                     <td colspan="8"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Нет свободных бустеров' | i18n }}</h4></td>
+                   </tr>
+                 </tbody>
+              </table>
+      		</div>
+
+		</div>
+    </div>
+  </div>
+</div>

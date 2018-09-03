@@ -1,0 +1,139 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="myModalLabel">{{ 'Запрос на вывод средств' | i18n }} #{{ request.id }}</h4>
+</div>
+<div class="modal-body custom-scroll no-padding">
+  <div class="smart-form" id="left" [class.submitted]="!!responseMessage" #form>
+
+    <div style="min-height: 30vh;">
+      <fieldset *ngIf="req">  
+        <section class="margin-bottom-5">
+          <div class="flex">
+            <div class="column">
+              <label class="label">{{ 'Пользователь' | i18n }} <sup>({{ 'Баланс' | i18n }}: {{ req?.user_balance | number : '1.2-2' }} {{ req?.user_currency }})</sup></label>
+              <label class="input">
+                <input type="text" [(ngModel)]="req.user_name" readonly disabled>
+              </label>
+            </div>
+            <div class="column padding-left-10">
+              <label class="label">{{ 'Метод вывода' | i18n }}</label>
+              <div class="radio-select">
+                <label>
+                  <input type="radio" name="method" [value]="req?.method_id" checked disabled><b>{{ req?.method_name | i18n }}</b>
+                </label>
+              </div>            
+            </div>               
+          </div>
+        </section>
+        <section class="margin-bottom-5">
+          <div class="flex">
+            <div class="column">
+              <div class="flex">
+                <div class="column">
+                  <label class="label">{{ 'Сумма вывода' | i18n }}</label>
+                  <label class="input">
+                    <input type="number" [(ngModel)]="req.amount" step="100">
+                  </label>
+                </div>
+                <div class="column padding-left-10">
+                  <label class="label">{{ 'Валюта вывода' | i18n }}</label>
+                  <div class="radio-select">
+                    <label>
+                      <input type="radio" name="currency" [value]="req?.currency" checked disabled><b>{{ req?.currency | i18n }}</b>
+                    </label>
+                  </div>          
+                </div> 
+              </div>
+            </div>
+            <div class="column padding-left-10">
+              <div class="flex">
+                <div class="column">
+                  <label class="label">{{ 'Счет получателя' | i18n }}</label>
+                  <label class="input">
+                      <input type="input" [(ngModel)]="req.prop">
+                  </label>            
+                </div>  
+                <div class="column padding-left-10">
+                  <label class="label">{{ 'Страна получателя' | i18n }}</label>
+                  <label class="input">
+                      <input type="input" [(ngModel)]="req.country">
+                  </label>            
+                </div>               
+              </div>          
+            </div>
+          </div>
+        </section>
+        <section class="margin-bottom-5">
+          <div>
+            <label class="label">{{ 'Комметарий получателя' | i18n }}</label>
+            <label class="textarea">
+              <textarea rows="2" #message [(ngModel)]="req.comment"></textarea>
+            </label>
+          </div>
+        </section>
+        <section>
+          <div class="flex">
+            <div class="column">
+              <label class="label">{{ 'Статус запроса' | i18n }}</label>
+              <div class="radio-select">
+                <label *ngFor="let status of statuses">
+                  <input type="radio" name="status" [(ngModel)]="req.status" [value]="status.id" (change)="req.status_name = status.name"><b>{{ status.name | i18n }}</b>
+                </label>
+              </div>            
+            </div>
+          </div>
+        </section>
+        <section *ngIf="tx">
+          <label class="label">{{ 'Найдена трансакция' | i18n }}</label>
+          <table class="table table-hover table-bordereds table-tx">
+            <thead>
+            <tr>
+              <th>{{ 'Номер' | i18n }}</th>
+              <th>{{ 'Тип' | i18n }}</th>
+              <th><i class="fas fa-dollar-sign"></i> {{ 'Сумма' | i18n }}</th>
+              <th><i class="fas fa-calendar-alt"></i> {{ 'Дата' | i18n }}</th>
+              <th><i class="glyphicon glyphicon-send"></i> {{ 'Статус' | i18n }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr [class.warning]="tx.status==1" [class.danger]="tx.status==2" [class.success]="tx.status==3">
+              <td>{{ tx.system_number }}</td>
+              <td>{{ tx.type_name }}</td>
+              <td> 
+                <div class="changes">
+                  <i *ngIf="tx.status==3 && tx.amount > 0" class="fas fa-angle-up"></i> 
+                  <i *ngIf="tx.status==3 && tx.amount < 0" class="fas fa-angle-down"></i> 
+                </div>
+                {{ tx.amount | number: '1.2-2' }} {{ tx.currency_name }}
+              </td>
+              <td>{{ tx.created_at | moment: 'DD.MM.YY HH:mm:ss' }}</td>
+              <td>{{ tx.status_name }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </section>
+        <section *ngIf="req?.status == 3 && !tx">
+          <div class="alert alert-info">
+            <h4 class="alert-heading fw-500">{{ 'Баланс после подтверждения' | i18n }}: {{ req?.user_balance - req?.amount | number : '1.2-2' }} {{ req?.user_currency }}</h4>
+          </div>
+        </section>
+      </fieldset> 
+
+      <div class="message" [class.error]="!responseSuccess" *ngIf="responseMessage">
+        <div class="appearance">
+          <i class="fas fa-sync-alt loading" *ngIf="responseSuccess == 'loading'"></i>
+          <i class="fas fa-check" *ngIf="responseSuccess == true"></i>
+          <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
+          <p>{{ responseMessage | i18n }}</p>          
+        </div>
+      </div> 
+    </div>
+  </div>
+
+  <div class="smart-form">
+    <footer>
+      <button class="btn btn-primary" type="button" (click)="send()"> {{ 'Сохранить' | i18n }} </button>
+      <button class="btn btn-default" type="button" (click)="close.emit(true)"> {{ 'Закрыть' | i18n }}  </button>
+    </footer>     
+  </div>
+
+</div>

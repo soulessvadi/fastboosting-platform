@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComponentService } from '@app/components/components.service';
+import { I18nService } from '@app/components/i18n/i18n.service';
 
 @Component({
   selector: 'translations',
@@ -9,7 +10,7 @@ export class TranslationsComponent implements OnInit {
 
   public translations: any = null;
 
-  constructor(private _service: ComponentService) {
+  constructor(private _service: ComponentService, private i18n: I18nService) {
   	this._service.getTranslations().subscribe(res => {
   		this.translations = res.body;
   	})
@@ -32,7 +33,7 @@ export class TranslationsComponent implements OnInit {
   	event.target.classList.add('loading');
   	let data = this.translations.filter(e => e.c || e.d || e.u);
   	this._service.setTranslations(data).subscribe(res => {
-  		this.translations = res.body;
+      this.translations = res.body;
   		setTimeout(() => { 
   			event.target.classList.remove('loading');
   		}, 1000);

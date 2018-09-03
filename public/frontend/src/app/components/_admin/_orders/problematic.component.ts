@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentService } from '@app/components/components.service';
-import { DatePipe } from '@angular/common';
-import { NotificationService } from '@app/core/services';
+import * as moment from 'moment';
 
 @Component({
   selector: 'orders-list',
@@ -21,7 +20,7 @@ export class ProblematicComponent implements OnInit {
   public clients: any = [];
   public partners: any = [];
   public filters = {
-    show: 0,
+    show: false,
     asc: 0,
     type: 0,
     status: 0,
@@ -43,11 +42,11 @@ export class ProblematicComponent implements OnInit {
     {field: 'salary_run', name: 'Оплата бустеру'},
   ];
 
-  constructor(public _service: ComponentService, private router: Router, private datePipe: DatePipe, private notificationService: NotificationService) {
+  constructor(public _service: ComponentService, private router: Router) {
     this.fetch();
   }
 
-  private fetch() {
+  public fetch() {
     $('#sync_button').addClass('loading');
     this._service.getProblematicOrders(this.filters).subscribe((res: any) => {
       this.orders = res.body.orders;
@@ -85,7 +84,7 @@ export class ProblematicComponent implements OnInit {
     let html;
     if(d.type == 1) {
       html =  `
-          <tr class="details"><td colspan="9"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
+          <tr class="details"><td colspan="10"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
                 <tr>
                   <td>Линии для игры:</td>
                   <td>
@@ -139,7 +138,7 @@ export class ProblematicComponent implements OnInit {
           </tbody></table></td></tr>`;
      } else if (d.type == 2) {
       html =  `
-          <tr class="details"><td colspan="9"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
+          <tr class="details"><td colspan="10"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
                 <tr>
                     <td>Комментарий клиента:</td>
                     <td>${d.client_comment}</td>
@@ -151,7 +150,7 @@ export class ProblematicComponent implements OnInit {
           </tbody></table></td></tr>`;
      } else if (d.type == 3) {
       html =  `
-          <tr class="details"><td colspan="9"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
+          <tr class="details"><td colspan="10"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
                 <tr>
                     <td>Комментарий клиента:</td>
                     <td>${d.client_comment}</td>
@@ -202,10 +201,10 @@ export class ProblematicComponent implements OnInit {
           </tbody></table></td></tr>`;
      } else {
       html =  `
-          <tr class="details"><td colspan="9"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
+          <tr class="details"><td colspan="10"><table cell-padding="5" cell-spacing="0" border="0" class="table table-hover table-condensed"><tbody>
                 <tr>
                     <td>Удобное время игры:</td>
-                    <td>${this.datePipe.transform(d.training_time_from, 'd.MM.yyyy HH:mm') + ' - ' + this.datePipe.transform(d.training_time_till, 'd.MM.yyyy HH:mm')}</td>
+                    <td>${moment(d.training_time_from).format('D.MM.YYYY HH:mm') + ' - ' + moment(d.training_time_till).format('D.MM.YYYY HH:mm')}</td>
                 </tr>
                 <tr>
                     <td>Часов сыграно / осталось:</td>

@@ -6,11 +6,14 @@ const https = require('https');
 const request = require('request');
 const moment = require('moment');
 const fs = require('fs');
+const randstr = require('randomstring');
+
+
 const order_permissions = {
 	type: [1,2,3,4],
 	source_id: [1,2,3,4],
 	mmr_finish: 6000,
-	medal_finish: 9999999,
+	medal_finish: 20,
 	amount: 9999999,
 };
 
@@ -36,7 +39,6 @@ const booster_permissions = {
 	19: {c:0,r:1,u:0,d:0},
 	20: {c:0,r:1,u:0,d:0},
 	21: {c:0,r:1,u:0,d:0},
-	22: {c:0,r:1,u:0,d:0},
 };
 
 const admin_permissions = {
@@ -71,6 +73,10 @@ const admin_permissions = {
 	48: {c:1,r:1,u:1,d:1},
 	49: {c:1,r:1,u:1,d:1},
 	50: {c:1,r:1,u:1,d:1},
+	51: {c:1,r:1,u:1,d:1},
+	52: {c:1,r:1,u:1,d:1},
+	53: {c:1,r:1,u:1,d:1},
+	54: {c:1,r:1,u:1,d:1},
 };
 
 (async () => {
@@ -308,29 +314,36 @@ const admin_permissions = {
 		{name: 'Подтверждена'},
 	]);
 	await schemas.Tx.bulkCreate([
-		{system_number: 1, type: 1, amount: 2500, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-06 15:25:00')},
-		{system_number: 1, type: 1, amount: 3244, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
-		{system_number: 1, type: 2, amount: -5125, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-08 15:25:00')},
-		{system_number: 1, type: 2, amount: -2555, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-09 15:25:00')},
-		{system_number: 1, type: 3, amount: 1208, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-09 16:25:00')},
-		{system_number: 1, type: 4, amount: -1468, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
-		{system_number: 1, type: 1, amount: 1751, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
-		{system_number: 1, type: 1, amount: 4198, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-12 15:25:00')},
-		{system_number: 1, type: 4, amount: 3794, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-13 15:25:00')},
-		{system_number: 1, type: 2, amount: -5682, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-14 15:25:00')},
-		{system_number: 1, type: 1, amount: 3562, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-14 18:25:00')},
-		{system_number: 1, type: 4, amount: -1528, user_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-15 15:25:00')},
-		{system_number: 2, type: 1, amount: 2000, user_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-16 15:25:00')},
-		{system_number: 2, type: 4, amount: -1528, user_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-17 15:25:00')},
+		{system_number: 1, type: 1, amount: 2500, user_id: 1, order_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-06 15:25:00')},
+		{system_number: 1, type: 1, amount: 3244, user_id: 1, order_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
+		{system_number: 1, type: 3, amount: 3244, user_id: 1, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
+		{system_number: 1, type: 3, amount: 3244, user_id: 1, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
+		{system_number: 1, type: 2, amount: -5125, user_id: 1, order_id: 3, currency_id: 1, status:3, created_at: new Date('2018-08-08 15:25:00')},
+		{system_number: 1, type: 2, amount: -2555, user_id: 1, order_id: 4, currency_id: 1, status:3, created_at: new Date('2018-08-09 15:25:00')},
+		{system_number: 1, type: 3, amount: 1208, user_id: 1, order_id: 5, currency_id: 1, status:3, created_at: new Date('2018-08-09 16:25:00')},
+		{system_number: 1, type: 4, amount: -1468, user_id: 1, order_id: 6, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
+		{system_number: 1, type: 1, amount: 1751, user_id: 1, order_id: 7, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
+		{system_number: 1, type: 1, amount: 4198, user_id: 1, order_id: 8, currency_id: 1, status:3, created_at: new Date('2018-08-12 15:25:00')},
+		{system_number: 1, type: 4, amount: 3794, user_id: 1, order_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-13 15:25:00')},
+		{system_number: 1, type: 2, amount: -5682, user_id: 1, order_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-14 15:25:00')},
+		{system_number: 1, type: 1, amount: 3562, user_id: 1, order_id: 3, currency_id: 1, status:3, created_at: new Date('2018-08-14 18:25:00')},
+		{system_number: 1, type: 4, amount: -1528, user_id: 1, order_id: 4, currency_id: 1, status:3, created_at: new Date('2018-08-15 15:25:00')},
+		{system_number: 2, type: 1, amount: 2000, user_id: 2, order_id: 5, currency_id: 1, status:3, created_at: new Date('2018-08-16 15:25:00')},
+		{system_number: 2, type: 4, amount: -1528, user_id: 3, order_id: 6, currency_id: 1, status:3, created_at: new Date('2018-08-17 15:25:00')},
+		{system_number: 1, type: 1, amount: 3794, user_id: 4, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-13 15:25:00')},
+		{system_number: 1, type: 2, amount: -3794, user_id: 4, order_id: 5, currency_id: 1, status:1, created_at: new Date('2018-08-14 15:25:00')},
+		{system_number: 1, type: 1, amount: 3562, user_id: 3, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-14 18:25:00')},
+		{system_number: 1, type: 2, amount: -3562, user_id: 3, order_id: 3, currency_id: 1, status:2, created_at: new Date('2018-08-15 15:25:00')},
+		{system_number: 2, type: 1, amount: 2000, user_id: 4, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-16 15:25:00')},
+		{system_number: 2, type: 2, amount: -2000, user_id: 4, order_id: 1, currency_id: 1, status:2, created_at: new Date('2018-08-17 15:25:00')},
 	]);
 	await schemas.Currency.bulkCreate([
 		{name: 'RUB', sign: '₽', rate: 1.00, used: true},
 		{name: 'USD', sign: '$', rate: 67.18, used: true},
-		{name: 'UAH', sign: '₴', rate: 24.25, used: false},
 	]);
 	await schemas.TxType.bulkCreate([
 		{name: 'Зачисление'},
-		{name: 'Вывод'},
+		{name: 'Списание'},
 		{name: 'Бонус'},
 		{name: 'Штраф'},
 	]);
@@ -394,34 +407,37 @@ const admin_permissions = {
 		{name:'Контакты сайта', link:'/support/contacts', nested_in: 18},
 
 		{icon:'fas fa-shopping-cart',name:'Управление заказами', link:null, nested_in: 0},
-		{name:'Все заказы', link:'/govt/orders', nested_in: 22},
-		{name:'Проблемные заказы', link:'/govt/orders/problematic', nested_in: 22},
+		{name:'Все заказы', link:'/govt/orders/actual', nested_in: 22},
+		{name:'Проблемные заказы', link:'/govt/orders/issues', nested_in: 22},
 		{icon:'fas fa-dollar-sign',name:'Финансы', link:null, nested_in: 0},
-		{name:'Пополнения (клиент)', link:'/govt/finances/client-refill', nested_in: 25},
-		{name:'Списания (клиент)', link:'/govt/finances/client-writeoff', nested_in: 25},
-		{name:'Вывод средств (бустер)', link:'/govt/finances/booster-payoff', nested_in: 25},
-		{name:'Отчеты по заказам (бустер)', link:'/govt/finances/booster-reports', nested_in: 25},
-		{name:'Штрафы и бонусы (бустер)', link:'/govt/finances/booster-bonuses', nested_in: 25},
+		{name:'Пополнения (клиент)', link:'/govt/finance/client-refill', nested_in: 25},
+		{name:'Списания (клиент)', link:'/govt/finance/client-writeoff', nested_in: 25},
+		{name:'Запросы на вывод', link:'/govt/finance/booster-payoff', nested_in: 25},
+		{name:'Отчеты по заказам', link:'/govt/finance/booster-reports', nested_in: 25},
+		{name:'Штрафы и бонусы', link:'/govt/finance/booster-bonuses', nested_in: 25},
 		{icon:'fas fa-users',name:'Пользователи', link:null, nested_in: 0},
-		{name:'Клиенты', link:'/govt/users/list', nested_in: 31},
-		{name:'Новый пользователь', link:'/govt/users/new', nested_in: 31},
-		{name:'Привелегии', link:'/govt/users/privileges', nested_in: 31},
-		{icon:'fas fa-users',name:'Бустеры', link:null, nested_in: 0},
-		{name:'Статистика', link:'/govt/boosters/statistics', nested_in: 35},
-		{name:'Список', link:'/govt/boosters/list', nested_in: 35},
-		{name:'Новый бустер', link:'/govt/boosters/new', nested_in: 35},
-		{icon:'fas fa-users',name:'Партнеры', link:null, nested_in: 0},
+		{name:'Все клиенты', link:'/govt/users/clients', nested_in: 31, display_id: 1},
+		{name:'Новый клиент', link:'/govt/users/clients/new', nested_in: 31, display_id: 2},
+		{icon:'fas fa-users-cog',name:'Бустеры', link:null, nested_in: 0},
+		{name:'Статистика', link:'/govt/boosters/statistics', nested_in: 34},
+		{name:'Все бустеры', link:'/govt/boosters/list', nested_in: 34},
+		{name:'Новый бустер', link:'/govt/boosters/new', nested_in: 34},
+		{name:'Группы пользователей', link:'/govt/users/privileges', nested_in: 31, display_id: 3},
+		{icon:'fas fa-handshake',name:'Партнеры', link:null, nested_in: 0},
 		{name:'Статистика', link:'/govt/partners/statistics', nested_in: 39},
-		{name:'Список', link:'/govt/partners/list', nested_in: 39},
-		{name:'Новый бустер', link:'/govt/partners/new', nested_in: 39},
+		{name:'Все партнеры', link:'/govt/partners/list', nested_in: 39},
+		{name:'Новый партнер', link:'/govt/partners/new', nested_in: 39},
 		{icon:'fas fa-cogs',name:'Настройки системы', link:null, nested_in: 0},
 		{name:'Прайс-листы', link:'/govt/settings/pricelists', nested_in: 43},
-		{name:'Автоматические штрафы и бонусы', link:'/govt/settings/bonuses&penalties', nested_in: 43},
+		{name:'Автоматические штрафы и бонусы', link:'/govt/settings/bonuses&penalties', nested_in: 43, display: false},
 		{icon:'far fa-life-ring',name:'Служба поддержки', link:null, nested_in: 0},
 		{name:'Тикеты от клиентов', link:'/govt/support/clients', nested_in: 46},
 		{name:'Тикеты от бустеров', link:'/govt/support/boosters', nested_in: 46},
 		{name:'Тикеты от партнеров', link:'/govt/support/partners', nested_in: 46},
 		{icon:'fas fa-exchange-alt',name:'Языковые переводы', link:'/govt/sundry/translations', nested_in: 0},
+		{name:'Все пользователи', link:'/govt/users/list', nested_in: 31, display_id: 5},
+		{name:'Новая группа', link:'/govt/users/privileges/new', nested_in: 31, display_id: 4},
+		{name:'Выводы (бустер)', link:'/govt/finance/booster-writeoff', nested_in: 25},
 	]);
 	await schemas.LogAction.bulkCreate([
 		{name:'user_registered', details:'Регистрация в системе'},
@@ -471,22 +487,30 @@ const admin_permissions = {
 		{action: 2,finisher: true,order_id: 7,worker_id: 1,worker_rank: 2.5,rank:2.8,salary:80,note: 'Заказ завершен с отличием!'},
 		{action: 1,finisher: false,order_id: 8,worker_id: 1,worker_rank: 2.5,rank:0,salary:0,note: ''},
 	]);	
+	await schemas.Language.bulkCreate([
+		{code: 'ru', name: 'Русский'},
+		{code: 'us', name: 'English'},
+	]);
 	await schemas.User.bulkCreate([
-		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: booster_permissions, login: 'booster@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: '[1,3]', heroes: '[1,2,55,82]', first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
-		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: admin_permissions, login: 'admin@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: '[1,3]', heroes: '[1,2,55,82]', first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
-		{login: 'client1@gmail.com', password: md5('11111111'), first_name:'Voodoo', last_name:'Savage', nick_name:'Voodoo Savage', email: 'ondarkpath@gmail.com',type:4},
-		{login: 'client2@gmail.com', password: md5('11111111'), first_name:'Savage', last_name:'Voodoo', nick_name:'Savage Voodoo', email: 'ondarkpath@gmail.com',type:4},
+		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: booster_permissions, login: 'booster@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
+		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: admin_permissions, login: 'admin@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
+		{login: 'client1@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 1', nick_name:'Client 1', email: 'client1@gmail.com', type:4},
+		{login: 'client2@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 2', nick_name:'Client 2', email: 'client2@gmail.com', type:4},
+		{login: 'client3@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 3', nick_name:'Client 3', email: 'client3@gmail.com', type:4},
+		{login: 'client4@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 4', nick_name:'Client 4', email: 'client4@gmail.com', type:4},
+		{login: 'client5@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 5', nick_name:'Client 5', email: 'client5@gmail.com', type:4},
+		{login: 'client6@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 6', nick_name:'Client 6', email: 'client6@gmail.com', type:4},
 	]);
 	await schemas.UserType.bulkCreate([
-		{name:'Admin', 		permissions: admin_permissions, order_permissions: order_permissions},
-		{name:'Support', 	permissions: admin_permissions, order_permissions: order_permissions},
-		{name:'Booster', 	permissions: booster_permissions, order_permissions: order_permissions},
-		{name:'Client', 	permissions: null, order_permissions: null},
+		{name:'Администрация', 		permissions: admin_permissions, order_permissions: order_permissions},
+		{name:'Поддержка', 	permissions: admin_permissions, order_permissions: order_permissions},
+		{name:'Бустеры', 	permissions: booster_permissions, order_permissions: order_permissions},
+		{name:'Клиенты', 	permissions: null, order_permissions: null},
 	]);	
 	await schemas.Partner.bulkCreate([
-		{name:'fastboosting.ru'},
-		{name:'z3ddota.com'},
-		{name:'z3dboosting.com'},
+		{login:'partner-' + randstr.generate(24), name:'fastboosting.ru', domain:'fastboosting.ru'},
+		{login:'partner-' + randstr.generate(24), name:'z3ddota.com', domain:'z3ddota.com'},
+		{login:'partner-' + randstr.generate(24), name:'z3dboosting.com', domain:'z3dboosting.com'},
 	]);	
 	await schemas.OrderServer.bulkCreate([
 		{name: 'US'}, 
@@ -509,22 +533,22 @@ const admin_permissions = {
 		{name:'Hard'},
 	]);	
 	await schemas.Order.bulkCreate([
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 120.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858912',type: 2,partner_id: 2,client_id: 3,client_comment: 'My high priority order #2 comment!',quality: 1,lanes: null,heroes: null,heroes_ban: null,mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 90.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858911',type: 3,partner_id: 2,client_id: 4,client_comment: 'My high priority order #3 comment!',quality: 1,lanes: null,heroes: [2,5,8,26,73,56],heroes_ban: [9,88], servers: null, mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 3,medal_finish: 24,medal_current:7,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 105.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858914',type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #1 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: null, servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 130.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858915',type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #4 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,73,56],heroes_ban: [3,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 45.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858916',type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #5 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: [4,9,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 58.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858917',type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #6 comment!',quality: 1,lanes: [1,3],heroes: [8,26,73,56],heroes_ban: [3,4,9], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 75.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858918',type: 4,partner_id: 2,client_id: 4,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: null,heroes: [2,5,8,56],heroes_ban: null, servers: null, mmr_start: 2300,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,training_time_from: new Date(), training_time_till: new Date().setHours(new Date().getHours() + 8),training_hours: 8,training_services: [2,3,4,5,6,7],training_worker_id: 1,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 92.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858919',type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,56,92,94],heroes_ban: [15,27,64,19], servers: [2,3], mmr_start: 2300,mmr_finish: 7500,mmr_boosted: 3275,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 120.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858912',type: 2,partner_id: 2,client_id: 4,client_comment: 'My high priority order #2 comment!',quality: 1,lanes: null,heroes: null,heroes_ban: null,mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 90.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858911',type: 3,partner_id: 2,client_id: 3,client_comment: 'My high priority order #3 comment!',quality: 1,lanes: null,heroes: [2,5,8,26,73,56],heroes_ban: [9,88], servers: null, mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 3,medal_finish: 24,medal_current:7,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 105.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858914',type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #1 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: null, servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 130.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858915',type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #4 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,73,56],heroes_ban: [3,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 45.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858916',type: 1,partner_id: 2,client_id: 4,client_comment: 'My high priority order #5 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: [4,9,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 58.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858917',type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #6 comment!',quality: 1,lanes: [1,3],heroes: [8,26,73,56],heroes_ban: [3,4,9], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 75.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858918',type: 4,partner_id: 2,client_id: 4,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: null,heroes: [2,5,8,56],heroes_ban: null, servers: null, mmr_start: 2300,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,training_time_from: new Date(), training_time_till: new Date().setHours(new Date().getHours() + 8),training_hours: 8,training_services: [2,3,4,5,6,7],training_worker_id: 1,status: 5,urgency_hours: 10},
-		{amount: 150.99, amount_paid: 150.99, salary_rub: 92.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:'104858919',type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,56,92,94],heroes_ban: [15,27,64,19], servers: [2,3], mmr_start: 2300,mmr_finish: 7500,mmr_boosted: 3275,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 120.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:1,type: 2,partner_id: 2,client_id: 3,client_comment: 'My high priority order #2 comment!',quality: 1,lanes: null,heroes: null,heroes_ban: null,mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 90.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:2,type: 3,partner_id: 2,client_id: 4,client_comment: 'My high priority order #3 comment!',quality: 1,lanes: null,heroes: [2,5,8,26,73,56],heroes_ban: [9,88], servers: null, mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 3,medal_finish: 24,medal_current:7,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 105.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:3,type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #1 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: null, servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 130.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:4,type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #4 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,73,56],heroes_ban: [3,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 45.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:5,type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #5 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: [4,9,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 58.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:6,type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #6 comment!',quality: 1,lanes: [1,3],heroes: [8,26,73,56],heroes_ban: [3,4,9], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 75.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:7,type: 4,partner_id: 2,client_id: 4,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: null,heroes: [2,5,8,56],heroes_ban: null, servers: null, mmr_start: 2300,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,training_time_from: new Date(), training_time_till: new Date().setHours(new Date().getHours() + 8),training_hours: 8,training_services: [2,3,4,5,6,7],training_worker_id: 1,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 92.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:8,type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,56,92,94],heroes_ban: [15,27,64,19], servers: [2,3], mmr_start: 2300,mmr_finish: 7500,mmr_boosted: 3275,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 120.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:9,type: 2,partner_id: 2,client_id: 4,client_comment: 'My high priority order #2 comment!',quality: 1,lanes: null,heroes: null,heroes_ban: null,mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 90.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:10,type: 3,partner_id: 2,client_id: 3,client_comment: 'My high priority order #3 comment!',quality: 1,lanes: null,heroes: [2,5,8,26,73,56],heroes_ban: [9,88], servers: null, mmr_start: 0,mmr_finish: 0,mmr_boosted: 0,medal_start: 3,medal_finish: 24,medal_current:7,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 105.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:11,type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #1 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: null, servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 130.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:12,type: 1,partner_id: 1,client_id: 3,client_comment: 'My high priority order #4 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,73,56],heroes_ban: [3,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 45.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:13,type: 1,partner_id: 2,client_id: 4,client_comment: 'My high priority order #5 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,26,73],heroes_ban: [4,9,88], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 58.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:14,type: 1,partner_id: 1,client_id: 4,client_comment: 'My high priority order #6 comment!',quality: 1,lanes: [1,3],heroes: [8,26,73,56],heroes_ban: [3,4,9], servers: [2,3], mmr_start: 2300,mmr_finish: 5500,mmr_boosted: 0,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 75.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:15,type: 4,partner_id: 2,client_id: 4,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: null,heroes: [2,5,8,56],heroes_ban: null, servers: null, mmr_start: 2300,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,training_time_from: new Date(), training_time_till: new Date().setHours(new Date().getHours() + 8),training_hours: 8,training_services: [2,3,4,5,6,7],training_worker_id: 1,status: 5,urgency_hours: 10},
+		{amount: 150.99, amount_paid: 150.99, salary_rub: 92.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:16,type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,56,92,94],heroes_ban: [15,27,64,19], servers: [2,3], mmr_start: 2300,mmr_finish: 7500,mmr_boosted: 3275,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
 	]);
 	await schemas.OrderCalibrationType.bulkCreate([
 		{name:'Калибровка с гарантией'},
@@ -626,15 +650,15 @@ const admin_permissions = {
 				        heroes[x].img_md = "http://cdn.dota2.com/apps/dota2/images/heroes/"+name+"_hphover.png";
 				        heroes[x].img_sm = "http://cdn.dota2.com/apps/dota2/images/heroes/"+name+"_sb.png";
 				        loop(x - 1);
-					    download(heroes[x].img_vr, 'storage/cdn/heroes/' + heroes[x].id + '_vr.jpg', () => { 
-					       	download(heroes[x].img_lg, 'storage/cdn/heroes/' + heroes[x].id + '_lg.png', () => { 
-						    	download(heroes[x].img_md, 'storage/cdn/heroes/' + heroes[x].id + '_md.png', () => { 
-						       		download(heroes[x].img_sm, 'storage/cdn/heroes/' + heroes[x].id + '_sm.png', () => {
-						       			loop(x - 1);
-						       		});
-					       		});
-						   	});
-				   		});
+					    // download(heroes[x].img_vr, 'storage/cdn/heroes/' + heroes[x].id + '_vr.jpg', () => { 
+					    //    	download(heroes[x].img_lg, 'storage/cdn/heroes/' + heroes[x].id + '_lg.png', () => { 
+						   //  	download(heroes[x].img_md, 'storage/cdn/heroes/' + heroes[x].id + '_md.png', () => { 
+						   //     		download(heroes[x].img_sm, 'storage/cdn/heroes/' + heroes[x].id + '_sm.png', () => {
+						   //     			loop(x - 1);
+						   //     		});
+					    //    		});
+						   // 	});
+				   		// });
 					})(heroes.length - 1);
 				}
 		  	});

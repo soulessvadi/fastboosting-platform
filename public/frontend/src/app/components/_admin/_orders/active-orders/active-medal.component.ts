@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, TemplateRef,
 import { Router } from '@angular/router';
 import { ComponentService } from '@app/components/components.service';
 import { SocketService, SocketEvent, Message } from '@app/components/socketio.service';
-import { DatePipe } from '@angular/common';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { NotificationService } from '@app/core/services';
@@ -23,6 +22,9 @@ export class MedalComponent implements OnInit, OnDestroy {
   @Input() properties;
   private bsModalRef: BsModalRef;
   public tabs: any = { active: 0 };
+  public heroes: any = {};
+  public lanes: any = {};
+  public servers: any = {};
   public chart: any = { options: null, data: null };
   public progress: number = 0;
   public responseMessage = null;
@@ -37,12 +39,14 @@ export class MedalComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificationService: NotificationService,
     private socketio: SocketService, 
-    private datePipe: DatePipe, 
     private modalService: BsModalService, 
     private el: ElementRef,
   ) { }
 
   ngOnInit() { 
+    this._service._heroes.then((heroes: any) => this.heroes = heroes);
+    this._service._lanes.then((lanes: any) => this.lanes = lanes);
+    this._service._servers.then((servers: any) => this.servers = servers);
     this.findMedals();
     this.joinChat(this.order.system_number);
     this.progress = this.getProgress();
@@ -53,9 +57,9 @@ export class MedalComponent implements OnInit, OnDestroy {
   }
 
   public findMedals() {
-    this.order.medal_c = this.properties.ranks.find(e => e.id == this.order.medal_current);
-    this.order.medal_f = this.properties.ranks.find(e => e.id == this.order.medal_finish);
-    this.order.medal_s = this.properties.ranks.find(e => e.id == this.order.medal_start);
+    if(!this.order.medal_current) this.order.medal_current = 1;
+    if(!this.order.medal_finish) this.order.medal_finish = 1;
+    if(!this.order.medal_start) this.order.medal_start = 1;
   }
 
   public changeStatus() {
@@ -68,6 +72,30 @@ export class MedalComponent implements OnInit, OnDestroy {
       if(res.status == 200) this.responseMessage = 'Сохранено';
       setTimeout(() => { $('#save-btn').removeClass('loading'); this.responseMessage = null; }, 1000);
     })
+  }
+
+  public heroesChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes.push(hero.id);
+    else if (this.order.heroes.indexOf(hero.id) !== -1)
+      this.order.heroes.splice(this.order.heroes.indexOf(hero.id), 1);
+  }
+
+  public heroesBanChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes_ban.push(hero.id);
+    else if (this.order.heroes_ban.indexOf(hero.id) !== -1)
+      this.order.heroes_ban.splice(this.order.heroes_ban.indexOf(hero.id), 1);
+  }
+
+  public lanesChanged(lane) {
+    if(lane.checked) this.order.lanes.push(lane.id);
+    else this.order.lanes = this.order.lanes.filter(e => e != lane.id);
+  }
+
+  public serversChanged(server) {
+    if(server.checked) this.order.servers.push(server.id);
+    else this.order.servers = this.order.servers.filter(e => e != server.id);
   }
 
   public quitOrder() {
@@ -144,5 +172,9 @@ export class MedalComponent implements OnInit, OnDestroy {
 
   public modalClose() {
     this.bsModalRef.hide();
+  }
+
+  public setDeadline($event) {
+    this.order.deadline = moment($event, 'DD.MM.YYYY').toISOString();
   }
 }

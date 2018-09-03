@@ -19,7 +19,7 @@ export class LanguageSelectorComponent implements OnInit {
     this.currentLanguage = this.i18n.currentLanguage;
   }
 
-  setLanguage(language){
+  setLanguage(language) {
     this.currentLanguage = language;
     this.i18n.setLanguage(language)
   }

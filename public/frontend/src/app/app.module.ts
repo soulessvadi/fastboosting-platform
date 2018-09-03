@@ -5,10 +5,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app.routing';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
 import { ComponentsModule } from './components/components.module';
 import { ComponentService } from './components/components.service';
 import { SocketService } from './components/socketio.service';
+import { GlobalShare } from './global.share';
 
 
 @NgModule({
@@ -20,9 +20,9 @@ import { SocketService } from './components/socketio.service';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    SharedModule,
     CoreModule,
     ComponentsModule,
+    GlobalShare,
   ],
   providers: [
     ComponentService,

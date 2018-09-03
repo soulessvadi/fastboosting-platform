@@ -1,0 +1,235 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Пользователи', 'Управление группами', type?.name]" icon="fas fa-key" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+  <div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div sa-widget class="well">
+          <div class="active-order-holder user-edit">
+            <div class="widget-body no-padding">
+              <div class="well">
+                <div class="row" style="margin:0;">          
+                  <article class="col-xs-12 margin-top-10">
+                    <div class="widget-body">
+
+                      <ul id="myTab1" class="nav nav-tabs bordered">
+                        <li [class.active]="activeTab == 0">
+                          <a (click)="activeTab = 0">
+                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Настройки группы' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 1">
+                          <a (click)="activeTab = 1">
+                            <i class="fas fa-fw fa-lg fa-key"></i> {{ 'Права доступа к страницам' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 2">
+                          <a (click)="activeTab = 2">
+                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'Права доступа к заказам' | i18n }}
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 3">
+                          <a (click)="activeTab = 3">
+                            <i class="fas fa-fw fa-lg fa-users"></i> {{ 'Пользователи в группе' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="users?.length">{{ users?.length }}</span> 
+                          </a>
+                        </li>
+                      </ul>
+
+                      <tabset class="padding-10" *ngIf="type">
+                        <tab [active]="activeTab == 0">
+                          <div class="row">
+                            <div class="table-responsive col-xs-12">
+                              <table class="table table-bordered table-striped table-hover va-m">
+                                <tbody>
+                                  <tr>
+                                    <th>{{ 'Название группы' | i18n }}</th>
+                                    <td>
+                                      <div class="row smart-form">
+                                        <label class="input col-xs-12">
+                                          <input class="form-control" type="text" [(ngModel)]="type.name" id="type-name">
+                                          <b class="tooltip tooltip-left">{{ 'Название группы не может быть пустым' | i18n }}</b>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>   
+                          </div>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="save()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>                        
+                        </tab>
+                        <tab [active]="activeTab == 1">
+                          <div class="row">
+                            <div class="col-xs-12" *ngIf="type.permissions">
+                              <div role="alert" class="alert alert-info margin-top-10">
+                                <h4 class="alert-heading fs-14">
+                                  {{ 'Права на доступ пользователя к определенным пунктам меню в системе' | i18n }}
+                                </h4>
+                              </div>
+                              <div class="flex">
+                                <div class="column shrink mw-20" *ngFor="let menu of menus; let i = index">
+                                  <div class="padding-10 h-100" [class.odd]="i % 2" [class.even]="!(i % 2)">
+                                    <div class="flex">
+                                      <label class="column fw-900">{{ menu.name | i18n }}</label>
+                                      <label class="column shrink ezswitch"><input type="checkbox" [value]="menu.id" [checked]="type.permissions?.hasOwnProperty(menu.id)" (change)="permissionMenuChanged($event)"><div></div></label>
+                                    </div>
+                                    <div class="flex padding-0-10" *ngFor="let nest of menu.nestings">
+                                      <label class="column">{{ nest.name | i18n }}</label>
+                                      <label class="column shrink ezswitch"><input type="checkbox" [value]="nest.id" [checked]="type.permissions?.hasOwnProperty(nest.id)" (change)="permissionMenuChanged($event)"><div></div></label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>  
+                          </div>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="save()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div> 
+                        </tab>
+                        <tab [active]="activeTab == 2">
+                          <div class="row">
+                            <div class="table-responsive col-xs-12" *ngIf="type.order_permissions">
+                              <div role="alert" class="alert alert-info margin-top-10">
+                                <h4 class="alert-heading fs-14">
+                                  {{ 'Права на доступ пользователя к заказам' | i18n }}
+                                </h4>
+                              </div>
+                              <table class="table table-bordered table-striped table-hover va-m td-h-auto">
+                                <tbody>
+                                  <tr>
+                                    <th>{{ 'Тип заказа' | i18n }}</th>
+                                    <td>
+                                      <div class="radio-select column shrink fs-11">
+                                        <label *ngFor="let type of otypes">
+                                          <input type="checkbox" name="type" [checked]="type.order_permissions?.type?.includes(type.id)" 
+                                          [value]="type.id" (change)="permissionsTypeChanged($event)"><b>{{ type.name }}</b>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Источник заказа' | i18n }}</th>
+                                    <td>
+                                      <div class="radio-select column shrink fs-11">
+                                        <label *ngFor="let source of osources">
+                                          <input type="checkbox" name="source" [checked]="type.order_permissions?.source_id?.includes(source.id)" 
+                                          [value]="source.id" (change)="permissionsSourceChanged($event)"><b>{{ source.name }}</b>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. MMR' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="input"><input class="form-control" type="number" [(ngModel)]="type.order_permissions.mmr_finish" step="100" min="0"></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. стоимость заказа' | i18n }}</th>
+                                    <td>
+                                      <div>
+                                        <label class="input"><input class="form-control" type="number" [(ngModel)]="type.order_permissions.amount"></label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>{{ 'Макс. медаль' | i18n }}</th>
+                                    <td>
+                                      <div class="medals-selector row">
+                                        <div class="item">
+                                          <div class="medal le-dr-selector">
+                                            <div class="medal-rank driven">
+                                              <div class="list">
+                                                <div data-le="1" class="active">
+                                                  <div *ngFor="let medal of medals; let i = index" [class.active]="medal.id == (type.order_permissions.medal_finish || 1)" [attr.data-dr]="medal.id"><img src="{{_service.store_medals}}{{medal.image}}">
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="controlls">
+                                                <span class="prev" (click)="type.order_permissions.medal_finish = type.order_permissions.medal_finish > 1 ? type.order_permissions.medal_finish - 1 : medals[medals?.length - 1].id;"><i class="fas fa-chevron-left"></i></span>
+                                                <span class="next" (click)="type.order_permissions.medal_finish = type.order_permissions.medal_finish < medals?.length ? type.order_permissions.medal_finish + 1 : 1;"><i class="fas fa-chevron-right"></i></span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div> 
+                          </div>
+                          <div class="smart-form margin-top-5">
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="save()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div> 
+                        </tab>
+                        <tab [active]="activeTab == 3">
+                          <table class="dataTable responsive display projects-table table table-striped table-bordered table-hover td-h-auto" role="grid">
+                             <thead>
+                                <tr role="row">
+                                   <th class="sorting_disabled">ID</th>
+                                   <th class="sorting_disabled">{{ 'Имя пользователя' | i18n }}</th>
+                                   <th class="sorting_disabled"><i class="fas fa-envelope text-muted hidden-md hidden-sm hidden-xs"></i> E-mail </th>
+                                   <th class="sorting_disabled"><i class="fas fa-clock text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Зарегистрирован' | i18n }} </th>
+                                   <th class="sorting_disabled"><i class="fas fa-user-lock text-muted hidden-md hidden-sm hidden-xs"></i> {{ 'Блок' | i18n }} </th>
+                                   <th class="sorting_disabled"></th>
+                                </tr>
+                             </thead>
+                             <tbody *ngIf="users">
+                                <tr *ngFor="let user of users" role="row" class="odd">
+                                   <td>{{ user.id }}</td>
+                                   <td>{{ user.first_name }} {{ user.last_name }} [<span class="txt-color-teal">{{ user.nick_name }}</span>]</td>
+                                   <td><a class="txt-color-blue" href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                                   <td>{{ user.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</td>
+                                   <td><label class="ezswitch"><input name="user.is_blocked" type="checkbox" [(ngModel)]="user.is_blocked" (change)="userBlock(user)"><div></div></label></td>
+                                   <td>
+                                    <a class="btn btn-xs btn-primary do-order-btn" *ngIf="user.type == 3" routerLink="/govt/boosters/{{ user.id }}">
+                                      <i class="fas fa-user-cog"></i>
+                                    </a>
+                                    <a class="btn btn-xs btn-primary do-order-btn" *ngIf="user.type == 4" routerLink="/govt/users/{{ user.id }}">
+                                      <i class="fas fa-user-cog"></i>
+                                    </a>
+                                  </td>
+                                </tr>
+                             </tbody>
+                             <tbody *ngIf="!users?.length">
+                               <tr>
+                                 <td colspan="6"><h4 class="text-center txt-color-teal fs-18 fw-500">{{ 'Список пуст' | i18n }}</h4></td>
+                               </tr>
+                             </tbody>
+                          </table>
+                        </tab>
+                      </tabset>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

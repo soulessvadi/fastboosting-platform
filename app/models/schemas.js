@@ -49,7 +49,131 @@ let Menu = connection.define('menu', {
   underscored: true
 });
 
+let Language = connection.define('languages', {
+  code: {type: Sequelize.STRING(64), defaultValue:''},
+  name: {type: Sequelize.STRING(64), defaultValue:''},
+  visible: {type: Sequelize.BOOLEAN, defaultValue:true},
+}, {
+  underscored: true
+});
+
+let Partner = connection.define('partners', {
+  login: {type: Sequelize.STRING(64), defaultValue: '', unique: true},
+  name: {type: Sequelize.STRING(64), defaultValue: ''},
+  domain: {type: Sequelize.STRING(64), defaultValue: ''},
+  email: {type: Sequelize.STRING(64), defaultValue: ''},
+  avatar: {type: Sequelize.STRING(255), defaultValue: 'mock.png'},
+  first_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  last_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  nick_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  language: {type: Sequelize.INTEGER, defaultValue: 1},
+  country: {type: Sequelize.STRING(64), defaultValue: ''},
+  phone: {type: Sequelize.STRING(64), defaultValue: ''},
+  skype: {type: Sequelize.STRING(64), defaultValue: ''},
+  discord: {type: Sequelize.STRING(64), defaultValue: ''},
+  vkontakte: {type: Sequelize.STRING(64), defaultValue: ''},
+  facebook: {type: Sequelize.STRING(64), defaultValue: ''},
+  instagram: {type: Sequelize.STRING(64), defaultValue: ''},
+  youtube: {type: Sequelize.STRING(64), defaultValue: ''},
+  twitter: {type: Sequelize.STRING(64), defaultValue: ''},
+  dotabuff: {type: Sequelize.STRING(64), defaultValue: ''},
+  is_approved: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_blocked: {type: Sequelize.BOOLEAN, defaultValue: false},
+  currency_id: {type: Sequelize.INTEGER(2), defaultValue:1},
+}, {
+  underscored: true
+});
+
+let PartnerArchive = connection.define('partners_archive', {
+  login: {type: Sequelize.STRING(64), defaultValue: '', unique: true},
+  name: {type: Sequelize.STRING(64), defaultValue: ''},
+  domain: {type: Sequelize.STRING(64), defaultValue: ''},
+  email: {type: Sequelize.STRING(64), defaultValue: ''},
+  avatar: {type: Sequelize.STRING(255), defaultValue: 'mock.png'},
+  first_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  last_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  nick_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  language: {type: Sequelize.INTEGER, defaultValue: 1},
+  country: {type: Sequelize.STRING(64), defaultValue: ''},
+  phone: {type: Sequelize.STRING(64), defaultValue: ''},
+  skype: {type: Sequelize.STRING(64), defaultValue: ''},
+  discord: {type: Sequelize.STRING(64), defaultValue: ''},
+  vkontakte: {type: Sequelize.STRING(64), defaultValue: ''},
+  facebook: {type: Sequelize.STRING(64), defaultValue: ''},
+  instagram: {type: Sequelize.STRING(64), defaultValue: ''},
+  youtube: {type: Sequelize.STRING(64), defaultValue: ''},
+  twitter: {type: Sequelize.STRING(64), defaultValue: ''},
+  dotabuff: {type: Sequelize.STRING(64), defaultValue: ''},
+  is_approved: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_blocked: {type: Sequelize.BOOLEAN, defaultValue: false},
+  currency_id: {type: Sequelize.INTEGER(2), defaultValue:1},
+}, {
+  underscored: true
+});
+
 let User = connection.define('user', {
+  login: {type: Sequelize.STRING(64), defaultValue: '', unique: true},
+  email: {type: Sequelize.STRING(64), defaultValue: ''},
+  password: {type: Sequelize.STRING(64), defaultValue: ''},
+  avatar: {type: Sequelize.STRING(255), defaultValue: 'mock.png'},
+  first_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  last_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  nick_name: {type: Sequelize.STRING(64), defaultValue: ''},
+  birth_date: {type: Sequelize.DATEONLY, defaultValue: Sequelize.NOW},
+  language: {type: Sequelize.INTEGER, defaultValue: 1},
+  country: {type: Sequelize.STRING(64), defaultValue: ''},
+  city: {type: Sequelize.INTEGER, defaultValue: 0},
+  zip: {type: Sequelize.INTEGER, defaultValue: 0},
+  phone: {type: Sequelize.STRING(64), defaultValue: ''},
+  skype: {type: Sequelize.STRING(64), defaultValue: ''},
+  discord: {type: Sequelize.STRING(64), defaultValue: ''},
+  vkontakte: {type: Sequelize.STRING(64), defaultValue: ''},
+  facebook: {type: Sequelize.STRING(64), defaultValue: ''},
+  instagram: {type: Sequelize.STRING(64), defaultValue: ''},
+  youtube: {type: Sequelize.STRING(64), defaultValue: ''},
+  twitter: {type: Sequelize.STRING(64), defaultValue: ''},
+  dotabuff: {type: Sequelize.STRING(64), defaultValue: ''},
+  is_approved: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_blocked: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_subscribed: {type: Sequelize.BOOLEAN, defaultValue: false},
+  is_configured: {type: Sequelize.BOOLEAN, defaultValue: false},
+  deposit: {type: Sequelize.DOUBLE, defaultValue: 0},
+  rating: {type: Sequelize.DOUBLE, defaultValue: 0},
+  rating_id: {type: Sequelize.INTEGER, defaultValue: 1},
+  currency_id: {type: Sequelize.INTEGER(2), defaultValue:1},
+  type: {type: Sequelize.INTEGER, defaultValue: 3},
+  permissions: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('permissions')) },
+    set(v) { return this.setDataValue('permissions', utils.jsonEncode(v)) },
+  },
+  order_permissions: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('order_permissions')) },
+    set(v) { return this.setDataValue('order_permissions', utils.jsonEncode(v)) },
+  },
+  heroes: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('heroes')) },
+    set(v) { return this.setDataValue('heroes', utils.jsonEncode(v)) },
+  },
+  lanes: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('lanes')) },
+    set(v) { return this.setDataValue('lanes', utils.jsonEncode(v)) },
+  },
+  mmr_solo: {type: Sequelize.INTEGER, defaultValue: 0},
+  mmr_party: {type: Sequelize.INTEGER, defaultValue: 0},
+  recovery_hash: {type: Sequelize.STRING(24), defaultValue: null},
+}, {
+  underscored: true
+});
+
+let UserArchive = connection.define('users_archives', {
   login: {type: Sequelize.STRING(64), defaultValue: '', unique: true},
   email: {type: Sequelize.STRING(64), defaultValue: ''},
   password: {type: Sequelize.STRING(64), defaultValue: ''},
@@ -57,7 +181,7 @@ let User = connection.define('user', {
   first_name: {type: Sequelize.STRING(64), defaultValue: ''},
   last_name: {type: Sequelize.STRING(64), defaultValue: ''},
   nick_name: {type: Sequelize.STRING(64), defaultValue: ''},
-  birth_date: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
+  birth_date: {type: Sequelize.DATEONLY, defaultValue: Sequelize.NOW},
   language: {type: Sequelize.INTEGER, defaultValue: 1},
   country: {type: Sequelize.STRING(64), defaultValue: ''},
   city: {type: Sequelize.INTEGER, defaultValue: 0},
@@ -83,21 +207,30 @@ let User = connection.define('user', {
   permissions: {
     type: Sequelize.TEXT, 
     defaultValue: '',           
-    get() { return JSON.parse(this.getDataValue('permissions')) },
-    set(v) { return this.setDataValue('permissions', JSON.stringify(v)) },
+    get() { return utils.jsonDecode(this.getDataValue('permissions')) },
+    set(v) { return this.setDataValue('permissions', utils.jsonEncode(v)) },
   },
   order_permissions: {
     type: Sequelize.TEXT, 
     defaultValue: '',           
-    get() { return JSON.parse(this.getDataValue('order_permissions')) },
-    set(v) { return this.setDataValue('order_permissions', JSON.stringify(v)) },
+    get() { return utils.jsonDecode(this.getDataValue('order_permissions')) },
+    set(v) { return this.setDataValue('order_permissions', utils.jsonEncode(v)) },
   },
-  heroes: {type: Sequelize.TEXT, defaultValue: ''},
-  lanes: {type: Sequelize.TEXT, defaultValue: ''},
+  heroes: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('heroes')) },
+    set(v) { return this.setDataValue('heroes', utils.jsonEncode(v)) },
+  },
+  lanes: {
+    type: Sequelize.TEXT, 
+    defaultValue: '',           
+    get() { return utils.jsonDecode(this.getDataValue('lanes')) },
+    set(v) { return this.setDataValue('lanes', utils.jsonEncode(v)) },
+  },
   mmr_solo: {type: Sequelize.INTEGER, defaultValue: 0},
   mmr_party: {type: Sequelize.INTEGER, defaultValue: 0},
   recovery_hash: {type: Sequelize.STRING(24), defaultValue: null},
-
 }, {
   underscored: true
 });
@@ -166,6 +299,17 @@ let BoosterPricelistMedal = connection.define('users_pricelists_medal', {
   underscored: true
 });
 
+let PartnerPricelistBoosting = connection.define('partners_pricelists_boost', {
+  partner_id: {type: Sequelize.INTEGER, defaultValue:0},
+  from: {type: Sequelize.INTEGER, defaultValue:0},
+  till: {type: Sequelize.INTEGER, defaultValue:0},
+  volume: {type: Sequelize.INTEGER, defaultValue:0},
+  rub: {type: Sequelize.DOUBLE, defaultValue:0},
+  usd: {type: Sequelize.DOUBLE, defaultValue:0},
+}, {
+  underscored: true
+});
+
 let BoosterPricelistBoosting = connection.define('users_pricelists_boosting', {
   from: {type: Sequelize.INTEGER, defaultValue:0},
   till: {type: Sequelize.INTEGER, defaultValue:0},
@@ -222,13 +366,6 @@ let Log = connection.define('logs', {
   action_id: {type: Sequelize.INTEGER, defaultValue:0},
   message: {type: Sequelize.TEXT, defaultValue:''},
   additional: {type: Sequelize.TEXT, defaultValue:''},
-}, {
-  underscored: true
-});
-
-let Partner = connection.define('partners', {
-  name: {type: Sequelize.STRING(64), defaultValue:''},
-  domain: {type: Sequelize.STRING(64), defaultValue:''},
 }, {
   underscored: true
 });
@@ -357,7 +494,6 @@ let OrderCalibrationType = connection.define('orders_calibration_types', {
 let Order = connection.define('orders', {
   type: {type: Sequelize.INTEGER, defaultValue:0},
   partner_id: {type: Sequelize.INTEGER, defaultValue:0},
-  system_number: {type: Sequelize.STRING(64), defaultValue:''},
   client_id: {type: Sequelize.INTEGER, defaultValue:0},
   client_comment: {type: Sequelize.TEXT, defaultValue: ''},
   worker_id: {type: Sequelize.INTEGER, defaultValue:0},
@@ -367,6 +503,12 @@ let Order = connection.define('orders', {
   account_pass: {type: Sequelize.STRING(255), defaultValue:''},
   promocode: {type: Sequelize.INTEGER, defaultValue:0},
   quality: {type: Sequelize.INTEGER, defaultValue:0},
+  system_number: {type: Sequelize.TEXT, 
+    set(v) {
+      let hex = 'z' + String(v) + Date.now();
+      this.setDataValue('system_number', hex);
+    }
+  },
   servers: {
     type: Sequelize.TEXT, 
     defaultValue: null,           
@@ -497,7 +639,7 @@ let Currency = connection.define('currencies', {
 let Tx = connection.define('txs', {
   system_number: {type: Sequelize.TEXT, 
     set(v) {
-      let hex = String(String(v) + '.' + randstr.generate(2) + '.' + String(Math.round(Date.now()/1000))).hexval(false);
+      let hex = 'x' + String(v) + Date.now();
       this.setDataValue('system_number', hex);
     }
   },
@@ -505,6 +647,7 @@ let Tx = connection.define('txs', {
   amount: {type: Sequelize.DOUBLE(19,4), defaultValue:0},
   user_id: {type: Sequelize.INTEGER(11), defaultValue:0},
   currency_id: {type: Sequelize.INTEGER(2), defaultValue:1},
+  order_id: {type: Sequelize.INTEGER(2), defaultValue:0},
   status: {type: Sequelize.INTEGER(2), defaultValue:1},
   comment: {type: Sequelize.STRING(255), defaultValue:''},
 }, {
@@ -535,8 +678,11 @@ module.exports = {
   Menu,
   UserType, 
   User, 
+  UserArchive,
   UserBonusPenalty,
   Partner, 
+  PartnerArchive,
+  PartnerPricelistBoosting,
   Contact,
   BoosterReview,
   BoosterPriceCategory,
@@ -577,4 +723,5 @@ module.exports = {
   TxType,
   TxStatus,
   Translate,
+  Language,
 };

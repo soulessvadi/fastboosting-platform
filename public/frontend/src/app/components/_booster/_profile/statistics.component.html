@@ -1,0 +1,94 @@
+<div id="content" class="profile-settings animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Профиль', 'Статистика']" icon="fas fa-chart-pie" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      	<div class="well well-light well-lg shadow-md">
+
+      		<div class="row">
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm blue">
+						<span class="title">{{ 'Участие в заказах' | i18n }}</span>
+						<span class="count">{{ ratings.orders_total }}</span>
+					</div>
+				</div> 
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm green">
+						<span class="title">{{ 'Заказов выполнено' | i18n }}</span>
+						<span class="count">{{ ratings.orders_finished }}</span>
+					</div>
+				</div> 
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm dblue">
+						<span class="title">{{ 'Средний рейтинг' | i18n }}</span>
+						<span class="count">{{ ratings.average_rank | number : '1.2-2' }} 
+							<sup class="fs-12" placement="top" tooltip="Ваш текущий рейтинг будет пересчитан в конце месяца">({{ ratings.current_rank }})</sup>
+						</span>
+					</div>
+				</div>  
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm red">
+						<span class="title">{{ 'Объем MMR' | i18n }}</span>
+						<span class="count">{{ ratings.mmr_volume }}</span>
+					</div>
+				</div>
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm orange">
+						<span class="title">{{ 'Отзывов получено' | i18n }}</span>
+						<span class="count">{{ ratings.reviews_total }}</span>
+					</div>
+				</div>
+				<div class="col-xs-2">
+					<div class="stat-info stat-info-sm violet">
+						<span class="title">{{ 'Средняя оценка' | i18n }}</span>
+						<span class="count">{{ ratings.reviews_mark | number : '1.2-2' }}</span>
+					</div>
+				</div>   		
+      		</div>
+
+            <div class="stat-chart">
+				<h2>{{ 'Динамика рейтинга за период' | i18n }} <strong *ngIf="ratings_period.from">{{ ratings_period.from }} - {{ ratings_period.till }}</strong></h2>
+              	<sa-chart-js *ngIf="ratingsChart.data" type="line" [options]="ratingsChart.options" [data]="ratingsChart.data"></sa-chart-js>
+            </div>
+
+      		<div class="row">
+				<div class="col-xs-3">
+					<div class="stat-info stat-info-sm blue">
+						<span class="title">{{ 'Депозит' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.deposit)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div> 
+				<div class="col-xs-3">
+					<div class="stat-info stat-info-sm green">
+						<span class="title">{{ 'Доступно к выводу' | i18n }}
+			       			<a *ngIf="balance.balance > 0" class="btn btn-success btn-xs pull-right" routerLink="/balance/withdrawal">{{ 'Вывод средств' | i18n }}</a>
+						</span>
+						<span class="count">{{ Math.abs(balance.balance)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="stat-info stat-info-sm orange">
+						<span class="title">{{ 'Заработано в системе' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.earned)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="stat-info stat-info-sm red">
+						<span class="title">{{ 'Средств выведено' | i18n }}</span>
+						<span class="count">{{ Math.abs(balance.deduced)?.toFixed(2) }} {{ balance.currency }}</span>
+					</div>
+				</div>     			
+      		</div>
+
+            <div class="stat-chart">
+				<h2>{{ 'Динамика баланса за период' | i18n }} <strong *ngIf="balance_period.from">{{ balance_period.from }} - {{ balance_period.till }}</strong></h2>
+              	<sa-chart-js *ngIf="balanceChart.data" type="line" [options]="balanceChart.options" [data]="balanceChart.data"></sa-chart-js>
+            </div>
+
+		</div>
+    </div>
+  </div>
+</div>

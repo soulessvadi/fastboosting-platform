@@ -46,4 +46,5 @@ import {CalendarComponentsModule} from "@app/shared/calendar/calendar-components
     CalendarComponentsModule,
   ]
 })
+
 export class SharedModule {}

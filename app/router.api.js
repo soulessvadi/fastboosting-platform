@@ -1,86 +1,145 @@
 const Router = require('express').Router();
 const Connection = require('./models/sequelize').connection;
-const Controllers = require('./controllers/controller.api.js');
+const Utils = require('./utils/helpers');
+const Guards = require('./utils/guards');
+const Storage = require('./utils/storage');
+const ApiController = require('./controllers/controller.api.js');
 const BaseController = require('./controllers/controller.base.js')(Connection);
 const UsersController = require('./controllers/controller.users.js')(Connection);
+const PartnersController = require('./controllers/controller.partners.js')(Connection);
 const IntefaceController = require('./controllers/controller.interface.js')(Connection);
 const OrdersController = require('./controllers/controller.orders.js')(Connection);
 const TicketsController = require('./controllers/controller.tickets.js')(Connection);
 const NewsController = require('./controllers/controller.news.js')(Connection);
-const Utils = require('./utils/helpers');
-const AuthGuard = require('./utils/authguard');
-const Storage = require('./utils/storage');
+const AuthController = require('./controllers/controller.auth.js')(Connection);
+const TxsController = require('./controllers/controller.txs.js')(Connection);
 
-Router.use(Controllers.init);
+Router.use(ApiController.init);
 
 /* Public methods */
-Router.post('/register', UsersController.register);
-Router.post('/authorize', UsersController.authorize);
-Router.post('/recovery', UsersController.recovery);
+Router.post('/register', AuthController.register);
+Router.post('/authorize', AuthController.authorize);
+Router.post('/recovery', AuthController.recovery);
 /* Public methods */
 
+/* Interface */
 Router.get('/', BaseController.info);
-Router.get('/interface', AuthGuard, IntefaceController.get);
-Router.get('/interface/menu', AuthGuard, IntefaceController.menu);
+Router.get('/interface', Guards.auth, IntefaceController.get);
+Router.get('/interface/userTypes', Guards.auth, IntefaceController.userTypes);
+Router.get('/interface/menu', Guards.auth, IntefaceController.menu);
 Router.get('/interface/translate', IntefaceController.translate);
-Router.get('/interface/translations', IntefaceController.translations);
-Router.post('/interface/translations', IntefaceController.translationsU);
+Router.get('/interface/translations', IntefaceController.getTranslations);
+Router.post('/interface/translations', IntefaceController.updateTranslations);
 Router.get('/interface/heroes', IntefaceController.heroes);
+Router.get('/interface/medals', IntefaceController.medals);
 Router.get('/interface/servers', IntefaceController.servers);
 Router.get('/interface/lanes', IntefaceController.lanes);
 Router.get('/interface/countries', IntefaceController.countries);
 Router.get('/interface/paymethods', IntefaceController.paymethods);
+Router.get('/interface/pricelists', Guards.auth, IntefaceController.pricelists);
+Router.post('/interface/pricelists/boost', Guards.auth, IntefaceController.setBoostPricelist);
+Router.post('/interface/pricelists/medal', Guards.auth, IntefaceController.setMedalPricelist);
+Router.post('/interface/pricelists/categories', Guards.auth, IntefaceController.setPricelistCategories);
+/* Interface */
+
+/* Txs */
+Router.get('/txs', Guards.auth, TxsController.all);
+Router.delete('/txs/:id', Guards.auth, TxsController.remove);
+Router.put('/txs/:id', Guards.auth, TxsController.update);
+/* Txs */
 
 /* Orders */
-Router.get('/orders/all', AuthGuard, OrdersController.all);
-Router.get('/orders/problematic', AuthGuard, OrdersController.problematic);
-Router.get('/orders/pending', AuthGuard, OrdersController.accessible);
-Router.get('/orders/history', AuthGuard, OrdersController.history);
-Router.get('/orders/active', AuthGuard, OrdersController.active);
-Router.get('/orders/:number', AuthGuard, OrdersController.order);
-Router.post('/orders/:number', AuthGuard, OrdersController.orderUpdate);
-Router.post('/orders/active/issue', AuthGuard, OrdersController.issue);
-Router.post('/orders/active/report', AuthGuard, Storage.screenshots.any('files[]'), OrdersController.report);
-Router.post('/orders/active/workerStatus', AuthGuard, OrdersController.workerStatus);
-Router.post('/orders/active/setDotabuff', AuthGuard, OrdersController.setDotabuff);
-Router.post('/orders/active/cancelOrder', AuthGuard, OrdersController.cancelOrder);
-Router.post('/orders/joinOrder', AuthGuard, OrdersController.joinOrder);
+Router.get('/orders/all', Guards.auth, OrdersController.all);
+Router.get('/orders/reports', Guards.auth, OrdersController.reports);
+Router.delete('/orders/reports/:id', Guards.auth, OrdersController.removeReport);
+Router.delete('/orders/reports/screenshot/:src', Guards.auth, OrdersController.removeScreenshot);
+Router.put('/orders/reports/:id', Guards.auth, Storage.screenshots.any('files[]'), OrdersController.updateReport);
+Router.get('/orders/problematic', Guards.auth, OrdersController.problematic);
+Router.get('/orders/pending', Guards.auth, OrdersController.accessible);
+Router.get('/orders/history', Guards.auth, OrdersController.history);
+Router.get('/orders/active', Guards.auth, OrdersController.active);
+Router.post('/orders/active/issue', Guards.auth, OrdersController.issue);
+Router.post('/orders/active/report', Guards.auth, Storage.screenshots.any('files[]'), OrdersController.report);
+Router.post('/orders/active/workerStatus', Guards.auth, OrdersController.workerStatus);
+Router.post('/orders/active/setDotabuff', Guards.auth, OrdersController.setDotabuff);
+Router.post('/orders/active/cancelOrder', Guards.auth, OrdersController.cancelOrder);
+Router.post('/orders/joinOrder', Guards.auth, OrdersController.joinOrder);
+Router.get('/orders/:number', Guards.auth, OrdersController.order);
+Router.post('/orders/:number', Guards.auth, OrdersController.orderUpdate);
 /* Orders */
 
 /* Tickets */
-Router.get('/tickets/all', AuthGuard, TicketsController.all);
-Router.get('/tickets/self', AuthGuard, TicketsController.self);
-Router.get('/tickets/statuses', AuthGuard, TicketsController.statuses);
-Router.get('/tickets/types', AuthGuard, TicketsController.types);
-Router.get('/tickets/:number', AuthGuard, TicketsController.ticket);
-Router.post('/tickets/:number', AuthGuard, TicketsController.ticketUpdate);
-Router.post('/tickets/new', AuthGuard, TicketsController.new);
+Router.get('/tickets/all', Guards.auth, TicketsController.all);
+Router.get('/tickets/self', Guards.auth, TicketsController.self);
+Router.get('/tickets/statuses', Guards.auth, TicketsController.statuses);
+Router.get('/tickets/types', Guards.auth, TicketsController.types);
+Router.get('/tickets/:number', Guards.auth, TicketsController.ticket);
+Router.post('/tickets/:number', Guards.auth, TicketsController.ticketUpdate);
+Router.post('/tickets/new', Guards.auth, TicketsController.new);
 /* Tickets */
 
-/* Tickets */
-Router.post('/news/comment', AuthGuard, NewsController.newComment);
-/* Tickets */
+/* News */
+Router.post('/news/comment', Guards.auth, NewsController.newComment);
+/* News */
+
+/* Authorized user */ 
+Router.get('/users/me', Guards.auth, UsersController.me);
+Router.post('/users/me', Guards.auth, Storage.avatars.single('files'), UsersController.updateMe);
+Router.post('/users/me/changePassword', Guards.auth, UsersController.changePassword);
+Router.get('/users/me/contacts', Guards.auth, UsersController.contacts);
+Router.get('/users/me/logs&reviews', Guards.auth, UsersController.selfLogsAndReviews);
+Router.get('/users/me/bonuses&penalties', Guards.auth, UsersController.bonuses);
+Router.get('/users/me/pricelists', Guards.auth, UsersController.pricelists);
+Router.get('/users/me/txs', Guards.auth, UsersController.txs);
+Router.get('/users/me/events', Guards.auth, UsersController.events);
+Router.get('/users/me/balanceStatistics', Guards.auth, UsersController.balanceStatistics);
+Router.get('/users/me/boosterStatistics', Guards.auth, UsersController.boosterStatistics);
+Router.get('/users/me/payoutRequests', Guards.auth, UsersController.payoutRequests);
+Router.post('/users/me/payoutRequests', Guards.auth, UsersController.newPayoutRequest);
+/* Authorized user */ 
 
 /* Users*/
-Router.get('/users/me', AuthGuard, UsersController.me);
-Router.post('/users/me', AuthGuard, Storage.avatars.single('files'), UsersController.updateMe);
-Router.post('/users/me/changePassword', AuthGuard, UsersController.changePassword);
-Router.get('/users/me/contacts', AuthGuard, UsersController.contacts);
-Router.get('/users/me/logs&reviews', AuthGuard, UsersController.selfLogsAndReviews);
-Router.get('/users/me/bonuses&penalties', AuthGuard, UsersController.bonuses);
-Router.get('/users/me/pricelists', AuthGuard, UsersController.pricelists);
-Router.get('/users/me/txs', AuthGuard, UsersController.txs);
-Router.get('/users/me/events', AuthGuard, UsersController.events);
-Router.get('/users/me/balanceStatistics', AuthGuard, UsersController.balanceStatistics);
-Router.get('/users/me/boosterStatistics', AuthGuard, UsersController.boosterStatistics);
-Router.get('/users/me/payoutRequests', AuthGuard, UsersController.payoutRequests);
-Router.post('/users/me/payoutRequests', AuthGuard, UsersController.newPayoutRequest);
-Router.get('/users', AuthGuard, UsersController.list);
-Router.get('/users/:id', AuthGuard, UsersController.user);
-Router.post('/users', AuthGuard, UsersController.create);
-Router.put('/users/:id', AuthGuard, UsersController.update);
-Router.delete('/users/:id', AuthGuard, UsersController.remove);
+Router.get('/users/payoff', Guards.auth, UsersController.payoffRequests);
+Router.get('/users/payoff/:id', Guards.auth, UsersController.payoffRequest);
+Router.delete('/users/payoff/:id', Guards.auth, UsersController.removePayoffRequests);
+Router.put('/users/payoff/:id', Guards.auth, UsersController.updatePayoffRequests);
+Router.get('/users/types', Guards.auth, UsersController.types);
+Router.post('/users/types', Guards.auth, UsersController.typeCreate);
+Router.get('/users/types/:id', Guards.auth, UsersController.type);
+Router.put('/users/types/:id', Guards.auth, UsersController.typeUpdate);
+Router.delete('/users/types/:id', Guards.auth, UsersController.typeDelete);
+Router.put('/users/block', Guards.auth, UsersController.block);
+Router.put('/users/approve', Guards.auth, UsersController.approve);
+Router.get('/users/boosters/statistics', Guards.auth, UsersController.boostersStatistics);
+Router.get('/users/boosters', Guards.auth, UsersController.boosters);
+Router.get('/users/boosters/:id', Guards.auth, UsersController.booster);
+Router.put('/users/boosters/:id', Guards.auth, Storage.avatars.single('files'), UsersController.boosterUpdate);
+Router.post('/users/boosters', Guards.auth, Storage.avatars.single('files'), UsersController.boosterCreate);
+Router.get('/users/clients', Guards.auth, UsersController.clients);
+Router.get('/users/clients/:id', Guards.auth, UsersController.client);
+Router.put('/users/clients/:id', Guards.auth, Storage.avatars.single('files'), UsersController.clientUpdate);
+Router.post('/users/clients', Guards.auth, Storage.avatars.single('files'), UsersController.clientCreate);
+Router.get('/users/boosters', Guards.auth, UsersController.boosters);
+Router.get('/users/partners', Guards.auth, UsersController.partners);
+Router.get('/users', Guards.auth, UsersController.all);
+Router.get('/users/:id', Guards.auth, UsersController.user);
+Router.put('/users/:id', Guards.auth, Storage.avatars.single('files'), UsersController.userUpdate);
+Router.post('/users', Guards.auth, UsersController.create);
+Router.delete('/users/:id', Guards.auth, UsersController.remove);
 /* Users*/
+
+/* Partners */
+Router.get('/partners', Guards.auth, PartnersController.all);
+Router.post('/partners', Guards.auth, Storage.avatars.single('files'), PartnersController.create);
+Router.get('/partners/statistics', Guards.auth, PartnersController.statistics);
+Router.put('/partners/block', Guards.auth, PartnersController.block);
+Router.put('/partners/approve', Guards.auth, PartnersController.approve);
+Router.get('/partners/keygen', Guards.auth, PartnersController.keygen);
+Router.put('/partners/:id', Guards.auth, Storage.avatars.single('files'), PartnersController.partnerUpdate);
+Router.get('/partners/:id', Guards.auth, PartnersController.partner);
+Router.post('/partners/:id/pricelists/boost', Guards.auth, PartnersController.setPartnerBoostPricelist);
+Router.delete('/partners/:id', Guards.auth, PartnersController.remove);
+/* Partners */ 
 
 Router.get('/*', (req, res, next) => {
 	res.status(404).json('Requested address is not maintained.');

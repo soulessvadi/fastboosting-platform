@@ -25,12 +25,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     private renderer: Renderer,
     private socketio: SocketService,
     private _service: ComponentService,
-  ) { 
-    setInterval(() => {
-      let update = this.lastUpdate.toString();
-      this.lastUpdate = new Date(update);
-    }, 10000);
-  }
+  ) { }
 
   ngOnInit() {
     this.socketio.connect();  
@@ -41,12 +36,14 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
       this.reminders = reminders; this.countAll();
     });
     this.socketio.onEvent(SocketEvent.NTFMESSAGES).subscribe((messages) => {
+      console.log(messages)
       this.messages = messages; this.countAll();
     });
     this.update();
   }
 
   private countAll() { 
+    this.lastUpdate = new Date(); 
     this.count = this.news.length + this.reminders.length + this.messages.length;
   }
 
@@ -54,8 +51,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.socketio.emit(SocketEvent.NOTIFICATIONS, {t: this._service._token});     
     setTimeout(() => { 
-      this.loading = false; 
-      this.lastUpdate = new Date();  
+      this.loading = false;  
       this.countAll();
     }, 1000); 
   }

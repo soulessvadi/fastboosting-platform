@@ -27,7 +27,7 @@ export class LogoutComponent implements OnInit {
     this.notificationService.smartMessageBox(
       {
         title:
-          "<i class='fa fa-sign-out txt-color-orangeDark'></i> Выйти из системы <span class='txt-color-orangeDark'><strong>" + this._service._user.nick_name + "</strong></span> ?",
+          "<i class='fas fa-sign-out-alt txt-color-orangeDark'></i> Выйти из системы <span class='txt-color-orangeDark'><strong>" + this._service._user.nick_name + "</strong></span> ?",
         content:
           "Для безопасности, после выхода, закройте вкладку с приложением.",
         buttons: "[Нет][Да]"

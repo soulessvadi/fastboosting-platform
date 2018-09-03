@@ -5,35 +5,12 @@ const controllers = {};
 controllers.news = require('../controllers/controller.news')(connection);
 controllers.users = require('../controllers/controller.users')(connection);
 const async = require('async');
+var countdowns = {};
 
 module.exports.use = (app) => {
   var server = require('http').createServer(app);
   var io = require('socket.io')(server);
   var online = 0;
-
-
-  Models.Order.findAll({where:{type:4}}).then(orders => {
-    if(orders) {
-      for(let order of orders) {
-        let distance = (order.training_hours - order.training_hours_done) * 60 * 60 * 1000;
-        let timer = {h:'00',m:'00',s:'00',paused:false,stopped:false};
-        let pause = false;
-        let interval = setInterval(function() {
-          if(!pause) {
-            distance -= 1000;
-            timer.h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            timer.m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            timer.s = Math.floor((distance % (1000 * 60)) / 1000);
-            timer.h = ("00" + timer.h).substr(-2);
-            timer.m = ("00" + timer.m).substr(-2);
-            timer.s = ("00" + timer.s).substr(-2);
-          }
-          io.to(order.system_number).emit('order countdown', timer);
-          if(distance < 0) clearInterval(interval);
-        }, 1000);        
-      }
-    }
-  }).catch(console.log);
 
   io.touser = (user_id) => {
     var socket = null;
@@ -54,6 +31,13 @@ module.exports.use = (app) => {
     var addedUser = false;
 
     socket.on('user connected', (data) => {
+      let token = data.t;
+      if(!data.t) return socket.emit('property failure');
+      let user = Utils.jwtVerify(data.t);
+      if(!user) socket.emit('property failure');
+    });
+
+    socket.on('user connected', (data) => {
       if(!data.t) return null;
       let user = Utils.jwtVerify(data.t);
       if(!user) return null;
@@ -61,13 +45,9 @@ module.exports.use = (app) => {
       if(user.type == 3) socket.join('boosters');
       socket.nick_name = user.nick_name;
       socket.user_id = user.id;
-    });
-
-    socket.on('property check', (data) => {
-      let token = data.t;
-      if(!data.t) return socket.emit('property failure');
-      let user = Utils.jwtVerify(data.t);
-      if(!user) socket.emit('property failure');
+      setInterval(() => {
+        if(!Utils.jwtVerify(data.t)) socket.emit('property failure');
+      }, 5000);
     });
 
     socket.on('join room', (data) => {
@@ -146,13 +126,14 @@ module.exports.use = (app) => {
             if(t.id, 'support', 'order') as type,
             if(t.id, t.system_number, o.system_number) as system_number
             from chat_messages cm
-            left join orders o on o.system_number = cm.room and o.worker_id = ?
-            left join tickets t on t.system_number = cm.room and t.user_id = ?
-            where cm.user_id <> ? and seen = ?
+            left join orders o on o.system_number = cm.room and (o.worker_id = ${user.id} or o.client_id = ${user.id})
+            left join tickets t on t.system_number = cm.room and t.user_id = ${user.id}
+            where cm.user_id <> ${user.id} and seen = 0
+            having system_number is not null
             order by cm.id desc limit 100) as m
           group by m.system_number
           order by m.created_at desc`, 
-          {replacements:[user.id, user.id, user.id, 0], raw: true})
+          {raw: true})
         .then(messages => {
           socket.emit('notification messages', messages);
         })
@@ -168,6 +149,61 @@ module.exports.use = (app) => {
       socket.broadcast.emit('stop typing', { nick_name: socket.nick_name });
     });
 
+    socket.on('order countdown get', (data) => {
+      let order_number = data.order_number;
+      if(!order_number) return null;
+      if(countdowns[order_number] && countdowns[order_number]['timer']) {
+        io.to(data.order_number).emit('order countdown set', countdowns[order_number]['timer']);
+      } else {
+        Models.Order.findOne({where:{system_number:order_number}, raw: true}).then(order => {
+          if(!order) return null;
+          let distance = (order.training_hours - order.training_hours_done) * 60 * 60 * 1000;
+          let timer = getTimeLeftObject(distance);
+          io.to(order.system_number).emit('order countdown set', timer);
+        }).catch(e => null);
+      }
+    });
+
+    socket.on('order countdown start', (data) => {
+      let order_number = data.order_number;
+      if(!order_number) return null;
+
+      if(countdowns[order_number] && countdowns[order_number]['pause']) {
+        countdowns[order_number]['pause'] = false;
+        io.to(data.order_number).emit('order countdown start', countdowns[order_number]['timer']);
+        return null;
+      } else {
+        Models.Order.findOne({where:{system_number:order_number}}).then(order => {
+          if(!order) return null;
+            let distance = (order.training_hours - order.training_hours_done) * 60 * 60 * 1000;
+            countdowns[order_number] = [];
+            countdowns[order_number]['pause'] = false;
+            countdowns[order_number]['interval'] = setInterval(function() {
+              if(!countdowns[order_number]['pause']) {
+                distance -= 1000;
+                countdowns[order_number]['distance'] = distance;
+                countdowns[order_number]['timer'] = getTimeLeftObject(distance);
+                io.to(order.system_number).emit('order countdown', countdowns[order_number]['timer']);
+              }
+              if(distance < 0) orderTimerStop(order_number);
+            }, 1000);  
+        }).catch(e => null);
+      }
+    });
+    
+    socket.on('order countdown pause', (data) => {
+      let order_number = data.order_number;
+      if(!order_number || !countdowns[order_number]) return null;
+      countdowns[order_number]['pause'] = true;
+      io.to(data.order_number).emit('order countdown pause', countdowns[order_number]['timer']);
+    });
+
+    socket.on('order countdown stop', (data) => {
+      let order_number = data.order_number;
+      if(!order_number || !countdowns[order_number]) return null;
+      orderTimerStop(order_number);
+    });
+
     socket.on('disconnect', () => {
       if (addedUser) {
         --online;
@@ -178,4 +214,30 @@ module.exports.use = (app) => {
 
   server.listen(4001);
 
+  function getTimeLeftObject(distance) {
+    let timer = {};
+    timer.h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    timer.m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    timer.s = Math.floor((distance % (1000 * 60)) / 1000);
+    timer.h = ("00" + timer.h).substr(-2);
+    timer.m = ("00" + timer.m).substr(-2);
+    timer.s = ("00" + timer.s).substr(-2);
+    return timer;
+  }
+
+  function orderTimerStop(order_number) {
+    if(!order_number || !countdowns[order_number]) return null;
+    let distance = countdowns[order_number]['distance'];
+    Models.Order.findOne({where:{system_number:order_number}}).then(order => {
+      if(!order) return null;
+      let hoursLeft = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let hoursUsed = order.training_hours - hoursLeft;
+      let timer =  getTimeLeftObject(hoursLeft * 60 * 60 * 1000);
+      order.update({training_hours_done: hoursUsed}).then(res => {
+        clearInterval(countdowns[order_number]['interval']);
+        delete countdowns[order_number];
+        io.to(order_number).emit('order countdown stop', timer);
+      }).catch(e => console.log(e));
+    }).catch(e => console.log(e));
+  }
 }

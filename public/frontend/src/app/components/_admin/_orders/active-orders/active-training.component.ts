@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, TemplateRef,
 import { Router } from '@angular/router';
 import { ComponentService } from '@app/components/components.service';
 import { SocketService, SocketEvent, Message } from '@app/components/socketio.service';
-import { DatePipe } from '@angular/common';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { NotificationService } from '@app/core/services';
@@ -22,7 +21,11 @@ export class TrainingComponent implements OnInit, OnDestroy {
   @Input() order;
   @Input() properties;
   private bsModalRef: BsModalRef;
+  public responseMessage = null;
   public tabs: any = { active: 0 };
+  public heroes: any = {};
+  public lanes: any = {};
+  public servers: any = {};
   public progress: number = 0;
   public chat = {
     message:'',
@@ -42,18 +45,52 @@ export class TrainingComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificationService: NotificationService,
     private socketio: SocketService, 
-    private datePipe: DatePipe, 
     private modalService: BsModalService, 
     private el: ElementRef,
   ) { }
 
   ngOnInit() { 
-    this.joinChat(this.order.system_number);
+    this._service._heroes.then((heroes: any) => this.heroes = heroes);
+    this._service._lanes.then((lanes: any) => this.lanes = lanes);
+    this._service._servers.then((servers: any) => this.servers = servers);
+    this.joinSockets(this.order.system_number);
     this.progress = this.getProgress();
   }
 
   ngOnDestroy() {
-    this.leaveChat(this.order.system_number);
+    this.leaveSockets(this.order.system_number);
+  }
+
+  public save() {
+    $('#save-btn').addClass('loading');
+    this._service.saveOrder(this.order.system_number, this.order).subscribe((res: any) => {
+      if(res.status == 200) this.responseMessage = 'Сохранено';
+      setTimeout(() => { $('#save-btn').removeClass('loading'); this.responseMessage = null; }, 1000);
+    })
+  }
+
+  public heroesChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes.push(hero.id);
+    else if (this.order.heroes.indexOf(hero.id) !== -1)
+      this.order.heroes.splice(this.order.heroes.indexOf(hero.id), 1);
+  }
+
+  public heroesBanChanged(hero) {
+    if(hero.checked) 
+      this.order.heroes_ban.push(hero.id);
+    else if (this.order.heroes_ban.indexOf(hero.id) !== -1)
+      this.order.heroes_ban.splice(this.order.heroes_ban.indexOf(hero.id), 1);
+  }
+
+  public lanesChanged(lane) {
+    if(lane.checked) this.order.lanes.push(lane.id);
+    else this.order.lanes = this.order.lanes.filter(e => e != lane.id);
+  }
+
+  public serversChanged(server) {
+    if(server.checked) this.order.servers.push(server.id);
+    else this.order.servers = this.order.servers.filter(e => e != server.id);
   }
 
   public changeStatus() {
@@ -68,6 +105,14 @@ export class TrainingComponent implements OnInit, OnDestroy {
     this.dotabuff.emit(e);
   }
 
+  public serviceCanged(service, $event) {
+    if($event.target.checked) 
+      this.order.training_services.push(service.id);
+    else
+      this.order.training_services = this.order.training_services.filter(e => e != service.id);
+    console.log(this.order.training_services)
+  }
+
   public reportSaved(response) {
     this.report.emit(response);
     if(response.report) { 
@@ -77,32 +122,74 @@ export class TrainingComponent implements OnInit, OnDestroy {
   }
 
   public pause(): void {
-    if(this.timer.paused)
-      this.socketio.emit(SocketEvent.ORDERCOUNTDOWNSTART, {room:this.order.system_number}); 
-    else
-      this.socketio.emit(SocketEvent.ORDERCOUNTDOWNPAUSE, {room:this.order.system_number}); 
+    if(this.timer.stopped || this.timer.paused) {
+      this.socketio.emit(SocketEvent.ORDERCOUNTDOWNSTART, {order_number:this.order.system_number});
+    } else {
+      this.socketio.emit(SocketEvent.ORDERCOUNTDOWNPAUSE, {order_number:this.order.system_number});
+    }
   }
 
-  private joinChat(room): void {
+  public stop(): void {
+    this.socketio.emit(SocketEvent.ORDERCOUNTDOWNSTOP, {order_number:this.order.system_number});
+  }
+
+  private joinSockets(room): void {
     this.socketio.emit(SocketEvent.JOIN, { room:room, nick_name:this._service.user.nick_name });
+    this.socketio.emit(SocketEvent.ORDERCOUNTDOWNGET, { order_number:room });
+
+    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWNPAUSE).subscribe((res) => {
+        this.timer.paused = true;
+        this.timer.stopped = false;
+        this.timer.h = res.h;
+        this.timer.m = res.m;
+        this.timer.s = res.s;
+    }); 
+    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWNSTART).subscribe((res) => {
+        this.timer.paused = false;
+        this.timer.stopped = false;
+        this.timer.h = res.h;
+        this.timer.m = res.m;
+        this.timer.s = res.s;
+    }); 
+    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWNSET).subscribe((res) => {
+        this.timer.h = res.h;
+        this.timer.m = res.m;
+        this.timer.s = res.s;
+    }); 
+    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWNSTOP).subscribe((res) => {
+        this.timer.paused = true;
+        this.timer.stopped = true;
+        this.timer.h = res.h;
+        this.timer.m = res.m;
+        this.timer.s = res.s;
+    }); 
+    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWN).subscribe((res) => {
+        this.timer.paused = false;
+        this.timer.stopped = false;
+        this.timer.h = res.h;
+        this.timer.m = res.m;
+        this.timer.s = res.s;
+    }); 
+    this.socketio.onEvent(SocketEvent.ROOMMSGS).subscribe((res) => {
+      this.chat.messages = res;
+    }); 
     this.socketio.onEvent(SocketEvent.ORDERMSG).subscribe((message) => {
       if(message.user.id != this._service.user.id) ++this.chat.unread;
       this.chat.messages.push(message);
       this.scrollChat();
-    });
-    this.socketio.onEvent(SocketEvent.ORDERCOUNTDOWN).subscribe((res) => {
-        this.timer = res;
-    }); 
-    this.socketio.onEvent(SocketEvent.ROOMJOINED).subscribe((res) => {
-        console.log(res.nick_name + ' joined chat');
-    }); 
-    this.socketio.onEvent(SocketEvent.ROOMMSGS).subscribe((res) => {
-      this.chat.messages = res;
-    });      
+    });     
   }
 
-  private leaveChat(room): void {
-    this.socketio.removeEvent(SocketEvent.ORDERMSG, SocketEvent.ROOMJOINED, SocketEvent.ROOMMSGS, SocketEvent.ORDERCOUNTDOWN);
+  private leaveSockets(room): void {
+    this.socketio.removeEvent(
+      SocketEvent.ORDERMSG, 
+      SocketEvent.ROOMMSGS, 
+      SocketEvent.ORDERCOUNTDOWN, 
+      SocketEvent.ORDERCOUNTDOWNSET, 
+      SocketEvent.ORDERCOUNTDOWNPAUSE, 
+      SocketEvent.ORDERCOUNTDOWNSTART,
+      SocketEvent.ORDERCOUNTDOWNSTOP
+     );
     this.socketio.emit(SocketEvent.LEAVE, {room:room});
   }
 
@@ -129,11 +216,9 @@ export class TrainingComponent implements OnInit, OnDestroy {
 
   public getProgress() {
     let progress;
-    if(this.order.type == 1) {
-      let totalval = this.order.mmr_finish - this.order.mmr_start;
-      let doneval = this.order.mmr_boosted;
-      progress = 100 / totalval * doneval;
-    }
+    let totalval = this.order.training_hours;
+    let doneval = this.order.training_hours_done;
+    progress = 100 / totalval * doneval;
     return Math.round(progress);
   }
 
@@ -144,5 +229,9 @@ export class TrainingComponent implements OnInit, OnDestroy {
 
   public modalClose() {
     this.bsModalRef.hide();
+  }
+
+  public setDeadline($event) {
+    this.order.deadline = moment($event, 'DD.MM.YYYY').toISOString();
   }
 }

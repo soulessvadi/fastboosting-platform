@@ -21,10 +21,10 @@
         <a *ngIf="menu.link" title="{{ menu.name | i18n }}" routerLink="{{ menu.link }}"><i class="fa-lg fa-fw {{ menu.icon }}"></i><span class="menu-item-parent">{{ menu.name | i18n }}</span></a>
         <ul *ngIf="menu.nestings?.length">
           <ng-container *ngFor="let child of menu.nestings">
-            <li routerLinkActive="active" *ngIf="child.link != '/orders/active'">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"  *ngIf="child.link != '/orders/active'">
               <a routerLink="{{ child.link }}">{{ child.name | i18n }}</a>
             </li>
-            <li routerLinkActive="active" *ngIf="child.link == '/orders/active' && _service.user.is_busy">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" *ngIf="child.link == '/orders/active' && _service.user.is_busy">
               <a routerLink="{{ child.link }}">{{ child.name | i18n }}</a>
             </li>
           </ng-container>

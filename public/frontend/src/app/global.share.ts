@@ -9,6 +9,7 @@ import {PipesModule} from "@app/shared/pipes/pipes.module";
 import {ChatModule} from "@app/shared/chat/chat.module";
 import {InlineGraphsModule} from "@app/shared/graphs/inline/inline-graphs.module";
 import {SmartProgressbarModule} from "@app/shared/ui/smart-progressbar/smart-progressbar.module";
+import {SafePipe} from "@app/components/pipes/safe.pipe";
 
 @NgModule({
   imports: [
@@ -18,7 +19,9 @@ import {SmartProgressbarModule} from "@app/shared/ui/smart-progressbar/smart-pro
     ElementsModule,
     BootstrapModule
   ],
-  declarations: [],
+  declarations: [
+    SafePipe
+  ],
   exports: [
     CommonModule,
     FormsModule,
@@ -30,6 +33,7 @@ import {SmartProgressbarModule} from "@app/shared/ui/smart-progressbar/smart-pro
     SmartProgressbarModule,
     InlineGraphsModule,
     ChatModule,
+    SafePipe,
   ]
 })
 

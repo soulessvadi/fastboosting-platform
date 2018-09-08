@@ -442,7 +442,7 @@ module.exports = (db) => {
 			},
 			txs: (cb) => {
 				connection.execute(`
-					select txs.system_number, txs.created_at, txs.status, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
+					select txs.system_number, txs.created_at, txs.status, txs.comment, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
 					(select name from currencies where id = txs.currency_id) as currency_name, 
 					(select name from txs_types where id = txs.type) as type_name, 
 					(select name from txs_statuses where id = txs.status) as status_name
@@ -610,7 +610,8 @@ module.exports = (db) => {
 						(select sum(txs.amount) from txs where user_id = users.id and status = 3 limit 1) as balance,
 						(select name from currencies where id = users.currency_id limit 1) as currency,
 						(select sum(amount) from orders where client_id = users.id limit 1) as orders_amount,
-						(select system_number from orders where client_id = users.id and status in(5,6,9) limit 1) as active_order
+						(select system_number from orders where client_id = users.id and status in(5,6,9) limit 1) as active_order,
+						(select id from orders where client_id = users.id and status in(5,6,9) limit 1) as active_order_id
 						from users where id = ${user_id} limit 1`, { raw: true })
 					.then((user) => cb(null, user))
 					.catch((err) => res.status(202).json({'error':'internal_error'}));
@@ -632,7 +633,7 @@ module.exports = (db) => {
 			},
 			txs: (cb) => {
 				connection.execute(`
-					select txs.system_number, txs.created_at, txs.status, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
+					select txs.system_number, txs.comment, txs.created_at, txs.status, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
 					(select name from currencies where id = txs.currency_id) as currency_name, 
 					(select name from txs_types where id = txs.type) as type_name, 
 					(select name from txs_statuses where id = txs.status) as status_name
@@ -816,6 +817,7 @@ module.exports = (db) => {
 						 is_approved, created_at, country, currency_id, language, birth_date, permissions, order_permissions, heroes, lanes, 
 						(select sum(txs.amount) from txs where user_id = users.id and status = 3 limit 1) as balance,
 						(select system_number from orders where status in (5,6,9) and worker_id = users.id limit 1) as active_order,
+						(select id from orders where status in (5,6,9) and worker_id = users.id limit 1) as active_order_id,
 						(select name from currencies where id = users.currency_id limit 1) as currency
 						from users where id = ${user_id} and type = 3 limit 1`, { raw: true })
 					.then((user) => {
@@ -849,20 +851,51 @@ module.exports = (db) => {
 				.then((orders) => cb(null, orders))
 				.catch((err) => cb(null, []));
 			},
-			ordersc: (cb) => {
+			reviews: (cb) => {
 				connection.execute(`
-				  	select o.id, o.client_comment,o.status,o.system_number,o.created_at, o.deadline, o.amount, o.amount_paid, o.client_id, 
-				  	c.name as currency_name, c.sign as currency_sign, p.name as partner_name, p.domain as partner_domain,
-				  	(select name from orders_statuses where id = o.status) as status_name,
-				  	(select name from orders_types where id = o.type) as type_name
-				  	from orders o
-				  	left join partners p on p.id = o.partner_id
-				  	left join currencies c on c.id = o.currency_id
-				  	where o.client_id = ${user_id}
-					order by o.id desc`, { raw: true })
-				.then((results) => cb(null, results))
-				.catch((err) => cb(null, []));
+					select ur.comment, ur.mark, ur.created_at,
+					(select system_number from orders where id = ur.order_id) as order_number,
+					(select nick_name from users where id = ur.client_id) as author_name,
+					(select avatar from users where id = ur.client_id) as author_avatar
+					from users_reviews ur 
+					where ur.user_id = ? 
+					order by ur.id desc`, { replacements: [user_id], raw: true})
+				.then((res) => {
+					cb(null, res);
+				})
+				.catch((err) => {
+					cb(null, []);
+				});
 			},
+			logs: (cb) => {
+				connection.execute(`
+					select logs.message, logs.created_at, la.name, la.details,
+					(select system_number from orders where id = logs.order_id) as order_number
+					from logs
+					left join logs_actions la on la.id = logs.action_id
+					where logs.user_id = ? 
+					order by logs.id desc limit 50`, { replacements: [user_id], raw: true})
+				.then((res) => {
+					cb(null, res);
+				})
+				.catch((err) => {
+					cb(null, []);
+				});
+			},
+			// ordersc: (cb) => {
+			// 	connection.execute(`
+			// 	  	select o.id, o.client_comment,o.status,o.system_number,o.created_at, o.deadline, o.amount, o.amount_paid, o.client_id, 
+			// 	  	c.name as currency_name, c.sign as currency_sign, p.name as partner_name, p.domain as partner_domain,
+			// 	  	(select name from orders_statuses where id = o.status) as status_name,
+			// 	  	(select name from orders_types where id = o.type) as type_name
+			// 	  	from orders o
+			// 	  	left join partners p on p.id = o.partner_id
+			// 	  	left join currencies c on c.id = o.currency_id
+			// 	  	where o.client_id = ${user_id}
+			// 		order by o.id desc`, { raw: true })
+			// 	.then((results) => cb(null, results))
+			// 	.catch((err) => cb(null, []));
+			// },
 			menus: (cb) => {
 				Models.Menu.findAll({where:{nested_in:0},attributes:['id','name'],raw:true})
 				.then((results) => {
@@ -894,7 +927,7 @@ module.exports = (db) => {
 			},
 			txs: (cb) => {
 				connection.execute(`
-					select txs.system_number, txs.created_at, txs.status, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
+					select txs.system_number, txs.created_at, txs.comment, txs.status, txs.type, cast(txs.amount AS decimal(19,2)) as amount,
 					(select name from currencies where id = txs.currency_id) as currency_name, 
 					(select name from txs_types where id = txs.type) as type_name, 
 					(select name from txs_statuses where id = txs.status) as status_name
@@ -1110,10 +1143,46 @@ module.exports = (db) => {
 				.catch(e => cb(null, e))
 			},
 			calibration: (cb) => {
-				cb(null, []);
+				connection.execute(`
+					select up.name, c.name as currency_name, c.sign as currency_sign,
+					if(u.currency_id = 1, up.rub * upc.factor, up.usd * upc.factor) as price
+					from users_pricelists_calibrations as up
+				  	left join users as u on u.id = ?
+				  	left join currencies as c on c.id = u.currency_id
+				  	left join users_pricelists_categories as upc on upc.id = u.rating_id
+				  	group by up.id order by up.id`, {replacements:[user.id]})
+				.then(results => {
+					cb(null, results)
+				})
+				.catch(e => cb(null, e))
 			},
 			training: (cb) => {
-				cb(null, []);
+				connection.execute(`
+					select up.hours, c.name as currency_name, c.sign as currency_sign,
+					if(u.currency_id = 1, up.rub * upc.factor, up.usd * upc.factor) as price
+					from users_pricelists_trainings as up
+				  	left join users as u on u.id = ?
+				  	left join currencies as c on c.id = u.currency_id
+				  	left join users_pricelists_categories as upc on upc.id = u.rating_id
+				  	group by up.id order by up.id`, {replacements:[user.id]})
+				.then(results => {
+					cb(null, results)
+				})
+				.catch(e => cb(null, e))
+			},
+			training_services: (cb) => {
+				connection.execute(`
+					select up.name, c.name as currency_name, c.sign as currency_sign,
+					if(u.currency_id = 1, up.rub * upc.factor, up.usd * upc.factor) as price
+					from users_pricelists_training_services as up
+				  	left join users as u on u.id = ?
+				  	left join currencies as c on c.id = u.currency_id
+				  	left join users_pricelists_categories as upc on upc.id = u.rating_id
+				  	group by up.id order by up.id`, {replacements:[user.id]})
+				.then(results => {
+					cb(null, results)
+				})
+				.catch(e => cb(null, e))
 			}
 		}, (error, stack) => {
 			if(error) return res.status(202).json({error:'internal_error'});
@@ -1170,9 +1239,10 @@ module.exports = (db) => {
       	let search_condition = system_number ? `and txs.system_number = '${system_number}'` : '';
 		connection.execute(`
 			select txs.system_number, txs.created_at, txs.status, txs.type, txs.comment, cast(txs.amount AS decimal(19,2)) as amount,
-			(select name from currencies where id = txs.currency_id) as currency_name, 
-			(select name from txs_types where id = txs.type) as type_name, 
-			(select name from txs_statuses where id = txs.status) as status_name
+			(select name from currencies where id = txs.currency_id limit 1) as currency_name, 
+			(select system_number from orders where id = txs.order_id limit 1) as order_number, 
+			(select name from txs_types where id = txs.type limit 1) as type_name, 
+			(select name from txs_statuses where id = txs.status limit 1) as status_name
 			from txs 
 			where txs.user_id = ? 
 			${search_condition}
@@ -1186,8 +1256,8 @@ module.exports = (db) => {
 				let total = stats.reduce((a, c) => a + c.value, 0);
 	            let pages = Math.ceil(total/perpage);
 	            let pagination = utils.paginate(page, perpage, pages, 3);
-	            stats.forEach(e => { e.ratio = (100 / total * e.value).toFixed(2); });
-				res.status(200).json({txs: results, pagination: pagination, stats: stats});
+	            stats.forEach(e => { e.ratio = (total ? (100 / total * e.value) : 0).toFixed(5); });
+				res.status(200).json({txs: results, pagination: pagination, stats: stats, total: total});
 			})
 			.catch(err => {
 				res.status(202).json({error:'internal_error'});
@@ -1265,20 +1335,22 @@ module.exports = (db) => {
 		async.parallel({
 			user: (cb) => {
 				connection.executeOne(
-					`select id, type, permissions, order_permissions, lanes, heroes, first_name, last_name, nick_name, language, 
+					`select id, type, order_permissions, lanes, heroes, first_name, last_name, nick_name, language, referrer_hash,
 					is_approved, is_blocked, is_subscribed, language, avatar, country, phone, skype, discord, email,
 					facebook, vkontakte, twitter, youtube, instagram, mmr_solo, mmr_party, dotabuff, rating, created_at,
 					(select avg(mark) from users_reviews where user_id = users.id) as reviews_mark,
+					(select id from orders_histories where worker_id = users.id and action = 1 and DATE(created_at) > '${activity_date}' limit 1) as is_active,
+					(select avg(rank) from orders_histories where worker_id = users.id and action = 2 limit 1) as orders_rank,
+					(select created_at from orders_histories where worker_id = users.id order by created_at desc limit 1) as orders_last,
 					(select count(id) from users_reviews where user_id = users.id) as reviews_total,
 					if((select id from orders o where o.worker_id = users.id and (o.status = 6 or o.status = 9) limit 1), true, false) as is_busy,
 					(select o.system_number from orders o where o.worker_id = users.id and (o.status = 6 or o.status = 9) limit 1) as active_order
 					from users where id = ? limit 1`, { replacements: [req.app.user.id], raw: true, model: Models.User })
 				.then((user) => {
-					if(!fs.existsSync(storage.spaces.avatars + user.avatar)) {
-						user.avatar = 'mock.png';
-					}
-					user.lanes = JSON.parse(user.lanes) || [];
-					user.heroes = JSON.parse(user.heroes) || [];
+					if(!fs.existsSync(storage.spaces.avatars + user.avatar)) user.avatar = 'mock.png';
+					user.lanes = utils.jsonDecode(user.lanes);
+					user.heroes = utils.jsonDecode(user.heroes);
+					user.order_permissions = utils.jsonDecode(user.order_permissions);
 					connection.execute(`
 						select upp.id, upp.prop, upp.default, upp.method_id, upp.country,
 						(select name from users_pay_methods where id = upp.method_id limit 1) as method 
@@ -1295,6 +1367,16 @@ module.exports = (db) => {
 				.catch((err) => {
 					return res.status(202).json({error:'internal_error'});
 				});
+			},
+			otypes: (cb) => {
+				Models.OrderType.findAll({attributes:['id','name'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
+			osources: (cb) => {
+				Models.Partner.findAll({attributes:['id','name','domain'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
 			},
 			reviews: (cb) => {
 				connection.execute(`
@@ -1414,6 +1496,7 @@ module.exports = (db) => {
 		.then((user) => {
     		if(user) {
     			user.update({password: md5(req.body.new)});
+    			Models.Log.create({user_id: user.id, action_id: 5});
     			res.status(200).json();
     		} else {
     			res.status(202).json({'error':'incorrect_password'});
@@ -1505,11 +1588,11 @@ module.exports = (db) => {
 	controller.calculateBalanceDetailed = (user_id) => {
 		return connection.executeOne(`
 			select 
-			(select deposit from users where id = txs.user_id limit 1) as deposit,
-			sum(if(txs.status = 3, txs.amount, 0)) as balance,
-			sum(if(txs.status = 3 and (txs.type = 1 or txs.type = 3), txs.amount, 0)) as earned,
-			sum(if(txs.status = 3 and (txs.type = 2), txs.amount, 0)) as deduced,
-			sum(if(txs.status = 3 and (txs.type = 4), txs.amount, 0)) as withheld,
+			coalesce((select deposit from users where id = txs.user_id limit 1), 0) as deposit,
+			coalesce(sum(if(txs.status = 3, txs.amount, 0)), 0) as balance,
+			coalesce(sum(if(txs.status = 3 and (txs.type = 1 or txs.type = 3), txs.amount, 0)), 0) as earned,
+			coalesce(sum(if(txs.status = 3 and (txs.type = 2), txs.amount, 0)), 0) as deduced,
+			coalesce(sum(if(txs.status = 3 and (txs.type = 4), txs.amount, 0)), 0) as withheld,
 			(select name from currencies where id = (select currency_id from users where id = txs.user_id limit 1)) as currency
 			from txs 
 			where user_id = ? limit 1`, 
@@ -1520,13 +1603,13 @@ module.exports = (db) => {
 	controller.calculateWorkDetailed = (user_id) => {
 		return connection.executeOne(`
 			select 
-			sum(1) as orders_total,
-			sum(if(oh.finisher = 1, 1, 0)) as orders_finished,
-			avg(oh.rank) as average_rank,
-			(select rating from users where id = oh.worker_id limit 1) as current_rank,
-			(select sum(mmr_diff) from orders_reports where user_id = oh.worker_id and canceled = 0) as mmr_volume,
-			(select avg(mark) from users_reviews where user_id = oh.worker_id) as reviews_mark,
-			(select count(id) from users_reviews where user_id = oh.worker_id) as reviews_total
+			coalesce(sum(1), 0) as orders_total,
+			coalesce(sum(if(oh.finisher = 1, 1, 0)), 0) as orders_finished,
+			coalesce(avg(oh.rank), 0) as average_rank,
+			coalesce((select rating from users where id = oh.worker_id limit 1), 0) as current_rank,
+			coalesce((select sum(mmr_diff) from orders_reports where user_id = oh.worker_id and canceled = 0), 0) as mmr_volume,
+			coalesce((select avg(mark) from users_reviews where user_id = oh.worker_id), 0) as reviews_mark,
+			coalesce((select count(id) from users_reviews where user_id = oh.worker_id), 0) as reviews_total
 			from orders_histories oh 
 			where oh.worker_id = ? and oh.action = ? limit 1`, 
 			{replacements: [user_id, 2], raw: true}

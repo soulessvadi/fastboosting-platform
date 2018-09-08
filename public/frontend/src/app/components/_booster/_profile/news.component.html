@@ -15,7 +15,7 @@
             </span>
           </li>
           <li> 
-            <a class="txt-color-blue" class="txt-color-blue" (click)="post.show_comments = true">
+            <a class="txt-color-blue" class="txt-color-blue" (click)="post.show_comments = !post.show_comments">
               <i class="fas fa-comment-dots"></i> 
               <span> {{ 'комментарии' | i18n }}: {{ post.comments?.length || 'нет' }}</span>
             </a>
@@ -25,11 +25,27 @@
       <div class="col-sm-6 col-md-8 col-lg-10 padding-left-0">
         <h3 class="margin-top-0 margin-bottom-10">
           <strong class="txt-color-blue">{{ post.title }}</strong><br>
-          <small class="font-xs"><i>Создатель{{ '' | i18n }}: <strong class="txt-color-blue">{{ post.author }}</strong></i></small>
+          <small class="font-xs"><i>{{ 'Автор' | i18n }}: <strong class="txt-color-blue">{{ post.author }}</strong></i></small>
         </h3>
-        <p *ngIf="!post.full_view">{{ post.preview }}</p>
-        <p *ngIf="post.full_view">{{ post.text }}</p>
-        <a class="btn btn-info btn-xs" (click)="post.full_view = true" *ngIf="!post.full_view">{{ 'читать полностью' | i18n }} <i class="fas fa-chevron-down fs-8 va-m"></i></a>
+        <p *ngIf="!post.full_view" [innerHTML]="post.preview"></p>
+        <p *ngIf="post.full_view" [innerHTML]="post.text"></p>
+        <button class="btn btn-primary btn-sm" (click)="post.full_view = !post.full_view">
+          <i class="fas" [class.fa-eye]="!post.full_view" [class.fa-eye-slash]="post.full_view"></i>&nbsp;
+          {{ post.full_view ? 'Скрыть текст' : 'Полный текст' | i18n }}
+        </button>
+        <button class="btn btn-success btn-sm" (click)="post.show_comments = !post.show_comments">
+          <i class="fas" [class.fa-comments]="!post.show_comments" [class.fa-times]="post.show_comments"></i>&nbsp;
+          {{ post.show_comments ? 'Закрыть комментарии' : 'Комментарии' | i18n }}
+        </button>
+        <button *ngIf="post.video && post.video.length" class="btn btn-info btn-sm" (click)="post.show_video = !post.show_video">
+          <i class="fas" [class.fa-video]="!post.show_video" [class.fa-times]="post.show_video"></i>&nbsp;
+          {{ post.show_video ? 'Закрыть видео' : 'Смотреть видео' | i18n }}
+        </button>
+          <div class="well padding-10 margin-top-10" *ngIf="post.video && post.show_video">
+            <div class="iframe-inside-16-9">
+              <iframe frameborder="0" [src]="post.video | safeUrl"  allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+            </div>
+          </div>
       </div>
 
       <div class="col-xs-12 replies" *ngIf="post.show_comments">
@@ -51,7 +67,7 @@
                 <a class="username" style="width: 100%;">{{ message.author }} 
                   <time class="text-muted pull-right ultra-light"><i class="fas fa-user-clock"></i>&nbsp; {{ message.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</time>
                 </a> 
-                <span [innerHTML]="message.text"></span>
+                <span class="message-text-content"  [innerHTML]="message.text"></span>
               </span>
               <ul class="list-inline font-xs">
                 <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> {{ 'Ответить' | i18n }}</a></li>
@@ -61,7 +77,7 @@
         </div>
 
         <div class="well padding-bottom-10 margin-top-10 chat-form">
-          <textarea rows="2" class="form-control" placeholder="Ваш комментарий, соблюдайте правила приличия." [(ngModel)]="post.new_message" #message></textarea>
+          <textarea rows="2" class="form-control" [placeholder]="'Ваш комментарий, соблюдайте правила приличия' | i18n" [(ngModel)]="post.new_message" #message></textarea>
           <div class="note"> {{ 'Сообщение не может быть слишком коротким' | i18n }}</div>
           <div class="margin-top-10">
             <button type="button" class="btn btn-sm btn-warning" (click)="post.show_comments = false">{{ 'Скрыть' | i18n }}</button>

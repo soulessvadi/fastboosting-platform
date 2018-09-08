@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService, SocketEvent, Message } from '@app/components/socketio.service';
 import { ComponentService } from '@app/components/components.service';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 @Component({
   selector: 'user-edit',
@@ -10,6 +12,7 @@ import { ComponentService } from '@app/components/components.service';
 
 export class EditComponent implements OnInit, OnDestroy {
   @ViewChild('avatarimg') avatarimg;
+  private bsModalRef: BsModalRef;
   public loading: boolean = false;
   public avatarUpload = null;
   public orders: any = [];
@@ -31,6 +34,7 @@ export class EditComponent implements OnInit, OnDestroy {
     private socketio: SocketService,
     private route: ActivatedRoute,
     private router: Router,
+    private modalService: BsModalService, 
   ) { }
 
   ngOnInit() {
@@ -64,6 +68,13 @@ export class EditComponent implements OnInit, OnDestroy {
     })
   }
 
+  public txCreated(tx) {
+    if(tx && tx.user_id == this.user.id) {
+      this.txs.unshift(tx);
+      this.activeTab = 2;
+    }
+  }
+
   public loadMoreReviews() {
     this.reviewsShown = this.reviewsShown.concat(this.reviews.slice(0, 5));
     this.reviews.splice(0, 5);
@@ -85,6 +96,15 @@ export class EditComponent implements OnInit, OnDestroy {
     var reader = new FileReader();
     reader.onload = (e:any) => { this.avatarimg.nativeElement.src = e.target.result; }
     reader.readAsDataURL(file);
+  }
+
+  public openModal(event, template: TemplateRef<any>, className?) {
+    event.preventDefault();
+    this.bsModalRef = this.modalService.show(template, {class: className || ''});
+  }
+
+  public modalClose() {
+    this.bsModalRef.hide();
   }
 
 }

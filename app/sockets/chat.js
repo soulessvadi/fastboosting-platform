@@ -30,7 +30,7 @@ module.exports.use = (app) => {
   io.on('connection', (socket) => {
     var addedUser = false;
 
-    socket.on('user connected', (data) => {
+    socket.on('property check', (data) => {
       let token = data.t;
       if(!data.t) return socket.emit('property failure');
       let user = Utils.jwtVerify(data.t);
@@ -45,9 +45,6 @@ module.exports.use = (app) => {
       if(user.type == 3) socket.join('boosters');
       socket.nick_name = user.nick_name;
       socket.user_id = user.id;
-      setInterval(() => {
-        if(!Utils.jwtVerify(data.t)) socket.emit('property failure');
-      }, 5000);
     });
 
     socket.on('join room', (data) => {

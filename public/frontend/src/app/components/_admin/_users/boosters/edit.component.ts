@@ -14,6 +14,10 @@ export class EditComponent implements OnInit, OnDestroy {
   @ViewChild('avatarimg') avatarimg;
   private bsModalRef: BsModalRef;
   public avatarUpload = null;
+  public reviews = null;
+  public reviewsShown = null;
+  public logs = null;
+  public logsShown = null;
   public menus: any = [];
   public medals: any = [];
   public heroes: any = [];
@@ -79,8 +83,21 @@ export class EditComponent implements OnInit, OnDestroy {
       this.otypes = res.body.otypes;
       this.osources = res.body.osources;
       this.menus = res.body.menus;
+      this.reviews = res.body.reviews;
+      this.reviewsShown = this.reviews.slice(0, 5);
+      this.reviews.splice(0, 5);
+      this.logs = res.body.logs;
+      this.logsShown = this.logs.slice(0, 9);
+      this.logs.splice(0, 9);      
       if(!this.user) this.router.navigate(['/govt/sundry/404']);
     })
+  }
+
+  public txCreated(tx) {
+    if(tx && tx.user_id == this.user.id) {
+      this.txs.unshift(tx);
+      this.activeTab = 3;
+    }
   }
 
   public onimgloaded(event) : void {
@@ -134,9 +151,14 @@ export class EditComponent implements OnInit, OnDestroy {
     else delete this.user.permissions[value];
   }
 
-  public openModal(event, template: TemplateRef<any>) {
+  public loadMoreReviews() {
+    this.reviewsShown = this.reviewsShown.concat(this.reviews.slice(0, 5));
+    this.reviews.splice(0, 5);
+  }
+
+  public openModal(event, template: TemplateRef<any>, className?) {
     event.preventDefault();
-    this.bsModalRef = this.modalService.show(template);
+    this.bsModalRef = this.modalService.show(template, {class: className || ''});
   }
 
   public modalClose() {

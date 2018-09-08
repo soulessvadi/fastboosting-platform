@@ -46,63 +46,10 @@ const routes: Routes = [
       path: "balance",
       loadChildren: "./components/_booster/_balance/balance.module#BalanceModule",
       data: { pageTitle: "Баланс пользователя" }
-    },
-    {
-      path: "dashboard",
-      loadChildren: "./features/dashboard/dashboard.module#DashboardModule",
-      data: { pageTitle: "Dashboard" }
-    },{
-      path: "app-views",
-      loadChildren: "./features/app-views/app-views.module#AppViewsModule",
-      data: { pageTitle: "App Views" }
-    },{
-      path: "calendar",
-      loadChildren: "app/features/calendar/calendar.module#CalendarFeatureModule",
-      data: { pageTitle: "Calendar" }
-    },{
-      path: "e-commerce",
-      loadChildren: "./features/e-commerce/e-commerce.module#ECommerceModule",
-      data: { pageTitle: "E-commerce" }
-    },{
-      path: "forms",
-      loadChildren: "./features/forms/forms-showcase.module#FormsShowcaseModule",
-      data: { pageTitle: "Forms" }
-    },{
-      path: "graphs",
-      loadChildren: "./features/graphs/graphs-showcase.module#GraphsShowcaseModule",
-      data: { pageTitle: "Graphs" }
-    },{
-      path: "maps",
-      loadChildren: "./features/maps/maps.module#MapsModule",
-      data: { pageTitle: "Maps" }
-    },{
-      path: "miscellaneous",
-      loadChildren: "./features/miscellaneous/miscellaneous.module#MiscellaneousModule",
-      data: { pageTitle: "Miscellaneous" }
-    },{
-      path: "outlook",
-      loadChildren: "./features/outlook/outlook.module#OutlookModule",
-      data: { pageTitle: "Outlook" }
-    },{
-      path: "smartadmin",
-      loadChildren: "./features/smartadmin-intel/smartadmin-intel.module#SmartadminIntelModule",
-      data: { pageTitle: "Smartadmin" }
-    },{
-      path: "tables",
-      loadChildren: "./features/tables/tables.module#TablesModule",
-      data: { pageTitle: "Tables" }
-    },{
-      path: "ui",
-      loadChildren: "./features/ui-elements/ui-elements.module#UiElementsModule",
-      data: { pageTitle: "Ui" }
-    },{
-      path: "widgets",
-      loadChildren: "./features/widgets/widgets-showcase.module#WidgetsShowcaseModule",
-      data: { pageTitle: "Widgets" }
     }]
   },{ 
     path: "**", 
-    redirectTo: "/govt/sundry/404" 
+    redirectTo: "/404" 
   }
 
 ];

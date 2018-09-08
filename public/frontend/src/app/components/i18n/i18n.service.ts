@@ -16,7 +16,7 @@ export class I18nService {
 
   constructor(private ref: ApplicationRef, private _service: ComponentService) {
     this.state = new Subject();
-    this.initLanguage(localStorage.getItem('locale') || languages[0].key);
+    this.initLanguage(this._service.locale || languages[0].key);
     this.fetch(this.currentLanguage.key);
   }
 
@@ -29,9 +29,7 @@ export class I18nService {
   }
 
   private initLanguage(locale:string) {
-    let language = languages.find((it)=> {
-      return it.key == locale
-    });
+    let language = languages.find(it => it.key == locale);
     if (language) {
       this.currentLanguage = language;
     } else {
@@ -39,9 +37,9 @@ export class I18nService {
     }
   }
 
-  setLanguage(language){
+  setLanguage(language) {
     this.currentLanguage = language;
-    localStorage.setItem('locale', this.currentLanguage.key);
+    this._service.locale = this.currentLanguage.key;
     this.fetch(this.currentLanguage.key);
   }
 

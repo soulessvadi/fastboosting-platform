@@ -11,15 +11,22 @@ export class NavigationComponent implements OnInit {
 
   public devMenu = 0;
   public menus = null;
+  public shortcuts = [];
 
-  constructor(private layoutService: LayoutService, public _service: ComponentService) {
-  	_service.menu().subscribe((res: any) => {
-  		this.menus = res.body.list;
-  	});
-  }
+  constructor(private layoutService: LayoutService, public _service: ComponentService) {}
 
   ngOnInit() {
-
+    this._service.menu().subscribe((res: any) => {
+      this.menus = res.body.list;
+      this.menus.forEach(e => {
+        e.nestings.forEach(c => {
+          if(c.shortcut) {
+            c.color = this._service.colorify();
+            this.shortcuts.push(c);
+          }
+        })
+      })
+    });
   }
 
   toggleShortcut() {

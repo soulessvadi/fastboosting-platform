@@ -9,12 +9,12 @@ import { ComponentService } from '@app/components/components.service';
 })
 
 export class PricelistsComponent implements OnInit {
-  public activeTab = 0;
+  public activeTab = 5;
   public Math = Math;
   public responseMessage = null;
   public responseSuccess = false;
   public loading = false;
-
+  public order_categories = null;
   public categories = null;
   public factor = 1;
   public pricelists = {
@@ -22,6 +22,7 @@ export class PricelistsComponent implements OnInit {
     medal_boost: null,
     calibration: null,
     training: null,
+    training_services: null,
   };
   public boosting_prices: any[] = [{v:'0.00',c:'₽'},{v:'0.00',c:'$'}];
   public medal_price: any[] = [{v:'0.00',c:'₽'},{v:'0.00',c:'$'}];
@@ -49,8 +50,10 @@ export class PricelistsComponent implements OnInit {
       this.pricelists.medal_boost = res.body.medal_boost || null;
       this.pricelists.calibration = res.body.calibration || null;
       this.pricelists.training = res.body.training || null;
-      this.medal_price = this.medalPrice();
+      this.pricelists.training_services = res.body.training_services || null;
       this.categories = res.body.categories;
+      this.order_categories = res.body.order_categories || null;
+      this.medal_price = this.medalPrice();
     });
   }
 
@@ -74,12 +77,91 @@ export class PricelistsComponent implements OnInit {
     });
   }
 
+  public ocatReorder() {
+    this.order_categories = this.order_categories.sort((a,b) => a.id > b.id ? 1 : -1);
+  }
+
+  public ocatAdd() {
+    this.order_categories.unshift({id:1,from:0,till:0,factor:0,name:null});
+  }
+
+  public ocatRemove(item) {
+    this.order_categories = this.order_categories.filter((a) => a != item);
+  }
+
+  public ocatSave() {
+    this.loading = true; 
+    this._service.savePricelistOrderCategories(this.order_categories).subscribe((res: any) => {
+      if(res.status == 200) this.responseMessage = 'Сохранено';
+      setTimeout(() => { this.loading = false; this.responseMessage = null; }, 1000);
+    });
+  }
+
+  public caliReorder() {
+    this.pricelists.calibration = this.pricelists.calibration.sort((a,b) => a.id > b.id ? 1 : -1);
+  }
+
+  public caliAdd() {
+    this.pricelists.calibration.unshift({id:1,name:null,rub:0,usd:0});
+  }
+
+  public caliRemove(item) {
+    this.pricelists.calibration = this.pricelists.calibration.filter((a) => a != item);
+  }
+
+  public caliSave() {
+    this.loading = true; 
+    this._service.saveCaliPricelist(this.pricelists.calibration).subscribe((res: any) => {
+      if(res.status == 200) this.responseMessage = 'Сохранено';
+      setTimeout(() => { this.loading = false; this.responseMessage = null; }, 1000);
+    });
+  }
+
+  public trainingReorder() {
+    this.pricelists.training = this.pricelists.training.sort((a,b) => a.id > b.id ? 1 : -1);
+  }
+
+  public trainingAdd() {
+    this.pricelists.training.unshift({id:1,hours:1,rub:0,usd:0});
+  }
+
+  public trainingRemove(item) {
+    this.pricelists.training = this.pricelists.training.filter((a) => a != item);
+  }
+
+  public trainingSave() {
+    this.loading = true; 
+    this._service.saveTrainingPricelist(this.pricelists.training).subscribe((res: any) => {
+      if(res.status == 200) this.responseMessage = 'Сохранено';
+      setTimeout(() => { this.loading = false; this.responseMessage = null; }, 1000);
+    });
+  }
+
+  public trainingServiceReorder() {
+    this.pricelists.training_services = this.pricelists.training_services.sort((a,b) => a.id > b.id ? 1 : -1);
+  }
+
+  public trainingServiceAdd() {
+    this.pricelists.training_services.unshift({id:1,name:null,rub:0,usd:0});
+  }
+
+  public trainingServiceRemove(item) {
+    this.pricelists.training_services = this.pricelists.training_services.filter((a) => a != item);
+  }
+
+  public trainingServiceSave() {
+    this.loading = true; 
+    this._service.saveTrainingServicePricelist(this.pricelists.training_services).subscribe((res: any) => {
+      if(res.status == 200) this.responseMessage = 'Сохранено';
+      setTimeout(() => { this.loading = false; this.responseMessage = null; }, 1000);
+    });
+  }
+
   public medalPrice(): any[] {
     let amountrub = 0;
     let amountusd = 0;
     this.pricelists.medal_boost.forEach((e, i) => {
       if(i >= this.medal_from && i < this.medal_till && this.medal_from != this.medal_till) {
-        console.log(i, e.rub, e.usd)
         amountrub += e.rub; amountusd += e.usd;
       }
     });

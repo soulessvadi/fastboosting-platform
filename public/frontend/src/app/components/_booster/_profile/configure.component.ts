@@ -16,7 +16,7 @@ export class ConfigureComponent implements OnInit {
 
 	private bsModalRef: BsModalRef;
     public user: any;
-    public step: 1;
+    public step: any = 1;
     public now: Date = new Date();
     public paymethods: any;
     public heroes: any;
@@ -50,7 +50,7 @@ export class ConfigureComponent implements OnInit {
 	}
 
 	public onWizardChanged(event) {
-		this.step = event.step;
+		this.step = parseInt(event.step) || 1;
 	}
 
 	public onWizardComplete(event) {

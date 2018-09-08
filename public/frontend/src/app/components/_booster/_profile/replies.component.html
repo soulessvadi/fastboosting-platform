@@ -1,5 +1,5 @@
 <div *ngIf="!tickets.list?.length">
-  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Нет ответов{{ 'КОММЕНТАРИИ' | i18n }}</h2>
+  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">{{ 'Нет ответов' | i18n }}</h2>
   <hr>
 </div>
 <div class="row" *ngIf="tickets.list?.length">

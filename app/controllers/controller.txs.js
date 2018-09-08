@@ -14,53 +14,35 @@ var activity_date = moment().subtract(1, 'months').format('YYYY-MM-DD');
 module.exports = (db) => {
 	const controller = {};
 	
-	controller.block = (req, res, next) => {
-		if(req.body.id) {
-			Models.Partner.findById(req.body.id).then((partner) => {
-				partner.update({ is_blocked: req.body.is_blocked }).then(() => {
-		    		res.status(200).json({'status':'ok'});
-				}).catch((err) => res.status(202).json({'error':'internal_error'}));
-			}).catch((err) => res.status(202).json({'error':'user_not_found'}));
-		} else {
-			res.status(202).json({'error':'bad_parameters'});
-		}
-	};
-
-	controller.approve = (req, res, next) => {
-		if(req.body.id) {
-			Models.Partner.findById(req.body.id).then((partner) => {
-				partner.update({ is_approved: req.body.is_approved }).then(() => {
-		    		res.status(200).json({'status':'ok'});
-				}).catch((err) => res.status(202).json({'error':'internal_error'}));
-			}).catch((err) => res.status(202).json({'error':'user_not_found'}));
-		} else {
-			res.status(202).json({'error':'bad_parameters'});
-		}
-	};
-
 	controller.create = (req, res, next) => {
-		if(!r) {
+		if(!req.body.amount || !req.body.user_id || !req.body.type) {
 			res.status(202).json({'error':'bad_parameters'});
 			return null;
 		}
-		Models.Partner.findOne({where:{login:req.body.login}}).then(partner => {
-			if(partner) {
-				res.status(202).json({'error':'login_exists'});
-				return null;
-			}
-			var mock = Models.Partner.build();
-			mock.is_blocked = (req.body.is_blocked || mock.is_blocked);
-			mock.is_approved = (req.body.is_approved || mock.is_approved);
-			mock.currency_id = (req.body.currency_id || mock.currency_id);
-			mock.discord = (req.body.discord || mock.discord);
-			mock.skype = (req.body.skype || mock.skype);
-			mock.phone = (req.body.phone || mock.phone);
-			mock.vkontakte = (req.body.vkontakte || mock.vkontakte);
-			mock.facebook = (req.body.facebook || mock.facebook);
-			mock.instagram = (req.body.instagram || mock.instagram);
-			mock.save().then((user) => {
-	    		res.status(200).json({status:'ok',id:user.id});
-			}).catch((err) => {console.log(err), res.status(202).json({'error':'validation_error'})});
+		var mock = Models.Tx.build();
+		mock.system_number = req.body.user_id;
+		mock.amount = Math.abs(req.body.amount || mock.amount);
+		mock.user_id = (req.body.user_id || mock.user_id);
+		mock.order_id = (req.body.order_id || mock.order_id);
+		mock.currency_id = (req.body.currency_id || mock.currency_id);
+		mock.type = (req.body.type || mock.type);
+		mock.status = (req.body.status || mock.status);
+		mock.comment = (req.body.comment || mock.comment);
+		if(mock.type == 2 || mock.type == 4) mock.amount = 0 - mock.amount;
+		mock.save().then((tx) => {
+			connection.executeOne(`
+				select txs.id, txs.system_number, txs.currency_id, txs.created_at, txs.status, txs.comment,
+				txs.type, txs.user_id, users.nick_name as user_name, cast(txs.amount AS decimal(19,2)) as amount,
+				orders.system_number as order_number, 
+				(select name from currencies where id = txs.currency_id) as currency_name, 
+				(select name from txs_types where id = txs.type) as type_name, 
+				(select name from txs_statuses where id = txs.status) as status_name
+				from txs 
+				left join users on users.id = txs.user_id
+				left join orders on orders.id = txs.order_id
+				where txs.id = ${tx.id} limit 1`, { raw: true })
+			.then((tx) => res.status(200).json(tx))
+			.catch((err) => res.status(202).json({'error':'internal_error'}));
 		}).catch((err) => {console.log(err), res.status(202).json({'error':'validation_error'})});
 	};
 
@@ -70,7 +52,7 @@ module.exports = (db) => {
 				tx.destroy().then(() => {
 		    		res.status(200).json({'status':'ok'});
 				}).catch((err) => res.status(202).json({'error': 'internal_error'}));
-			}).catch((err) => res.status(202).json({'error':'partner_not_found'}));
+			}).catch((err) => res.status(202).json({'error':'tx_not_found'}));
 		} else {
 			res.status(202).json({'error':'bad_parameters'});
 		}
@@ -81,7 +63,7 @@ module.exports = (db) => {
 			Models.Tx.findById(req.body.id).then((tx) => {
 				let data = { 
 					comment: (req.body.comment || tx.comment),
-					client_id: Math.abs(req.body.client_id || tx.client_id),
+					client_id: parseInt(req.body.client_id || tx.client_id),
 					amount: Math.abs(req.body.amount || tx.amount),
 					currency_id: (req.body.currency_id || tx.currency_id),
 					type: (req.body.type || tx.type),
@@ -163,58 +145,47 @@ module.exports = (db) => {
 	};
 
 	controller.tx = (req, res, next) => {
-		let partner_id = parseInt(req.params.id || 0);
+		let tx_id = parseInt(req.params.id);
 		async.parallel({
-			info: (cb) => {
-				if(req.params.id == 0) {
-					var mock = Models.Partner.build();
-					mock.login = controller.generateKey();
-					cb(null, mock.dataValues);
-				} else {
-					connection.executeOne(
-						`select id, login, name, domain, email, is_blocked, is_approved, avatar, 
-						 country, phone, skype, discord, vkontakte, facebook, instagram, youtube, 
-						 twitter, dotabuff, country, currency_id, language, created_at, 
-						 (select count(id) from orders where partner_id = partners.id limit 1) as orders_count,
-						 coalesce((select sum(amount) from orders where partner_id = partners.id limit 1), 0) as orders_amount,
-					 	 coalesce((select sum(amount_paid) from orders where status in (4,5,6,7,8) and currency_id = 1 and partner_id = partners.id limit 1), 0) as orders_amount_paid_rub,
-					 	 coalesce((select sum(amount_paid) from orders where status in (4,5,6,7,8) and currency_id = 2 and partner_id = partners.id limit 1), 0) as orders_amount_paid_usd,
-						 (select name from currencies where id = partners.currency_id limit 1) as currency
-						from partners where id = ${partner_id} limit 1`, { raw: true })
-					.then((partner) => {
-						if(!partner) cb(null, []);
-						if(!fs.existsSync(storage.spaces.avatars + partner.avatar)) partner.avatar = 'mock.png';
-						cb(null, partner);
-					})
-					.catch((err) => res.status(202).json({'error':'internal_error'}));
-				}
-			},
-			orders: (cb) => {
-				connection.execute(
-					`select o.type,o.client_comment,o.status,o.deadline,o.system_number,o.created_at,o.amount,o.amount_paid,
-				  	c.name as currency_name, c.sign as currency_sign, u.nick_name as client_name, u.id as client_id,
-				  	(select name from orders_statuses where id = o.status limit 1) as status_name,
-				  	(select name from orders_types where id = o.type limit 1) as type_name
-				  	from orders o
-				  	left join users u on u.id = o.client_id
-				  	left join currencies c on c.id = o.currency_id
-				  	where o.partner_id = ${partner_id}
-				  	order by o.created_at desc`, {raw: true})
-				.then((orders) => cb(null, orders))
-				.catch((err) => cb(null, []));
-			},
 			txs: (cb) => {
-				connection.execute(`
-					select txs.system_number, txs.created_at, txs.status, txs.type, users.id as client_id, users.nick_name as client_name,
-					cast(txs.amount AS decimal(19,2)) as amount, orders.system_number as order_number,
+				if(!tx_id) return cb(null, []);
+				connection.executeOne(`
+					select txs.id, txs.system_number, txs.currency_id, txs.created_at, txs.status, txs.comment,
+					txs.type, txs.user_id, users.nick_name as user_name, cast(txs.amount AS decimal(19,2)) as amount,
+					orders.system_number as order_number, 
 					(select name from currencies where id = txs.currency_id) as currency_name, 
 					(select name from txs_types where id = txs.type) as type_name, 
 					(select name from txs_statuses where id = txs.status) as status_name
 					from txs 
+					left join users on users.id = txs.user_id
 					left join orders on orders.id = txs.order_id
-					left join users on users.id = orders.client_id
-					where orders.partner_id = ${partner_id}
-					order by txs.id desc`, { raw: true })
+					where txs.id = ${tx_id} limit 1`, { raw: true })
+				.then((txs) => {
+			    	cb(null, txs);
+				}).catch((err) => res.status(202).json({'error':'internal_error'}));
+			},
+			users: (cb) => {
+				connection.execute(`
+					select users.id, users.nick_name, users.currency_id, ut.name as type_name
+					from users 
+					left join users_types ut on ut.id = users.type
+					where users.is_blocked = 0 and users.type in (3,4)
+					order by ut.id asc, users.nick_name asc`, {raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
+			orders: (cb) => {
+				Models.Order.findAll({order:[['id','desc']],limit:50,attributes:['id','system_number'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
+			statuses: (cb) => {
+				Models.TxStatus.findAll({attributes:['id','name'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
+			types: (cb) => {
+				Models.TxType.findAll({attributes:['id','name'],raw:true})
 				.then((results) => cb(null, results))
 				.catch((err) => cb(null, []));
 			},
@@ -223,16 +194,6 @@ module.exports = (db) => {
 				.then((results) => cb(null, results))
 				.catch((err) => cb(null, []));
 			},
-			languages: (cb) => {
-				Models.Language.findAll({attributes:['id','name','code'],raw:true})
-				.then((results) => cb(null, results))
-				.catch((err) => cb(null, []));
-			},
-			countries: (cb) => {
-				Models.Country.findAll({attributes:['name'],raw:true})
-				.then((results) => cb(null, results))
-				.catch((err) => cb(null, []));
-			}
 		}, (err, results) => {
 			res.status(200).json(results);
 		});

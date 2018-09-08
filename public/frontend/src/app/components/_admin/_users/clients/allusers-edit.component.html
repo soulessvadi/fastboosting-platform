@@ -35,9 +35,19 @@
                             </ng-container>
                           </strong>
                         </h4>
-                        <a *ngIf="user?.active_order" class="btn btn-md btn-danger do-order-btn margin-top-10" routerLink="/govt/orders/{{ user.active_order }}">
-                          {{ 'Активный заказ' | i18n }} #{{ user.active_order }}
-                        </a>
+                        <div class="flex margin-top-10">
+                          <div class="column">
+                            <a *ngIf="user?.active_order" class="btn btn-md btn-success do-order-btn" routerLink="/govt/orders/{{ user.active_order }}">
+                              <i class="fas fa-chart-line"></i> {{ 'Заказ' | i18n }} #{{ user.active_order }}
+                            </a>
+                            <a *ngIf="!user?.active_order" class="btn btn-md btn-success do-order-btn disabled"><i class="fas fa-ban"></i></a>                            
+                          </div>
+                          <div class="column shrink">
+                            <a class="btn btn-md btn-info do-order-btn" (click)="openModal($event, txModal, 'modal-lg')">
+                              <i class="fas fa-calendar-plus"></i> {{ 'Финансы' | i18n }}
+                            </a>                            
+                          </div>
+                        </div>
                       </div>
                       <div class="carousel-inner">
                         <div class="item active">     
@@ -475,6 +485,7 @@
                                 <th><i class="text-muted fas fa-hashtag"></i> {{ 'Номер трансакции' | i18n }}</th>
                                 <th>{{ 'Тип' | i18n }}</th>
                                 <th><i class="text-muted fas fa-dollar-sign"></i> {{ 'Сумма' | i18n }}</th>
+                                <th><i class="text-muted fas fa-comment"></i> {{ 'Комментарий' | i18n }}</th>
                                 <th><i class="text-muted fas fa-calendar-alt"></i> {{ 'Дата' | i18n }}</th>
                                 <th><i class="text-muted glyphicon glyphicon-send"></i> {{ 'Статус' | i18n }}</th>
                               </tr>
@@ -490,6 +501,7 @@
                                   </div>
                                   {{ Math.abs(tx.amount)?.toFixed(2) }} {{ tx.currency_name }}
                                 </td>
+                                <td>{{ tx.comment }}</td>
                                 <td>{{ tx.created_at | moment: 'D.MM.YY HH:mm:ss' }}</td>
                                 <td>
                                   <span class="label label-default fs-11" *ngIf="tx.status == 1">{{ tx.status_name }}</span>  
@@ -624,4 +636,8 @@
 
 <ng-template #lanesModal>
   <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes" [selected]="user.lanes" title="Выбор линий"></lane-modal>
+</ng-template>
+
+<ng-template #txModal>
+  <tx-new-modal (close)="modalClose()" (changed)="txCreated($event)" [user_id]="user.id" [order_id]="user.active_order_id" [currency_id]="user.currency_id" [type]="1" [status]="1"></tx-new-modal>
 </ng-template>

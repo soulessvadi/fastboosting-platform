@@ -71,6 +71,11 @@
                 {{'Сообщения'|i18n}}
               </a>
             </li>
+            <li [class.active]="tabs.active == 3">
+              <a (click)="tabs.active = 3">
+                <i class="fas fa-fw fa-lg fa-calendar-times"></i> {{'Дедлайн'|i18n}}
+              </a>
+            </li>
           </ul>
 
           <tabset class="padding-10">
@@ -281,6 +286,24 @@
                       </div>
                     </div>
 
+                </div>
+              </div>
+            </tab>
+            <tab [active]="tabs.active == 3">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="widget-body">
+                    <div class="widget-body-toolbar">
+                      <div id="calendar-buttons">
+                        <div class="btn-group">
+                          <a (click)="prev()" class="btn btn-primary btn-sm"><i class="fa fa-chevron-left"></i></a>
+                          <a (click)="today()" class="btn btn-success btn-sm"><i class="fa fa-calendar"></i></a>
+                          <a (click)="next()" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="calendar"></div>
+                  </div>
                 </div>
               </div>
             </tab>

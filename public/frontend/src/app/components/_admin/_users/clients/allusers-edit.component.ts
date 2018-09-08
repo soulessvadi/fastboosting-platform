@@ -87,6 +87,13 @@ export class AllUsersEditComponent implements OnInit, OnDestroy {
     })
   }
 
+  public txCreated(tx) {
+    if(tx && tx.user_id == this.user.id) {
+      this.txs.unshift(tx);
+      this.activeTab = 2;
+    }
+  }
+
   public onimgloaded(event) : void {
     var path = event.target.value.split('\\');
     var filename = path.pop();
@@ -137,10 +144,10 @@ export class AllUsersEditComponent implements OnInit, OnDestroy {
     if($event.target.checked) this.user.permissions[value] = {c:0,r:1,u:0,d:0};
     else delete this.user.permissions[value];
   }
-
-  public openModal(event, template: TemplateRef<any>) {
+  
+  public openModal(event, template: TemplateRef<any>, className?) {
     event.preventDefault();
-    this.bsModalRef = this.modalService.show(template);
+    this.bsModalRef = this.modalService.show(template, {class: className || ''});
   }
 
   public modalClose() {

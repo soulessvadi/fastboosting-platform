@@ -47,10 +47,80 @@ export class MedalComponent implements OnInit, OnDestroy {
     this.order.medal_s = this.properties.ranks.find(e => e.id == this.order.medal_start);
     this.joinChat(this.order.system_number);
     this.progress = this.getProgress();
+    let events = [{
+      "id": this.order.system_number,
+      "title": "#"+this.order.system_number,
+      "start": moment(this.order.created_at).local(),
+      "end": moment(this.order.deadline).local(),
+      "icon": "fas fa-plus",
+      "className": ["event","fs-14"]
+    }];
+    this.renderCalendar(events);
   }
 
   ngOnDestroy() {
     this.leaveChat(this.order.system_number);
+    this.fullcalendar.fullCalendar("destroy");
+  }
+
+  private $calendarRef;
+  private fullcalendar;
+  private renderCalendar(events) {
+    require("script-loader!smartadmin-plugins/bower_components/fullcalendar/dist/fullcalendar.min.js");
+    let locale = this._service.locale == 'us' ? 'en' : 'ru';
+    this.$calendarRef = $(document.getElementById("calendar"));
+    this.fullcalendar = this.$calendarRef.fullCalendar({
+      lang: locale,
+      displayEventEnd: true,
+      timeFormat: 'DD.MM.YYYY hh:mm',
+      eventBackgroundColor: '#4c004e',
+      aspectRatio: 2.7,
+      editable: true,
+      draggable: true,
+      selectable: false,
+      selectHelper: true,
+      unselectAuto: false,
+      disableResizing: false,
+      droppable: true,
+      header: { left: "title", center: "prev, next, today", right: "month"},
+      select: (start, end, allDay) => {
+        var title = prompt("Event Title:");
+        if (title) {
+          this.fullcalendar.fullCalendar("renderEvent", {
+            title: title,
+            start: start,
+            end: end,
+            allDay: allDay
+          }, true );
+        }
+        this.fullcalendar.fullCalendar("unselect");
+      },
+      events: (start, end, timezone, callback) => {
+        callback(events);
+      },
+      eventRender: (event, element, icon) => {
+        if (event.description !== "")
+          element.find(".fc-event-title").append("<br/><span class='ultra-light'>" + event.description + "</span>");
+        if (event.icon !== "")
+          element.find(".fc-event-title").append("<i class='air air-top-right fa " + event.icon + " '></i>");
+      }
+    });
+
+    $(".fc-header-right, .fc-header-center", this.$calendarRef).hide();
+
+    $(".fc-left", this.$calendarRef).addClass("fc-header-title");
+  }
+
+  public next() {
+    $(".fc-next-button", this.el.nativeElement).click();
+  }
+
+  public prev() {
+    $(".fc-prev-button", this.el.nativeElement).click();
+  }
+
+  public today() {
+    $(".fc-today-button", this.el.nativeElement).click();
   }
 
   public changeStatus() {

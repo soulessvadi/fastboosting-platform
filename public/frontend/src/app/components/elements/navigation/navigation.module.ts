@@ -7,6 +7,7 @@ import { SmartMenuDirective } from "./smart-menu.directive";
 import { ChatModule } from "../../chat/chat.module";
 import { BigBreadcrumbsComponent } from "./big-breadcrumbs.component";
 import { I18nModule } from "@app/components/i18n/i18n.module";
+import { ShortcutComponent } from "../shortcut/shortcut.component";
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { I18nModule } from "@app/components/i18n/i18n.module";
     NavigationComponent,
     SmartMenuDirective,
     BigBreadcrumbsComponent,
+    ShortcutComponent,
   ],
   exports: [
     MinifyMenuComponent,

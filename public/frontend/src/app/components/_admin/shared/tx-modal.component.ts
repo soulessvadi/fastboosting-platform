@@ -28,10 +28,11 @@ export class TxModalComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    if(this.tx) this.tx.amount = Math.abs(this.tx.amount);
   }
 
   send() {
+    if(this.tx.type == 3 || this.tx.type == 4) this.tx.amount = 0 - Math.abs(this.tx.amount);
     this._service.saveTx(this.tx.id, this.tx).subscribe(res => {
       this.form.nativeElement.classList.add('submited');
       if(res.status == 200) { 

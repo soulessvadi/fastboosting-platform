@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
@@ -28,6 +28,7 @@ export class RegisterComponent implements OnInit {
     nick_name: '',
     termsAgreed: false,
     subscribe: true,
+    referred_by: null,
   };
 
   public responseMessage = null;
@@ -35,36 +36,39 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private modalService: BsModalService,
     private service: ComponentService,
   ) {}
  
-  ngOnInit() {}
+  ngOnInit() {
+    this.user.referred_by = this.route.snapshot.paramMap.get('hash');
+  }
 
   register(event) {
     event.preventDefault();
     if(!this.isEmail(this.user.login)) return this.email.nativeElement.focus(); 
-    if(this.user.nick_name.length < 5) return this.username.nativeElement.focus(); 
+    if(this.user.nick_name.length < 3) return this.username.nativeElement.focus(); 
     if(this.user.password.length < 8) return this.password.nativeElement.focus();
     if(this.user.passwordConfirm != this.user.password) return this.passwordConfirm.nativeElement.focus();
     if(!this.user.termsAgreed) return this.user.termsAgreed = true;
     this.service.register(this.user).subscribe((res) => { 
       if(res.status == 200) {
         this.responseSuccess = true;
-        this.responseMessage = `<b>${this.user.nick_name}</b> ваша заявка принята. На email <b>${this.user.login}</b> будет выслано письмо о результате рассмотрения`;
+        this.responseMessage = `Вы зарегистрированы. На email будет выслано письмо о результате рассмотрения`;
         setTimeout(() => {
           this.router.navigate(['/auth/login']);
         }, 5000);
       }  
       if(res.status == 202) {
         if(res.body.error == 'invalid_login')
-          this.responseMessage = 'Ваш логин - это используемый вами email';
+          this.responseMessage = 'Ваш логин - это email ';
         else if(res.body.error == 'invalid_password')
-          this.responseMessage = 'Слишком короткий пароль';
+          this.responseMessage = 'Минимальный размер пароля 8 символов';
         else if(res.body.error == 'user_exists')
-          this.responseMessage = `Пользователь <b>${this.user.login}</b> уже зарегистрирован в системе`;
+          this.responseMessage = `Пользователь с таким email уже зарегистрирован`;
         else
-          this.responseMessage = `На данный момент регистрация запрещена, повторите попытку позже`;
+          this.responseMessage = `На данный момент регистрация новых пользователей запрещена, повторите попытку позже`;
         setTimeout(() => {
           this.form.nativeElement.classList.remove('submited');
           this.username.nativeElement.focus();

@@ -38,7 +38,6 @@ const booster_permissions = {
 	18: {c:0,r:1,u:0,d:0},
 	19: {c:0,r:1,u:0,d:0},
 	20: {c:0,r:1,u:0,d:0},
-	21: {c:0,r:1,u:0,d:0},
 };
 
 const admin_permissions = {
@@ -77,6 +76,8 @@ const admin_permissions = {
 	52: {c:1,r:1,u:1,d:1},
 	53: {c:1,r:1,u:1,d:1},
 	54: {c:1,r:1,u:1,d:1},
+	55: {c:1,r:1,u:1,d:1},
+	56: {c:1,r:1,u:1,d:1},
 };
 
 (async () => {
@@ -97,6 +98,30 @@ const admin_permissions = {
 		{name: 'A', from: 2.5, till: 2.8, factor: 1.00},
 		{name: 'A+', from: 2.8, till: 3.0, factor: 1.20},
 	]);
+	await schemas.BoosterPricelistTraining.bulkCreate([
+		{hours:1, rub: 350, usd: 5},
+		{hours:2, rub: 700, usd: 10},
+		{hours:3, rub: 1050, usd: 15},
+		{hours:4, rub: 1400, usd: 20},
+		{hours:5, rub: 1750, usd: 25},
+		{hours:6, rub: 2100, usd: 30},
+		{hours:7, rub: 2450, usd: 35},
+		{hours:8, rub: 2800, usd: 40},
+	]);	
+	await schemas.BoosterTrainingService.bulkCreate([
+		{name:'Обучение фарму', rub: 700, usd: 10},
+		{name:'Игра на миде', rub: 700, usd: 10},
+		{name:'Игра на тяжелой линии', rub: 700, usd: 10},
+		{name:'Игра на кэрри', rub: 700, usd: 10},
+		{name:'Игра на саппорте', rub: 700, usd: 10},
+		{name:'Игра на роумерах', rub: 700, usd: 10},
+		{name:'Освоить конкретного героя', rub: 700, usd: 10},
+		{name:'Другое (анализ реплеев и т.д.)', rub: 700, usd: 10},
+	]);	
+	await schemas.BoosterPricelistCalibration.bulkCreate([
+		{name:'Калибровка без гарантий', rub: 700, usd: 10},
+		{name:'Калибровка с гарантией', rub: 4000, usd: 50},
+	]);	
 	await schemas.BoosterPricelistMedal.bulkCreate([
 		{title:"Herald", rank:"1",image:"180px-SeasonalRank1-0.png",rub:50.00,usd:0.80},
 		{title:"Herald", rank:"2",image:"180px-SeasonalRank1-1.png",rub:50.00,usd:0.80},
@@ -291,8 +316,10 @@ const admin_permissions = {
 	]);
 	await schemas.Post.bulkCreate([
 		{
-			user_id: 2,
+			user_id: 1,
+			tags: '#woo|#hoo',
 			publish: true,
+			video: 'https://www.youtube.com/embed/8rDoUQGmIg0',
 			cover: 'post.jpg',
 			title: 'Lorem ipsum dolor sit amet!',
 			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
@@ -300,6 +327,62 @@ const admin_permissions = {
 			expires_at:  moment().add(5, 'days'),
 		},{
 			user_id: 2,
+			tags: '#foo|#bar',
+			publish: true,
+			video: 'https://www.youtube.com/embed/-cSFPIwMEq4',
+			cover: 'post.jpg',
+			title: 'Quisquam eius dolorum sequi molestias, eveniet natus, similique debitis',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 1,
+			tags: '#baz|#bad',
+			publish: true,
+			cover: 'post.jpg',
+			title: 'Lorem ipsum dolor sit amet! 2',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 1,
+			tags: '#yea|#haa',
+			publish: true,
+			cover: 'post.jpg',
+			title: 'Quisquam eius dolorum sequi molestias, eveniet natus, similique debitis 2',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 2,
+			tags: '#foo|#bar',
+			publish: true,
+			cover: 'post.jpg',
+			title: 'Lorem ipsum dolor sit amet! 3',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 2,
+			tags: '#foo|#bar',
+			publish: true,
+			cover: 'post.jpg',
+			title: 'Quisquam eius dolorum sequi molestias, eveniet natus, similique debitis 3',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 1,
+			tags: '#yea|#haa',
+			publish: true,
+			cover: 'post.jpg',
+			title: 'Quisquam eius dolorum sequi molestias, eveniet natus, similique debitis',
+			preview: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur autem iste suscipit modi fugiat, atque facilis nesciunt commodi odit, officiis sed explicabo. Minus adipisci officia quia nisi sed, voluptate. Iure accusantium, necessitatibus, voluptatem inventore, aspernatur pariatur maxime a laboriosam porro dicta corporis libero. Sapiente officiis ullam mollitia voluptatibus maxime repellendus commodi assumenda voluptates ea. Ipsam.',
+			expires_at:  moment().add(7, 'days'),
+		},{
+			user_id: 2,
+			tags: '#baz|#bar',
 			publish: true,
 			cover: 'post.jpg',
 			title: 'Quisquam eius dolorum sequi molestias, eveniet natus, similique debitis',
@@ -315,21 +398,21 @@ const admin_permissions = {
 	]);
 	await schemas.Tx.bulkCreate([
 		{system_number: 1, type: 1, amount: 2500, user_id: 1, order_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-06 15:25:00')},
-		{system_number: 1, type: 1, amount: 3244, user_id: 1, order_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
+		{system_number: 1, type: 1, amount: 3244, user_id: 1, order_id: 2, currency_id: 1, status:2, created_at: new Date('2018-08-07 15:25:00')},
 		{system_number: 1, type: 3, amount: 3244, user_id: 1, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
-		{system_number: 1, type: 3, amount: 3244, user_id: 1, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-07 15:25:00')},
-		{system_number: 1, type: 2, amount: -5125, user_id: 1, order_id: 3, currency_id: 1, status:3, created_at: new Date('2018-08-08 15:25:00')},
+		{system_number: 1, type: 3, amount: 3244, user_id: 1, order_id: 0, currency_id: 1, status:2, created_at: new Date('2018-08-07 15:25:00')},
+		{system_number: 1, type: 2, amount: -5125, user_id: 1, order_id: 3, currency_id: 1, status:2, created_at: new Date('2018-08-08 15:25:00')},
 		{system_number: 1, type: 2, amount: -2555, user_id: 1, order_id: 4, currency_id: 1, status:3, created_at: new Date('2018-08-09 15:25:00')},
 		{system_number: 1, type: 3, amount: 1208, user_id: 1, order_id: 5, currency_id: 1, status:3, created_at: new Date('2018-08-09 16:25:00')},
-		{system_number: 1, type: 4, amount: -1468, user_id: 1, order_id: 6, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
+		{system_number: 1, type: 4, amount: -1468, user_id: 1, order_id: 6, currency_id: 1, status:1, created_at: new Date('2018-08-11 15:25:00'), comment: 'Невыполнение заказа в установленный срок'},
 		{system_number: 1, type: 1, amount: 1751, user_id: 1, order_id: 7, currency_id: 1, status:3, created_at: new Date('2018-08-11 15:25:00')},
 		{system_number: 1, type: 1, amount: 4198, user_id: 1, order_id: 8, currency_id: 1, status:3, created_at: new Date('2018-08-12 15:25:00')},
-		{system_number: 1, type: 4, amount: 3794, user_id: 1, order_id: 1, currency_id: 1, status:3, created_at: new Date('2018-08-13 15:25:00')},
+		{system_number: 1, type: 4, amount: 3794, user_id: 1, order_id: 1, currency_id: 1, status:1, created_at: new Date('2018-08-13 15:25:00'), comment: 'Невыполнение заказа в установленный срок'},
 		{system_number: 1, type: 2, amount: -5682, user_id: 1, order_id: 2, currency_id: 1, status:3, created_at: new Date('2018-08-14 15:25:00')},
 		{system_number: 1, type: 1, amount: 3562, user_id: 1, order_id: 3, currency_id: 1, status:3, created_at: new Date('2018-08-14 18:25:00')},
-		{system_number: 1, type: 4, amount: -1528, user_id: 1, order_id: 4, currency_id: 1, status:3, created_at: new Date('2018-08-15 15:25:00')},
+		{system_number: 1, type: 4, amount: -1528, user_id: 1, order_id: 4, currency_id: 1, status:3, created_at: new Date('2018-08-15 15:25:00'), comment: 'Отсутствие отчета по заказу'},
 		{system_number: 2, type: 1, amount: 2000, user_id: 2, order_id: 5, currency_id: 1, status:3, created_at: new Date('2018-08-16 15:25:00')},
-		{system_number: 2, type: 4, amount: -1528, user_id: 3, order_id: 6, currency_id: 1, status:3, created_at: new Date('2018-08-17 15:25:00')},
+		{system_number: 2, type: 4, amount: -1528, user_id: 2, order_id: 6, currency_id: 1, status:3, created_at: new Date('2018-08-17 15:25:00'), comment: 'Отсутствие скриншотов в отчете по заказу'},
 		{system_number: 1, type: 1, amount: 3794, user_id: 4, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-13 15:25:00')},
 		{system_number: 1, type: 2, amount: -3794, user_id: 4, order_id: 5, currency_id: 1, status:1, created_at: new Date('2018-08-14 15:25:00')},
 		{system_number: 1, type: 1, amount: 3562, user_id: 3, order_id: 0, currency_id: 1, status:3, created_at: new Date('2018-08-14 18:25:00')},
@@ -353,27 +436,27 @@ const admin_permissions = {
 		{name: 'Проведена'},
 	]);
 	await schemas.SupportTicket.create({
-		user_id:1, order_id: 6, theme:'Тема нового тикета 1', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
+		user_id:1,user_type:3,order_id: 6, theme:'Тема нового тикета 1', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
 	}).then(ticket => {
 		ticket.update({system_number: ticket.id})
 	});
 	await schemas.SupportTicket.create({
-		user_id:1, order_id: 6, theme:'Тема нового тикета 2', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
+		user_id:2,user_type:3,order_id: 6, theme:'Тема нового тикета 2', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
 	}).then(ticket => {
 		ticket.update({system_number: ticket.id})
 	});
 	await schemas.SupportTicket.create({
-		user_id:1, order_id: 6, theme:'Тема нового тикета 3', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
+		user_id:3,user_type:4,order_id: 6, theme:'Тема нового тикета 3', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
 	}).then(ticket => {
 		ticket.update({system_number: ticket.id})
 	});
 	await schemas.SupportTicket.create({
-		user_id:1, order_id: 6, theme:'Тема нового тикета 4', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
+		user_id:4,user_type:4,order_id: 6, theme:'Тема нового тикета 4', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
 	}).then(ticket => {
 		ticket.update({system_number: ticket.id})
 	});
 	await schemas.SupportTicket.create({
-		user_id:1, order_id: 6, theme:'Тема нового тикета 5', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
+		user_id:2,user_type:99,order_id: 6, theme:'Тема нового тикета 5', description:'Ipsam quaerat recusandae necessitatibus autem eveniet libero maxime beatae dolorem eaque. Voluptatum quia ullam pariatur molestiae autem, labore earum placeat a possimus!'
 	}).then(ticket => {
 		ticket.update({system_number: ticket.id})
 	});
@@ -386,58 +469,58 @@ const admin_permissions = {
 	await schemas.Menu.bulkCreate([
 		{icon:'fas fa-user',name:'Профиль и сводка', link:null, nested_in: 0},
 		{name:'Статистика', link:'/profile/statistics', nested_in: 1},
-		{name:'Настройки профиля', link:'/profile/settings', nested_in: 1},
+		{name:'Настройки профиля', link:'/profile/settings', nested_in: 1, shortcut: true, icon:'fas fa-user-cog'},
 		{name:'Активный заказ', link:'/orders/active', nested_in: 1},
-		{name:'События', link:'/profile/events', nested_in: 1},
+		{name:'События', link:'/profile/events', nested_in: 1, shortcut: true, icon:'fas fa-newspaper'},
 		{icon:'fas fa-balance-scale',name:'Баланс бустера', link:null, nested_in: 0},
 		{name:'Информация по балансу', link:'/balance/info', nested_in: 6},
 		{name:'Трансакции и списания', link:'/balance/txs', nested_in: 6},
 		{name:'Вывод средств', link:'/balance/withdrawal', nested_in: 6},
 		{icon:'fas fa-shopping-cart',name:'Заказы', link:null, nested_in: 0},
 		{name:'Список заказов', link:'/orders/pending', nested_in: 10},
-		{name:'Активный заказ', link:'/orders/active', nested_in: 10},
+		{name:'Активный заказ', link:'/orders/active', nested_in: 10, shortcut: true, icon:'fas fa-chart-line'},
 		{name:'История заказов', link:'/orders/history', nested_in: 10},
 		{icon:'fas fa-list-alt',name:'Условия работы', link:null, nested_in: 0},
 		{name:'Условия и согласия', link:'/conditions/agreements', nested_in: 14},
-		{name:'Прайс-лист', link:'/conditions/pricelists', nested_in: 14},
+		{name:'Прайс-лист', link:'/conditions/pricelists', nested_in: 14, shortcut: true, icon:'fas fa-hand-holding-usd'},
 		{name:'Бонусы и штрафы', link:'/conditions/bonuses&penalties', nested_in: 14},
 		{icon:'fas fa-life-ring',name:'Поддержка бустера', link:null, nested_in: 0},
-		{name:'Список тикетов', link:'/support/issues', nested_in: 18},
+		{name:'Список тикетов', link:'/support/issues', nested_in: 18, shortcut: true, icon:'fas fa-ambulance'},
 		{name:'Новый тикет', link:'/support/newissue', nested_in: 18},
-		{name:'Контакты сайта', link:'/support/contacts', nested_in: 18},
-
 		{icon:'fas fa-shopping-cart',name:'Управление заказами', link:null, nested_in: 0},
-		{name:'Все заказы', link:'/govt/orders/actual', nested_in: 22},
-		{name:'Проблемные заказы', link:'/govt/orders/issues', nested_in: 22},
+		{name:'Все заказы', link:'/govt/orders/actual', nested_in: 21, shortcut: true, icon:'fas fa-shopping-cart'},
+		{name:'Проблемные заказы', link:'/govt/orders/issues', nested_in: 21},
 		{icon:'fas fa-dollar-sign',name:'Финансы', link:null, nested_in: 0},
-		{name:'Пополнения (клиент)', link:'/govt/finance/client-refill', nested_in: 25},
-		{name:'Списания (клиент)', link:'/govt/finance/client-writeoff', nested_in: 25},
-		{name:'Запросы на вывод', link:'/govt/finance/booster-payoff', nested_in: 25},
-		{name:'Отчеты по заказам', link:'/govt/finance/booster-reports', nested_in: 25},
-		{name:'Штрафы и бонусы', link:'/govt/finance/booster-bonuses', nested_in: 25},
+		{name:'Пополнения (клиент)', link:'/govt/finance/client-refill', nested_in: 24},
+		{name:'Списания (клиент)', link:'/govt/finance/client-writeoff', nested_in: 24},
+		{name:'Запросы на вывод', link:'/govt/finance/booster-payoff', nested_in: 24},
+		{name:'Отчеты по заказам', link:'/govt/finance/booster-reports', nested_in: 24},
+		{name:'Штрафы и бонусы', link:'/govt/finance/booster-bonuses', nested_in: 24},
 		{icon:'fas fa-users',name:'Пользователи', link:null, nested_in: 0},
-		{name:'Все клиенты', link:'/govt/users/clients', nested_in: 31, display_id: 1},
-		{name:'Новый клиент', link:'/govt/users/clients/new', nested_in: 31, display_id: 2},
+		{name:'Все клиенты', link:'/govt/users/clients', nested_in: 30, display_id: 1, shortcut: true, icon:'fas fa-users'},
+		{name:'Новый клиент', link:'/govt/users/clients/new', nested_in: 30, display_id: 2},
 		{icon:'fas fa-users-cog',name:'Бустеры', link:null, nested_in: 0},
-		{name:'Статистика', link:'/govt/boosters/statistics', nested_in: 34},
-		{name:'Все бустеры', link:'/govt/boosters/list', nested_in: 34},
-		{name:'Новый бустер', link:'/govt/boosters/new', nested_in: 34},
-		{name:'Группы пользователей', link:'/govt/users/privileges', nested_in: 31, display_id: 3},
+		{name:'Статистика', link:'/govt/boosters/statistics', nested_in: 33},
+		{name:'Все бустеры', link:'/govt/boosters/list', nested_in: 33},
+		{name:'Новый бустер', link:'/govt/boosters/new', nested_in: 33},
+		{name:'Группы пользователей', link:'/govt/users/privileges', nested_in: 30, display_id: 3},
 		{icon:'fas fa-handshake',name:'Партнеры', link:null, nested_in: 0},
-		{name:'Статистика', link:'/govt/partners/statistics', nested_in: 39},
-		{name:'Все партнеры', link:'/govt/partners/list', nested_in: 39},
-		{name:'Новый партнер', link:'/govt/partners/new', nested_in: 39},
+		{name:'Статистика', link:'/govt/partners/statistics', nested_in: 38},
+		{name:'Все партнеры', link:'/govt/partners/list', nested_in: 38},
+		{name:'Новый партнер', link:'/govt/partners/new', nested_in: 38},
 		{icon:'fas fa-cogs',name:'Настройки системы', link:null, nested_in: 0},
-		{name:'Прайс-листы', link:'/govt/settings/pricelists', nested_in: 43},
-		{name:'Автоматические штрафы и бонусы', link:'/govt/settings/bonuses&penalties', nested_in: 43, display: false},
+		{name:'Прайс-листы', link:'/govt/settings/pricelists', nested_in: 42},
+		{name:'Штрафы и бонусы', link:'/govt/settings/bonuses&penalties', nested_in: 42},
 		{icon:'far fa-life-ring',name:'Служба поддержки', link:null, nested_in: 0},
-		{name:'Тикеты от клиентов', link:'/govt/support/clients', nested_in: 46},
-		{name:'Тикеты от бустеров', link:'/govt/support/boosters', nested_in: 46},
-		{name:'Тикеты от партнеров', link:'/govt/support/partners', nested_in: 46},
+		{name:'Тикеты от клиентов', link:'/govt/support/clients', nested_in: 45},
+		{name:'Тикеты от бустеров', link:'/govt/support/boosters', nested_in: 45},
+		{name:'Тикеты от партнеров', link:'/govt/support/partners', nested_in: 45},
 		{icon:'fas fa-exchange-alt',name:'Языковые переводы', link:'/govt/sundry/translations', nested_in: 0},
-		{name:'Все пользователи', link:'/govt/users/list', nested_in: 31, display_id: 5},
-		{name:'Новая группа', link:'/govt/users/privileges/new', nested_in: 31, display_id: 4},
-		{name:'Выводы (бустер)', link:'/govt/finance/booster-writeoff', nested_in: 25},
+		{name:'Все пользователи', link:'/govt/users/list', nested_in: 30, display_id: 5},
+		{name:'Новая группа', link:'/govt/users/privileges/new', nested_in: 30, display_id: 4},
+		{name:'Выводы (бустер)', link:'/govt/finance/booster-writeoff', nested_in: 24},
+		{icon:'fas fa-plus', name:'Новый тикет', link:'/govt/support/new', nested_in: 45},
+		{name:'Управление новостями', link:'/govt/settings/news', nested_in: 42},
 	]);
 	await schemas.LogAction.bulkCreate([
 		{name:'user_registered', details:'Регистрация в системе'},
@@ -457,14 +540,15 @@ const admin_permissions = {
 		{name:'booster_was_disabled', details:''},
 		{name:'booster_added_ticket', details:''},
 		{name:'user_recovery_requested', details:'Отправил запрос на смену пароля'},
-		{name:'user_changed_ticket', details:'Изменил настройки тикета'},
-		{name:'user_pinned_ticket', details:'Отметил тикет как важный'},
-		{name:'user_closed_ticket', details:'Закрыл тикет'},
-		{name:'user_canceled_ticket', details:'Отменил тикет'},
+		{name:'user_ticket_changed', details:'Изменил настройки тикета'},
+		{name:'user_ticket_pinned', details:'Отметил тикет как важный'},
+		{name:'user_ticket_closed', details:'Закрыл тикет'},
+		{name:'user_ticket_canceled', details:'Отменил тикет'},
 		{name:'user_changed_order', details:'Изменил настройки заказа'},
 		{name:'user_canceled_order', details:'Отклонил заказ'},
 		{name:'user_added_order_booster', details:'Назначил ответственного бустера'},
 		{name:'user_changed_order_booster', details:'Сменил ответственного бустера'},
+		{name:'user_ticket_created', details:'Создал тикет'},
 	]);
 	await schemas.Log.bulkCreate([
 		{user_id:1,order_id:8,action_id:6,message:'Описание залогированного события'},
@@ -492,8 +576,8 @@ const admin_permissions = {
 		{code: 'us', name: 'English'},
 	]);
 	await schemas.User.bulkCreate([
-		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: booster_permissions, login: 'booster@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
-		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: admin_permissions, login: 'admin@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'savage 77', type: 3, avatar: 'image_1533404228247.jpg', phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
+		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: booster_permissions, login: 'booster@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'Voodoo Savage', type: 3, phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
+		{rating: 2.5, rating_id: 4, order_permissions: order_permissions, permissions: admin_permissions, login: 'admin@gmail.com', password: md5('11111111'), is_approved: 1, is_blocked: 0, lanes: [1,3], heroes: [1,2,55,82], first_name:'Voodoo', last_name:'Savage', nick_name:'Voodoo Booster', type: 3, phone: '099-999-99-99', country: 'Ukraine', email: 'ondarkpath@gmail.com', skype:'skype99', discord: 'discord99'},
 		{login: 'client1@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 1', nick_name:'Client 1', email: 'client1@gmail.com', type:4},
 		{login: 'client2@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 2', nick_name:'Client 2', email: 'client2@gmail.com', type:4},
 		{login: 'client3@gmail.com', password: md5('11111111'), first_name:'Vadi', last_name:'Savage 3', nick_name:'Client 3', email: 'client3@gmail.com', type:4},
@@ -550,10 +634,6 @@ const admin_permissions = {
 		{amount: 150.99, amount_paid: 150.99, salary_rub: 75.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:15,type: 4,partner_id: 2,client_id: 4,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: null,heroes: [2,5,8,56],heroes_ban: null, servers: null, mmr_start: 2300,mmr_finish: 0,mmr_boosted: 0,medal_start: 0,medal_finish: 0,training_time_from: new Date(), training_time_till: new Date().setHours(new Date().getHours() + 8),training_hours: 8,training_services: [2,3,4,5,6,7],training_worker_id: 1,status: 5,urgency_hours: 10},
 		{amount: 150.99, amount_paid: 150.99, salary_rub: 92.99, deadline: moment().add(2,'days'),account_login:'acc202551',account_pass:'12345',system_number:16,type: 1,partner_id: 2,client_id: 3,client_comment: 'My high priority order #7 comment!',quality: 1,lanes: [1,3],heroes: [2,5,8,56,92,94],heroes_ban: [15,27,64,19], servers: [2,3], mmr_start: 2300,mmr_finish: 7500,mmr_boosted: 3275,medal_start: 0,medal_finish: 0,status: 5,urgency_hours: 10},
 	]);
-	await schemas.OrderCalibrationType.bulkCreate([
-		{name:'Калибровка с гарантией'},
-		{name:'Калибровка без гарантий'},
-	]);	
 	await schemas.OrderStatus.bulkCreate([
 		{name:'Новый', desc:'Только созданный заказ'},
 		{name:'Ошибка оплаты', desc:'Оплата не проведена по каким либо причинам'},
@@ -566,16 +646,6 @@ const admin_permissions = {
 		{name:'Ошибка', desc:'Заказ проблемный и ожидает коррекции данных'},
 		{name:'Отменен', desc:'Заказ отменет клиентом либо сервисом'},
 	]);
-	await schemas.TrainingService.bulkCreate([
-		{name:'Обучение фарму'},
-		{name:'Игра на миде'},
-		{name:'Игра на тяжелой линии'},
-		{name:'Игра на кэрри'},
-		{name:'Игра на саппорте'},
-		{name:'Игра на роумерах'},
-		{name:'Освоить конкретного героя'},
-		{name:'Другое (анализ реплеев и т.д.)'},
-	]);	
 	await schemas.OrderRankingSpeed.bulkCreate([
 		{name: 'F',from: 0,till: 60,ratio: 0},
 		{name: 'D',from: 60,till: 70,ratio: 0.3},
@@ -600,16 +670,11 @@ const admin_permissions = {
 		{name: 'A',mark: 5,ratio: 1},
 	]);	
 	await schemas.PayMethod.bulkCreate([
-		{name:'Visa/MasterCard'},
-		{name:'QIWI'},
-		{name:'Yandex.Money'},
-	]);	
-	await schemas.PayProp.bulkCreate([
-		{prop:'8741012401250681', method_id:1, country:'Ukraine', user_id:1, default:1},
-		{prop:'0999999999', method_id:2, country:'Ukraine', user_id:1, default:0},
-	]);	
+		{name:'advcash'},
+		{name:'paypal'},
+	]);		
 	await schemas.Translate.bulkCreate([
-		{name: '', us: '', ru: ''},
+		{name: 'Статистика', us: 'Statistics', ru: 'Статистика'},
 	]);
 	await new Promise(function(resolve, reject) {
 		https.get(`https://restcountries.eu/rest/v2/all`, (res) => {

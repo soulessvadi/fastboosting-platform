@@ -12,10 +12,14 @@ export class NewComponent implements OnInit {
   @ViewChild('form') form;
   @ViewChild('message') message;
   @ViewChild('order_number') order_number;
+  @ViewChild('user_id') user_id;
   @ViewChild('tx_number') tx_number;
   @ViewChild('theme') theme;
   @ViewChild('description') description;
-
+  public users = [];
+  public partners = [];
+  public clients = [];
+  public boosters = [];
   public responseMessage = null;
   public responseSuccess = false;
   public issues = [
@@ -25,6 +29,8 @@ export class NewComponent implements OnInit {
   ];
   public selectedIssue = this.issues[0];
   public ticket = {
+    user_type: 3,
+    user_id: 0,
     order_number: '',
     tx_number: '',
     theme: '',
@@ -36,11 +42,20 @@ export class NewComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this._service.getTicketByNumber(0).subscribe((res: any) => {
+      this.partners = res.body.partners;
+      this.clients = res.body.clients;
+      this.boosters = res.body.boosters;
+      this.users = this.boosters;
+    })
   }
 
   send($event) {
     $(this.form.nativeElement).find('*').removeClass('state-error');
+    if(!this.ticket.user_id) {
+      $(this.user_id.nativeElement).focus().closest('label').addClass('state-error');
+      return;
+    }
     if(this.order_number && !this.ticket.order_number.length) {
       $(this.order_number.nativeElement).focus().closest('label').addClass('state-error');
       return;
@@ -58,21 +73,21 @@ export class NewComponent implements OnInit {
       return;
     }
     $event.target.classList.add('loading');
-    this._service.sendNewTicket(this.ticket).subscribe(res => {
+    this._service.createTicket(this.ticket).subscribe(res => {
       this.form.nativeElement.classList.add('submited');
       if(res.status == 200) { 
-        this.responseMessage = 'Обращение отправлено', this.responseSuccess = true;
+        this.responseMessage = 'Тикет создан', this.responseSuccess = true;
       } else {
-        this.responseMessage = 'Обращение не отправлено по причине ...';
+        this.responseMessage = 'Тикет не создан по техническим причинам';
       }
       setTimeout(() => {
         this.form.nativeElement.classList.remove('submited');
-        this._router.navigate(['/support/issues']);
+        this._router.navigate(['/govt/support/' + res.body.system_number]);
         $event.target.classList.add('loading');
-      }, 2500);
+      }, 1500);
     }, (error) => {
       this.form.nativeElement.classList.add('submited');
-      this.responseMessage = 'Обращение не отправлено';            
+      this.responseMessage = 'Тикет не отправлено';            
       setTimeout(() => {
         this.form.nativeElement.classList.remove('submited');
         $event.target.classList.add('loading');

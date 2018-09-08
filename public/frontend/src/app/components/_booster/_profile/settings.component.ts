@@ -16,50 +16,48 @@ export class SettingsComponent implements OnInit {
     private user_default: any;
     public user: any;
     public now: Date = new Date();
-    public paymethods: any;
-    public heroes: any;
-    public lanes: any;
-    public lanes_checked = [];
+    public otypes: any = null;
+	public osources: any = null;
+    public paymethods: any = null;
+    public heroes: any = null;
+    public lanes: any = null;
+    public medals: any = null;
     public viewMode: boolean = true;
     public avatarUpload = null;
-    public activeTab = 1;
     public reviews = null;
     public reviewsShown = null;
     public logs = null;
     public logsShown = null;
+    public activeTab = 1;
+    public referrer_link = null;
 
     constructor(public _service: ComponentService, public _router: Router, private modalService: BsModalService) {
+    }
+
+    ngOnInit() {
     	this._service.getProfile().subscribe((res) => {
     		if(res.status == 200) {
 	    		this.user_default = JSON.stringify(res.body.user);
     			this.user = res.body.user;
-
+    			this.referrer_link = window.location.origin + "/auth/register/" + this.user.referrer_hash;
 	    		this.reviews = res.body.reviews;
 	    		this.reviewsShown = this.reviews.slice(0, 5);
 	    		this.reviews.splice(0, 5);
 	    		this.logs = res.body.logs;
 	    		this.logsShown = this.logs.slice(0, 9);
 	    		this.logs.splice(0, 9);
-
+			    this.otypes = res.body.otypes;
+			    this.osources = res.body.osources;
 		    	this._service._countries;
-		    	this._service._paymethods.then((methods) => {
-		    		this.paymethods = methods;
-		    	});
-		    	this._service._heroes.then((heroes) => { 
-		    		this.heroes = heroes;		    		
-		    	});
-		    	this._service._lanes.then((lanes) => {
-		    		this.lanes = lanes;
-		    	});
+		    	this._service._paymethods.then((methods) => this.paymethods = methods);
+		    	this._service._heroes.then((heroes) => this.heroes = heroes);
+		    	this._service._lanes.then((lanes) => this.lanes = lanes);
+    			this._service._medals.then((medals: any) => this.medals = medals);
 		    }
     	}, (e) => {
 			this._router.navigate(['/auth/login']);
-    	});
+    	});    	
     }
-
-	ngOnInit() {
-
-	}
 
 	loadMoreReviews() {
 		this.reviewsShown = this.reviewsShown.concat(this.reviews.slice(0, 5));
@@ -151,6 +149,12 @@ export class SettingsComponent implements OnInit {
 		var reader = new FileReader();
 		reader.onload = (e:any) => { this.avatarimg.nativeElement.src = e.target.result; }
 		reader.readAsDataURL(file);
+	}
+
+	public copyInputValue(inputElement) {
+	    inputElement.select();
+	    document.execCommand('copy');
+	    // inputElement.setSelectionRange(0, 0);
 	}
 
 }

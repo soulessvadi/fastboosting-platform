@@ -8,7 +8,46 @@ module.exports = (db) => {
 
 	const controller = {};
 
-	controller.ticketUpdate = (req, res, next) => {
+	controller.create = (req, res, next) => {
+		let user_id = req.app.user.id;
+		let user_type = req.app.user.type;
+		let entity = Models.SupportTicket.build();
+		entity.order_number = req.body.order_number.trim();
+		entity.tx_number = req.body.tx_number.trim();
+		entity.user_id = req.body.user_id || user_id;
+		entity.user_type = req.body.user_type || user_type;
+		entity.theme = req.body.theme;
+		entity.description = req.body.description;
+		entity.order_id = 0;
+		entity.tx_id = 0;
+		entity.system_number = entity.user_id;
+		(async () => {
+			if(entity.order_number && entity.order_number.length > 5) {
+				try	{
+					let order =  await Models.Order.findOne({where:{system_number:entity.order_number}, raw:true});
+					entity.order_id = order.id;
+				} catch(e) {
+					entity.order_id = 0;
+				}
+			} else if(entity.tx_number && entity.tx_number.length > 5) {
+				try	{
+					let tx =  await Models.Tx.findOne({where:{system_number:entity.tx_number}, raw:true});
+					entity.tx_id = tx.id;
+				} catch(e) {
+					entity.tx_id = 0;
+				}
+			}
+	      	entity.save().then((ticket) => {
+				Models.Log.create({user_id: user_id, action_id: 26});
+				res.status(200).json({system_number: ticket.system_number});
+			}).catch((err) => {
+				res.status(202).json({error:'internal_error'});
+			});
+		})();
+
+	};	
+
+	controller.update = (req, res, next) => {
 		let user_id = req.app.user.id;
 		let system_number = req.params.number;
 		Models.SupportTicket.findOne({where:{system_number:system_number}})
@@ -16,6 +55,7 @@ module.exports = (db) => {
 			if(!ticket) return res.status(202).json({'error':'ticket_not_found'});
 			let data = {
 				user_id: req.body.user_id || ticket.user_id,
+				user_type: req.body.user_type || ticket.user_type,
 				theme: req.body.theme || ticket.theme,
 				description: req.body.description || ticket.description,
 				status: req.body.status || ticket.status,
@@ -30,13 +70,13 @@ module.exports = (db) => {
 				res.status(200).json({status:'ok',error:null});
 			}).catch(err => res.status(202).json({status:'failed',error:'internal_error'}));
 		}).catch(err => res.status(202).json({status:'failed',error:'internal_error'}));
-		
 	};
 
 	controller.ticket = (req, res, next) => {
       	let system_number = req.params.number;
 		async.parallel({
 			ticket: (cb) => {
+				if(!system_number) return cb(null, []);
 				let query = `select t.*, u.nick_name as author_name, u.id as author_id, ut.name as author_type,
 				(select name from tickets_statuses where id = t.status limit 1) as status_name,
 				if(t.order_id > 0, (select system_number from orders where id = t.order_id limit 1), null) as order_number,
@@ -52,17 +92,48 @@ module.exports = (db) => {
 					cb(null, null);
 				});
 			},
-			authors: (cb) => {
+			boosters: (cb) => {
 				connection.execute(`
-					select users.id, users.nick_name, ut.name as type from users 
+					select users.id, users.nick_name as name, ut.name as type_name from users 
 					left join users_types ut on ut.id = users.type
-					where type in (3,4) order by users.nick_name`,{raw: true})
+					where type = 3 order by users.type asc, users.nick_name asc`,{raw: true})
 				.then((results) => {
 					cb(null, results);
 				}).catch((err) => {
 					cb(null, []);
 				})
-			}
+			},
+			clients: (cb) => {
+				connection.execute(`
+					select users.id, users.nick_name as name, ut.name as type_name from users 
+					left join users_types ut on ut.id = users.type
+					where type = 4 order by users.type asc, users.nick_name asc`,{raw: true})
+				.then((results) => {
+					cb(null, results);
+				}).catch((err) => {
+					cb(null, []);
+				})
+			},
+			partners: (cb) => {
+				connection.execute(`
+					select partners.id, partners.name, partners.domain as type_name 
+					from partners order by partners.name`,{raw: true})
+				.then((results) => {
+					cb(null, results);
+				}).catch((err) => {
+					cb(null, []);
+				})
+			},
+			statuses: (cb) => {
+				Models.SupportTicketStatus.findAll({attributes:['id','name'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
+			types: (cb) => {
+				Models.SupportTicketType.findAll({attributes:['id','name'],raw:true})
+				.then((results) => cb(null, results))
+				.catch((err) => cb(null, []));
+			},
 		}, (error, results) => {
     		res.status(200).json(results);
 		});
@@ -91,21 +162,17 @@ module.exports = (db) => {
 		      	if(user_id) conditions += ` and t.user_id = ${user_id}`;
 				if(keyword) conditions += ` and (t.theme like '%${keyword}%' or t.description like '%${keyword}%' or t.id like '%${keyword}%' or t.system_number like '%${keyword}%' or u.nick_name like '%${keyword}%')`;
 				let query = `select t.theme, t.description, t.system_number, t.created_at, t.considered_at, t.status, t.pinned,
-				(select nick_name from users where id = t.user_id limit 1) as creator,
 				(select name from tickets_statuses where id = t.status limit 1) as status_name,
+				if(${user_type} = 99, (select name from partners where id = t.user_id limit 1), (select nick_name from users where id = t.user_id limit 1)) as creator,
 				if(t.order_id > 0, (select system_number from orders where id = t.order_id limit 1), null) as order_number,
 				if(t.tx_id > 0, (select system_number from txs where id = t.tx_id limit 1), null) as tx_number
 				from tickets t
-				left join users u on u.id = t.user_id
-				where u.type = ${user_type}
-				${conditions}
+				where t.user_type = ${user_type} ${conditions}
 				order by t.pinned desc, t.${sortfield} ${sortdir}
 				limit ${limits}`;
 				connection.execute(query, { raw: true }).then((results) => {
 					connection.executeOne(`
-						select count(t.id) as total from tickets t 
-						left join users u on u.id = t.user_id
-						where u.type = ${user_type} limit 1`, {raw: true})
+						select count(t.id) as total from tickets t where t.user_type = ${user_type} ${conditions} limit 1`, {raw: true})
 					.then(count => {
 			            let pages = Math.ceil(count.total/perpage);
 			            let pagination = utils.paginate(page, perpage, pages, 3);
@@ -174,20 +241,23 @@ module.exports = (db) => {
 			});
 		})
 		.catch((err) => {
-			res.status(202).json({status:'failed',error:'internal_error'});
+			res.status(202).json({error:'internal_error'});
 		});
 	};
 
-	controller.new = (req, res, next) => {
-		let entity = {
-			order_number: req.body.order_number.trim(),
-			tx_number: req.body.tx_number.trim(),
-			user_id: req.app.user.id,
-			theme: req.body.theme,
-			description: req.body.description,
-			order_id: 0,
-			tx_id: 0,
-		};
+	controller.fromUser = (req, res, next) => {
+		let user_id = req.app.user.id;
+		let user_type = req.app.user.type;
+		let entity = Models.SupportTicket.build();
+		entity.order_number = req.body.order_number.trim();
+		entity.tx_number = req.body.tx_number.trim();
+		entity.user_id = user_id;
+		entity.user_type = user_type;
+		entity.theme = req.body.theme;
+		entity.description = req.body.description;
+		entity.order_id = 0;
+		entity.tx_id = 0;
+		entity.system_number = entity.user_id;
 
 		(async () => {
 			if(entity.order_number && entity.order_number.length > 5) {
@@ -205,8 +275,8 @@ module.exports = (db) => {
 					entity.tx_id = 0;
 				}
 			}
-	      	Models.SupportTicket.create(entity).then((ticket) => {
-				ticket.update({system_number:ticket.id});
+	      	entity.save().then((ticket) => {
+				ticket.update({system_number:ticket.system_number});
 				res.status(200).json(ticket);
 			}).catch((err) => {
 				res.status(202).json({status:'failed',error:'internal_error'});

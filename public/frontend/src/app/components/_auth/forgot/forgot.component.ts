@@ -36,7 +36,7 @@ export class ForgotComponent implements OnInit {
     this.service.recovery(this.recovery).subscribe((res) => { 
       if(res.status == 200) {
         this.responseSuccess = true;
-        this.responseMessage = 'На ваш email отправлено письмо с иструкциями по восстановлению доступа.';
+        this.responseMessage = 'На ваш email отправлено письмо с иструкциями по восстановлению доступа';
       }  
       if(res.status == 202) {
         if(res.body.error == 'user_absent') {

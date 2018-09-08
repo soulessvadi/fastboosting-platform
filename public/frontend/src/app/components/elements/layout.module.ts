@@ -8,7 +8,6 @@ import { HeaderModule } from "./header/header.module";
 import { FooterComponent } from "./footer/footer.component";
 import { NavigationModule } from "./navigation/navigation.module";
 import { RibbonComponent } from "./ribbon/ribbon.component";
-import { ShortcutComponent } from "./shortcut/shortcut.component";
 import { LayoutSwitcherComponent } from "./layout-switcher.component";
 import { MainLayoutComponent  } from './layouts/main-layout.component';
 import { AdminLayoutComponent } from "./layouts/admin-layout.component";
@@ -31,7 +30,6 @@ import { PipesModule } from '@app/shared/pipes/pipes.module';
   declarations: [
     FooterComponent,
     RibbonComponent,
-    ShortcutComponent,
     LayoutSwitcherComponent,
     MainLayoutComponent,
     AdminLayoutComponent,
@@ -45,7 +43,6 @@ import { PipesModule } from '@app/shared/pipes/pipes.module';
     NavigationModule,
     FooterComponent,
     RibbonComponent,
-    ShortcutComponent,
     LayoutSwitcherComponent,
   ]
 })

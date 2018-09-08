@@ -11,101 +11,208 @@
           <div class="col-sm-12 col-md-12 col-lg-12">
             <div class="well well-light shadow-md">
 			    <article class="col-xs-12">
-					<table class="table table-hover table-bordered">
-		              <caption>
-		              	<h1 class="txt-color-teal">{{'Таблица ваших расценок на отдельные виды услуг'|i18n}}</h1>
-		              	<p>{{'Таблица ваших расценок на отдельные виды услуг...'|i18n}}</p>
-		              </caption>
-		              <thead>
-			              <tr>
-			              	<th colspan="3"><h4 class="txt-color-blue fs-20">{{'Буст рейтинга'|i18n}}</h4></th>
-			              </tr>
-			              <tr>
-			              	<td colspan="3">
-			              		<h4 class="fs-16">{{'Подсчитать стоимость заказа'|i18n}}</h4>
-			              		<div class="row margin-top-10">
-				                    <div class="col-xs-12 col-sm-6 col-md-7">
-				                      <div class="form-group" style="padding: 0px 10px;">
-				                        <input *ngIf="pricelists.boosting?.length" ionSlider type="text" data-type="double" data-postfix=" MMR" data-hasgrid="true" data-min_interval="25" data-min="0" data-max="8000" data-from="0" data-to="8000"data-step="25" (change)="onSlide($event)">
-				                      </div>
-				                    </div>
-				                    <div class="col-xs-12 col-sm-6 col-md-5">
-				                    	<h4 class="text-center txt-color-teal fs-30 fw-700">{{boosting_price}} {{currency}}</h4>
-				                    </div>		              			
-			              		</div>
-			              	</td>
-			              </tr>
-			              <tr><th style="width:60px;">#</th><th>{{'Диапазон рейтинга'|i18n}}</th><th>{{'Стоимость'|i18n}}</th></tr>
-		              </thead>
-		              <tbody>
-			              <tr *ngFor="let item of pricelists.boosting; let i = index">
-			                <td>{{ i + 1 }}</td>
-			                <td>{{ item.from }} - {{ item.till }} <sup>MMR</sup></td>
-			                <td>{{ item.price | number:'1.2-2' }} {{ item.currency_name }} <sup>/ {{ item.volume }} MMR</sup></td>
-			              </tr>
-		              </tbody>
-		              <thead>
-			              <tr>
-			              	<th colspan="3"><h4 class="txt-color-blue fs-20">{{'Буст медали'|i18n}}</h4></th>
-			              </tr>
-			              <tr>
-			              	<th colspan="3">
-			              		<h4 class="fs-16">{{'Подсчитать стоимость заказа'|i18n}}</h4>
-			              		<div class="row margin-top-10">
-				                    <div class="col-xs-12 col-sm-6 col-md-7">
-										<div class="medals-selector" *ngIf="pricelists.medal_boost?.length">
-											<div class="item">
-												<div class="medal le-dr-selector">
-													<div class="medal-rank driven">
-														<div class="list">
-															<div data-le="1" class="active">
-																<div class="active" data-dr="1">
-																	<img src="{{_service.store_medals}}{{pricelists.medal_boost[medal_from].image}}">
+              		<h1 class="txt-color-teal">{{'Таблица ваших расценок на отдельные виды услуг'|i18n}}</h1>
+              		<p>{{'Таблица ваших расценок на отдельные виды услуг...'|i18n}}</p>
+		            <div class="widget-body">
+		              <ul id="myTab1" class="nav nav-tabs bordered">
+		                <li [class.active]="activeTab == 1">
+		                  <a (click)="activeTab = 1">
+		                    <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Буст MMR' | i18n }}
+		                  </a>
+		                </li>
+		                <li [class.active]="activeTab == 2">
+		                  <a (click)="activeTab = 2">
+		                    <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Буст медали' | i18n }}
+		                  </a>
+		                </li>
+		                <li [class.active]="activeTab == 3">
+		                  <a (click)="activeTab = 3">
+		                    <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Калибровка' | i18n }}
+		                  </a>
+		                </li>
+		                <li [class.active]="activeTab == 4">
+		                  <a (click)="activeTab = 4">
+		                    <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Тренинг' | i18n }}
+		                  </a>
+		                </li>
+		              </ul>
+		              <tabset class="padding-10">
+		                <tab [active]="activeTab == 1">
+		                  <article>       	
+							<table class="table table-hover table-bordered">
+				              <thead>
+					              <tr>
+					              	<th colspan="3"><span class="fs-16 txt-color-teal">{{'Буст рейтинга'|i18n}}</span></th>
+					              </tr>
+					              <tr>
+					              	<td colspan="3">
+					              		<h4 class="fs-16">{{'Подсчитать стоимость заказа'|i18n}}</h4>
+					              		<div class="row margin-top-10">
+						                    <div class="col-xs-12 col-sm-6 col-md-7">
+						                      <div class="form-group" style="padding: 0px 10px;">
+						                        <input *ngIf="pricelists.boosting?.length" ionSlider type="text" data-type="double" data-postfix=" MMR" data-hasgrid="true" data-min_interval="25" data-min="0" data-max="8000" data-from="0" data-to="8000"data-step="25" (change)="onSlide($event)">
+						                      </div>
+						                    </div>
+						                    <div class="col-xs-12 col-sm-6 col-md-5">
+						                    	<h4 class="text-center txt-color-teal fs-30 fw-700">{{boosting_price}} {{currency}}</h4>
+						                    </div>		              			
+					              		</div>
+					              	</td>
+					              </tr>
+					              <tr><th>#</th><th>{{'Диапазон рейтинга'|i18n}}</th><th>{{'Стоимость'|i18n}}</th></tr>
+				              </thead>
+				              <tbody>
+					              <tr *ngFor="let item of pricelists.boosting; let i = index">
+					                <td class="w-75px">{{ i + 1 }}</td>
+					                <td>{{ item.from }} - {{ item.till }} <sup>MMR</sup></td>
+					                <td class="w-25">{{ item.price | number:'1.2-2' }} {{ item.currency_name }} <sup>/ {{ item.volume }} MMR</sup></td>
+					              </tr>
+				              </tbody>
+				            </table>
+		                  </article>                         
+		                </tab>
+		                <tab [active]="activeTab == 2">
+		                  <article>
+					            <table class="table table-hover table-bordered">
+					              <thead>
+						              <tr>
+						              	<th colspan="3"><span class="fs-16 txt-color-teal">{{'Буст медали'|i18n}}</span></th>
+						              </tr>
+						              <tr>
+						              	<th colspan="3">
+						              		<h4 class="fs-16">{{'Подсчитать стоимость заказа'|i18n}}</h4>
+						              		<div class="row margin-top-10">
+							                    <div class="col-xs-12 col-sm-6 col-md-7">
+													<div class="medals-selector" *ngIf="pricelists.medal_boost?.length">
+														<div class="item">
+															<div class="medal le-dr-selector">
+																<div class="medal-rank driven">
+																	<div class="list">
+																		<div data-le="1" class="active">
+																			<div class="active" data-dr="1">
+																				<img src="{{_service.store_medals}}{{pricelists.medal_boost[medal_from].image}}">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="controlls">
+																		<span class="prev" (click)="prevMedal('from')"><i class="fas fa-chevron-left"></i></span>
+																		<span class="next" (click)="nextMedal('from')"><i class="fas fa-chevron-right"></i></span>
+																	</div>
 																</div>
 															</div>
 														</div>
-														<div class="controlls">
-															<span class="prev" (click)="prevMedal('from')"><i class="fas fa-chevron-left"></i></span>
-															<span class="next" (click)="nextMedal('from')"><i class="fas fa-chevron-right"></i></span>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="item">
-												<div class="medal le-dr-selector">
-													<div class="medal-rank driven">
-														<div class="list">
-															<div data-le="1" class="active">
-																<div class="active" data-dr="1">
-																	<img src="{{_service.store_medals}}{{pricelists.medal_boost[medal_till].image}}">
+														<div class="item">
+															<div class="medal le-dr-selector">
+																<div class="medal-rank driven">
+																	<div class="list">
+																		<div data-le="1" class="active">
+																			<div class="active" data-dr="1">
+																				<img src="{{_service.store_medals}}{{pricelists.medal_boost[medal_till].image}}">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="controlls">
+																		<span class="prev" (click)="prevMedal('till')"><i class="fas fa-chevron-left"></i></span>
+																		<span class="next" (click)="nextMedal('till')"><i class="fas fa-chevron-right"></i></span>
+																	</div>
 																</div>
 															</div>
 														</div>
-														<div class="controlls">
-															<span class="prev" (click)="prevMedal('till')"><i class="fas fa-chevron-left"></i></span>
-															<span class="next" (click)="nextMedal('till')"><i class="fas fa-chevron-right"></i></span>
-														</div>
 													</div>
-												</div>
-											</div>
-										</div>
-				                    </div>
-				                    <div class="col-xs-12 col-sm-6 col-md-5">
-				                    	<h4 class="text-center txt-color-teal fs-30 fw-700">{{medal_price}} {{currency}}</h4>
-				                    </div>		              			
-			              		</div>			              		
-			              	</th>
-			              </tr>
-			              <tr><th style="width:60px;">#</th><th>{{'Медаль'|i18n}}</th><th>{{'Стоимость'|i18n}}</th></tr>
-		              </thead>
-		              <tbody>
-			              <tr *ngFor="let item of pricelists.medal_boost; let i = index">
-			                <td class="va-m">{{ i + 1 }}</td>
-			                <td class="no-padding"> <img src="{{_service.store_medals}}{{item.image}}" style="width: 50px;"> {{ item.title }} <sup>{{ item.rank }}</sup></td>
-			                <td class="va-m">{{ item.price | number:'1.2-2' }} {{ item.currency_name }}</td>
-			              </tr>
-		              </tbody>
-		            </table>
+							                    </div>
+							                    <div class="col-xs-12 col-sm-6 col-md-5">
+							                    	<h4 class="text-center txt-color-teal fs-30 fw-700">{{medal_price}} {{currency}}</h4>
+							                    </div>		              			
+						              		</div>			              		
+						              	</th>
+						              </tr>
+						              <tr><th>#</th><th>{{'Медаль'|i18n}}</th><th>{{'Стоимость'|i18n}}</th></tr>
+					              </thead>
+					              <tbody>
+						              <tr *ngFor="let item of pricelists.medal_boost; let i = index">
+						                <td class="va-m w-75px">{{ i + 1 }}</td>
+						                <td class="no-padding"> <img src="{{_service.store_medals}}{{item.image}}" style="width: 50px;"> {{ item.title }} <sup>{{ item.rank }}</sup></td>
+						                <td class="va-m w-25">{{ item.price | number:'1.2-2' }} {{ item.currency_name }}</td>
+						              </tr>
+					              </tbody>
+					            </table>
+		                  </article>
+		                </tab>
+		                <tab [active]="activeTab == 3">
+		                  <article>
+		                    <table class="table table-hover table-bordered table-prices td-h-auto">
+		                      <thead>
+		                        <tr>
+		                          <th colspan="3">
+		                            <span class="fs-16 txt-color-teal">{{ 'Калибровка' | i18n }}</span>
+		                          </th>
+		                        </tr>
+		                        <tr>
+		                          <th>#</th>
+		                          <th>{{ 'Название' | i18n }}</th>
+		                          <th>{{ 'Стоимость' | i18n }}</th>
+		                        </tr>
+		                      </thead>
+		                      <tbody>
+		                        <tr *ngFor="let item of pricelists.calibration;let i = index">
+		                          <td class="w-75px">{{ i + 1 }}</td>
+		                          <td>{{ item.name }}</td>
+		                          <td class="w-25">{{ item.price | number : '1.2-2'}} {{ item.currency_name }}</td>
+		                        </tr>
+		                      </tbody>
+		                    </table>
+		                  </article>   
+		                </tab>
+		                <tab [active]="activeTab == 4">
+		                  <article>
+		                    <table class="table table-hover table-bordered table-prices td-h-auto margin-bottom-5">
+		                      <thead>
+		                        <tr>
+		                          <th colspan="3">
+		                            <span class="fs-16 txt-color-teal">{{ 'Стоимость игровых часов' | i18n }}</span>
+		                          </th>
+		                        </tr>
+		                        <tr>
+		                          <th>#</th>
+		                          <th>{{ 'Кол-во часов' | i18n }}</th>
+		                          <th>{{ 'Стоимость' | i18n }}</th>
+		                        </tr>
+		                      </thead>
+		                      <tbody>
+		                        <tr *ngFor="let item of pricelists.training; let i = index">
+		                          <td class="w-75px">{{ i + 1 }}</td>
+		                          <td>{{ item.hours }}</td>
+		                          <td class="w-25">{{ item.price | number : '1.2-2'}} {{ item.currency_name }}</td>
+		                        </tr>
+		                      </tbody>
+		                    </table> 
+		                  </article>  
+		                  <article>
+		                    <table class="table table-hover table-bordered table-prices td-h-auto margin-bottom-5">
+		                      <thead>
+		                        <tr>
+		                          <th colspan="3">
+		                            <span class="fs-16 txt-color-teal">{{ 'Дополнительные услуги' | i18n }}</span>
+		                          </th>
+		                        </tr>
+		                        <tr>
+		                          <th>#</th>
+		                          <th>{{ 'Название' | i18n }}</th>
+		                          <th>{{ 'Стоимость' | i18n }}</th>
+		                        </tr>
+		                      </thead>
+		                      <tbody>
+		                        <tr *ngFor="let item of pricelists.training_services; let i = index">
+		                          <td class="w-75px">{{ i + 1 }}</td>
+		                          <td>{{ item.name }}</td>
+		                          <td class="w-25">{{ item.price | number : '1.2-2'}} {{ item.currency_name }}</td>
+		                        </tr>
+		                      </tbody>
+		                    </table>   
+		                  </article>  
+		                </tab>
+		              </tabset>
+		            </div>     
 			    </article>       
 			    <br clear="both">      		
             </div>

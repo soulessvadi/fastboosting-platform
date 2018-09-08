@@ -14,6 +14,9 @@ const routes: Routes = [{
 	path: 'partners',
 	component: ListComponent
 },{
+	path: 'new',
+	component: NewComponent
+},{
 	path: ':ticket',
 	component: TicketComponent
 },{

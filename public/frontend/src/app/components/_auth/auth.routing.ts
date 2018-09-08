@@ -13,11 +13,23 @@ export const routes:Routes = [
     loadChildren: './register/register.module#RegisterModule'
   },
   {
+    path: 'register/:hash',
+    loadChildren: './register/register.module#RegisterModule'
+  },
+  {
+    path: 'verify/:hash',
+    loadChildren: './verify/verify.module#VerifyModule'
+  },
+  {
+    path: 'recovery/:hash',
+    loadChildren: './recovery/recovery.module#RecoveryModule'
+  },
+  {
     path: 'forgot',
     loadChildren: './forgot/forgot.module#ForgotModule'
   },
   {
-    path: 'locked',
+    path: 'locked/:id',
     loadChildren: './locked/locked.module#LockedModule'
   }
 ];

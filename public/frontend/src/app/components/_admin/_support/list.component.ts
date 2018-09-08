@@ -45,21 +45,7 @@ export class ListComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private el: ElementRef,
-  ) {
-    this.route.snapshot.url.map(e => {
-      if(e.path == 'boosters') {this.filters.action = 3;this.pageName="Тикеты бустеров"}
-      else if(e.path == 'clients') {this.filters.action = 4;this.pageName="Тикеты клиентов"}
-      else if(e.path == 'partners') {this.filters.action = 5;this.pageName="Тикеты партнеров"}
-      else {this.filters.action = 5;this.pageName="Тикеты пользователей"}
-    });
-    this._service._tickets_statuses.then(res => this.statuses = res);
-    this._service._tickets_types.then(res => this.types = res);
-    this.fetch();
-  }
-
-  ngOnInit() {
-
-  }
+  ) {}
 
   public fetch() {
     $('#sync_button').addClass('loading');
@@ -77,5 +63,17 @@ export class ListComponent implements OnInit {
       this.filters.page = page;
       this.fetch();
     }
+  }
+
+  ngOnInit() {
+    this.route.snapshot.url.map(e => {
+      if(e.path == 'boosters') {this.filters.action = 3;this.pageName="Тикеты бустеров"}
+      else if(e.path == 'clients') {this.filters.action = 4;this.pageName="Тикеты клиентов"}
+      else if(e.path == 'partners') {this.filters.action = 99;this.pageName="Тикеты партнеров"}
+      else {this.filters.action = 5;this.pageName="Тикеты пользователей"}
+    });
+    this._service._tickets_statuses.then(res => this.statuses = res);
+    this._service._tickets_types.then(res => this.types = res);
+    this.fetch();
   }
 }

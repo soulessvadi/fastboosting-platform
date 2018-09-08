@@ -9,8 +9,8 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 
 export class ComponentService {
 
-  public endpoint: string = 'http://localhost:4000/api/v1';
-  public cdn_endpoint: string = 'http://localhost:4000/cdn/';
+  public endpoint: string = 'http://vda.daricvety.com.ua:4000/api/v1';
+  public cdn_endpoint: string = 'http://vda.daricvety.com.ua:4000/cdn/';
   public store_heroes: string = this.cdn_endpoint + 'heroes/';
   public store_medals: string = this.cdn_endpoint + 'ranks/';
   public store_avatars: string = this.cdn_endpoint + 'avatars/';
@@ -29,6 +29,14 @@ export class ComponentService {
   public orders_types: any = null;
   public ranks: any = null;
   public services: any = null;
+
+  set locale(locale) {
+    this.storage.tot('locale', locale);
+  }
+
+  get locale() {
+    return this.storage.fetch('locale');
+  }
 
   set _user(user: any) {
     this.user = user;
@@ -230,6 +238,15 @@ export class ComponentService {
 
   }
 
+  public colorify() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
   public smallBox(data, cb?) {
     $.smallBox(data, cb)
   }
@@ -244,6 +261,11 @@ export class ComponentService {
 
   isEmail(mixed) {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(mixed);
+  }
+
+  isUrl(mixed) {
+    var regex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
     return regex.test(mixed);
   }
 
@@ -319,6 +341,10 @@ export class ComponentService {
     return this.http.post(`${this.endpoint}/recovery`, user, { observe: 'response' });
   }
 
+  public recoveryPassword(hash, data): Observable<any>  {
+    return this.http.post(`${this.endpoint}/recovery/${hash}`, data, { observe: 'response' });
+  }
+
   public logout(): void {
     this.storage.flush();
   }
@@ -375,6 +401,30 @@ export class ComponentService {
     return this.http.post(`${this.endpoint}/news/comment`, data, { observe: 'response', headers: this._auth });
   }
 
+  public getAllNews(params): Observable<any> {
+    return this.http.get(`${this.endpoint}/news/all`, { params: params, observe: 'response', headers: this._auth });
+  }
+
+  public updatePost(post_id, data) {
+    return this.http.put(`${this.endpoint}/news/${post_id}`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public addPost() {
+    return this.http.post(`${this.endpoint}/news`, null, { observe: 'response', headers: this._auth });
+  }
+
+  public getPost(post_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/news/${post_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public publishPost(id, params): Observable<any> {
+    return this.http.put(`${this.endpoint}/news/${id}/publish`, params, { observe: 'response', headers: this._auth });
+  }
+
+  public removePost(post_id): Observable<any> {
+    return this.http.delete(`${this.endpoint}/news/${post_id}`, { observe: 'response', headers: this._auth });
+  }
+
   public sendOrderIssue(issue: object): Observable<any>  {
     return this.http.post(`${this.endpoint}/orders/active/issue`, issue, { observe: 'response', headers: this._auth });
   }
@@ -411,6 +461,14 @@ export class ComponentService {
     return this.http.get(`${this.endpoint}/tickets/self`, { params: data,  observe: 'response', headers: this._auth });
   }
 
+  public sendNewTicket(issue: object): Observable<any>  {
+    return this.http.post(`${this.endpoint}/tickets/fromUser`, issue, { observe: 'response', headers: this._auth });
+  }
+
+  public createTicket(issue: object): Observable<any>  {
+    return this.http.post(`${this.endpoint}/tickets/`, issue, { observe: 'response', headers: this._auth });
+  }
+
   public getContacts(): Observable<any>  {
     return this.http.get(`${this.endpoint}/users/me/contacts`, { observe: 'response', headers: this._auth });
   }
@@ -425,10 +483,6 @@ export class ComponentService {
 
   public setTranslations(data: any): Observable<any>  {
     return this.http.post(`${this.endpoint}/interface/translations`, data, { observe: 'response', headers: this._auth });
-  }
-
-  public sendNewTicket(issue: object): Observable<any>  {
-    return this.http.post(`${this.endpoint}/tickets/new`, issue, { observe: 'response', headers: this._auth });
   }
 
   public getAllOrders(params): Observable<any> {
@@ -456,7 +510,7 @@ export class ComponentService {
   }
 
   public saveTicket(system_number, data): Observable<any> {
-    return this.http.post(`${this.endpoint}/tickets/${system_number}`, data, { observe: 'response', headers: this._auth });
+    return this.http.put(`${this.endpoint}/tickets/${system_number}`, data, { observe: 'response', headers: this._auth });
   }
 
   public getPartners(params): Observable<any> {
@@ -559,6 +613,14 @@ export class ComponentService {
     return this.http.get(`${this.endpoint}/users/${user_id}`, { observe: 'response', headers: this._auth });
   }
 
+  public getLockedUser(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/locked/${user_id}`, { observe: 'response' });
+  }
+
+  public verifyUser(user_id): Observable<any> {
+    return this.http.get(`${this.endpoint}/users/verify/${user_id}`, { observe: 'response' });
+  }
+
   public createUser(user_id, data): Observable<any> {
     return this.http.post(`${this.endpoint}/users`, data, { observe: 'response', headers: this._auth });
   }
@@ -611,12 +673,28 @@ export class ComponentService {
     return this.http.put(`${this.endpoint}/txs/${tx_id}`, data, { observe: 'response', headers: this._auth });
   }
 
+  public newTx(): Observable<any> {
+    return this.http.get(`${this.endpoint}/txs/0`, { observe: 'response', headers: this._auth });
+  }
+
+  public addTx(tx): Observable<any> {
+    return this.http.post(`${this.endpoint}/txs/`, tx, { observe: 'response', headers: this._auth });
+  }
+
   public getReports(params): Observable<any> {
     return this.http.get(`${this.endpoint}/orders/reports`, { params: params, observe: 'response', headers: this._auth });
   }
 
   public removeReport(tx_id): Observable<any> {
     return this.http.delete(`${this.endpoint}/orders/reports/${tx_id}`, { observe: 'response', headers: this._auth });
+  }
+
+  public getAllBonusesAndPenalties(): Observable<any>  {
+    return this.http.get(`${this.endpoint}/interface/bonuses&penalties`, { observe: 'response', headers: this._auth });
+  }
+
+  public saveBonusesAndPenalties(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/bonuses&penalties`, data, { observe: 'response', headers: this._auth });
   }
 
   public getPricelists(): Observable<any>  {
@@ -631,7 +709,23 @@ export class ComponentService {
     return this.http.post(`${this.endpoint}/interface/pricelists/medal`, data, { observe: 'response', headers: this._auth });
   }
 
+  public saveCaliPricelist(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/calibration`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public saveTrainingPricelist(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/training`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public saveTrainingServicePricelist(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/trainingService`, data, { observe: 'response', headers: this._auth });
+  }
+
   public savePricelistCategories(data): Observable<any> {
     return this.http.post(`${this.endpoint}/interface/pricelists/categories`, data, { observe: 'response', headers: this._auth });
+  }
+
+  public savePricelistOrderCategories(data): Observable<any> {
+    return this.http.post(`${this.endpoint}/interface/pricelists/orderCategories`, data, { observe: 'response', headers: this._auth });
   }
 }

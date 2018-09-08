@@ -1,0 +1,140 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Настройки', 'Новости', post?.title]" icon="fas fa-newspaper" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well padding-10">
+        <ng-container *ngIf="post">
+          <div class="row">
+            <div [class.col-md-3]="true">
+              <div class="padding-10">
+                <label class="image-uploader">
+                  <img src="{{ _service.store_shared + post.cover }}" class="img-responsive" alt="{{ post.title }}" #coverimg><i class="fas fa-pen"></i>
+                  <input type="file" (change)="onimgloaded($event)">
+                </label>
+              </div>
+              <ul class="list-inline padding-10">
+                <li>
+                  <div class="form-group">
+                    <label>{{ 'Дата публикации' | i18n }}</label>
+                    <div class="flex">
+                      <div class="input-group column">
+                        <input type="text" class="form-control" [saUiDatepicker]="{dateFormat: 'dd.mm.yy'}" [value]="post.published_at | moment: 'DD.MM.YYYY'" 
+                        (change)="post.published_at = getDate(post.published_at, $event, 'date')">
+                        <span class="input-group-addon"><i class="fas fa-calendar"></i></span>
+                      </div>
+                      <div class="input-group column">
+                        <input type="text" class="form-control" smartTimepicker [value]="post.published_at | moment: 'HH:mm:ss'" 
+                        (change)="post.published_at = getDate(post.published_at, $event, 'time')">
+                        <span class="input-group-addon"><i class="fas fa-clock"></i></span>
+                      </div>                        
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>{{ 'Отображать в уведомлениях' | i18n }}</label>
+                    <div class="flex">
+                      <div class="input-group column">
+                        <input type="text" class="form-control" [saUiDatepicker]="{dateFormat: 'dd.mm.yy'}" [value]="post.expires_at | moment: 'DD.MM.YYYY'" 
+                        (change)="post.expires_at = getDate(post.expires_at, $event, 'date')">
+                        <span class="input-group-addon"><i class="fas fa-calendar"></i></span>
+                      </div>
+                      <div class="input-group column">
+                        <input type="text" class="form-control" smartTimepicker [value]="post.expires_at | moment: 'HH:mm:ss'" 
+                        (change)="post.expires_at = getDate(post.expires_at, $event, 'time')">
+                        <span class="input-group-addon"><i class="fas fa-clock"></i></span>
+                      </div>                        
+                    </div>
+                  </div>
+
+                  <div class="well padding-10">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <span class="smart-form">
+                          <label class="label"><i class="fas fa-video"></i> {{ 'Видео' | i18n}}</label>
+                          <label class="input">
+                            <input class="form-control" [(ngModel)]="post.video">
+                          </label>
+                        </span>
+                      </div>
+                      <div class="col-lg-12" *ngIf="_service.isUrl(post.video)">
+                        <div class="margin-top-10">
+                          <iframe frameborder="0" height="210" width="100%" [src]="post.video | safeUrl" webkitallowfullscreen  mozallowfullscreen allowfullscreen></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="padding-left-0" [class.col-md-9]="true">
+              <h3 class="margin-top-0">
+                <div class="form-group">
+                  <div class="input-group column">
+                    <input type="text" class="form-control" [(ngModel)]="post.tags" [placeholder]="'Хештэги' | i18n">
+                    <span class="input-group-addon"><i class="fas fa-hashtag"></i></span>
+                  </div>    
+                  <small class="text-muted fs-10">{{ 'Пример' | i18n }} #news | #about | #anything</small>                      
+                </div>
+                <div class="smart-form">
+                  <label class="textarea">
+                    <textarea rows="2" class="form-control" [(ngModel)]="post.title" [placeholder]="'Название публикации' | i18n"></textarea>
+                  </label>                  
+                </div>
+                <br>
+                <small class="font-xs"><i>{{'Автор'|i18n}} <a routerLink="/govt/users/{{post.author_id}}">{{ post.author }}</a></i></small></h3>
+                <div *ngIf="post" (change)="post.preview = $event" [summernote]="{height: 100}" [content]="post.preview" [placeholder]="'Превью'"></div>
+                <div *ngIf="post" (change)="post.text = $event" [summernote]="{height: 180}" [content]="post.text" [placeholder]="'Полный текст'"></div>
+                <a class="btn btn-success" (click)="publish(post)">{{ post.publish ? 'Снять с публикации' : 'Публиковать' | i18n }}</a>
+                <a class="btn btn-danger" (click)="remove(post)">{{ 'Удалить' | i18n }}</a>
+                <a class="btn btn-success pull-right" (click)="save()">
+                <i class="fas" [class.fa-check]="!loading" [class.fa-sync-alt]="loading" [class.loading]="loading"></i> {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }}
+              </a>
+            </div>
+          </div>
+          <div class="row replies">
+            <div class="col-xs-12">
+              <div class="chat-body no-padding profile-message">
+                <div class="timeline-seperator text-center"><span>{{ 'КОММЕНТАРИИ' | i18n }}</span></div>
+                <ul *ngIf="!post.comments?.length">
+                  <li class="message" style="opacity: 0.5;">
+                    <img src="{{_service.store_avatars}}{{_service.user.avatar ? _service.user.avatar : 'mock.png'}}" class="online" alt="{{ _service.user.author }}">
+                    <span class="message-text">
+                      <a class="username" style="width: 100%;">{{ _service.user.nick_name }}</a>
+                      <span>{{ 'Ваше сообщение будет первым' | i18n }}</span>
+                    </span>
+                  </li>
+                </ul>
+                <ul class="custom-scroll" style="min-height: 20px;max-height: 100vh;">
+                  <li class="message" *ngFor="let message of post.comments">
+                    <img src="{{_service.store_avatars}}{{message.avatar ? message.avatar : 'mock.png'}}" class="online" alt="{{ message.author }}">
+                    <span class="message-text"> 
+                      <a class="username" style="width: 100%;">{{ message.author }} 
+                        <time class="text-muted pull-right ultra-light"><i class="fas fa-user-clock"></i>&nbsp; {{ message.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</time>
+                      </a> 
+                      <span class="message-text-content" [innerHTML]="message.text"></span>
+                    </span>
+                    <ul class="list-inline font-xs">
+                      <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> {{ 'Ответить' | i18n }}</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="well padding-bottom-10 chat-form">
+                <textarea rows="2" class="form-control" [placeholder]="'Ваш комментарий, соблюдайте правила приличия' | i18n" [(ngModel)]="post.new_message" #message></textarea>
+                <div class="note"> {{ 'Сообщение не может быть слишком коротким' | i18n }}</div>
+                <div class="margin-top-10">
+                  <button type="button" class="btn btn-sm btn-primary pull-right" (click)="postMessage($event, post)">{{ 'Опубликовать' | i18n }}</button>
+                  <br clear="both">
+                </div>
+              </div>              
+            </div> 
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

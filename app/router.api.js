@@ -20,6 +20,9 @@ Router.use(ApiController.init);
 Router.post('/register', AuthController.register);
 Router.post('/authorize', AuthController.authorize);
 Router.post('/recovery', AuthController.recovery);
+Router.post('/recovery/:hash', AuthController.recoveryPassword);
+Router.get('/users/locked/:id', AuthController.userLocked);
+Router.get('/users/verify/:hash', AuthController.userVerify);
 /* Public methods */
 
 /* Interface */
@@ -37,15 +40,24 @@ Router.get('/interface/lanes', IntefaceController.lanes);
 Router.get('/interface/countries', IntefaceController.countries);
 Router.get('/interface/paymethods', IntefaceController.paymethods);
 Router.get('/interface/pricelists', Guards.auth, IntefaceController.pricelists);
+Router.get('/interface/bonuses&penalties', Guards.auth, IntefaceController.bonusesAndPenalties);
+Router.post('/interface/bonuses&penalties', Guards.auth, IntefaceController.setBonusesAndPenalties);
 Router.post('/interface/pricelists/boost', Guards.auth, IntefaceController.setBoostPricelist);
 Router.post('/interface/pricelists/medal', Guards.auth, IntefaceController.setMedalPricelist);
+Router.post('/interface/pricelists/calibration', Guards.auth, IntefaceController.setCalibrationPricelist);
+Router.post('/interface/pricelists/training', Guards.auth, IntefaceController.setTrainingPricelist);
+Router.post('/interface/pricelists/trainingService', Guards.auth, IntefaceController.setTrainingServicePricelist);
 Router.post('/interface/pricelists/categories', Guards.auth, IntefaceController.setPricelistCategories);
+Router.post('/interface/pricelists/orderCategories', Guards.auth, IntefaceController.setPricelistOrderCategories);
 /* Interface */
 
 /* Txs */
 Router.get('/txs', Guards.auth, TxsController.all);
+Router.post('/txs', Guards.auth, TxsController.create);
 Router.delete('/txs/:id', Guards.auth, TxsController.remove);
 Router.put('/txs/:id', Guards.auth, TxsController.update);
+Router.get('/txs/:id', Guards.auth, TxsController.tx);
+
 /* Txs */
 
 /* Orders */
@@ -69,17 +81,24 @@ Router.post('/orders/:number', Guards.auth, OrdersController.orderUpdate);
 /* Orders */
 
 /* Tickets */
+Router.post('/tickets/', Guards.auth, TicketsController.create);
 Router.get('/tickets/all', Guards.auth, TicketsController.all);
 Router.get('/tickets/self', Guards.auth, TicketsController.self);
 Router.get('/tickets/statuses', Guards.auth, TicketsController.statuses);
 Router.get('/tickets/types', Guards.auth, TicketsController.types);
 Router.get('/tickets/:number', Guards.auth, TicketsController.ticket);
-Router.post('/tickets/:number', Guards.auth, TicketsController.ticketUpdate);
-Router.post('/tickets/new', Guards.auth, TicketsController.new);
+Router.put('/tickets/:number', Guards.auth, TicketsController.update);
+Router.post('/tickets/fromUser', Guards.auth, TicketsController.fromUser);
 /* Tickets */
 
 /* News */
+Router.get('/news/all', Guards.auth, NewsController.all);
 Router.post('/news/comment', Guards.auth, NewsController.newComment);
+Router.put('/news/:id/publish', Guards.auth, NewsController.publish);
+Router.get('/news/:id', Guards.auth, NewsController.post);
+Router.put('/news/:id', Guards.auth, Storage.shared.single('files'), NewsController.update);
+Router.delete('/news/:id', Guards.auth, NewsController.remove);
+Router.post('/news', Guards.auth, Storage.shared.single('files'), NewsController.create);
 /* News */
 
 /* Authorized user */ 

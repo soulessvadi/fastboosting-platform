@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observer, Observable } from 'rxjs';
 import * as socketIo from 'socket.io-client';
 
-const SERVER_URL = 'ws://localhost:4001';
+const SERVER_URL = 'ws://vda.daricvety.com.ua:4001';
 
 export interface Message {
     user: { avatar: string, name: string, id: number },
@@ -15,6 +15,8 @@ export enum SocketEvent {
     CONNECT = 'user connected',
     DISCONNECT = 'disconnect',
     AUTHFAILURE = 'property failure',
+    AUTHCHECK = 'property check',
+    AUTHLOCKED = 'property locked',
     ORDERCOUNTDOWNGET = 'order countdown get',
     ORDERCOUNTDOWNSET = 'order countdown set',
     ORDERCOUNTDOWN = 'order countdown',

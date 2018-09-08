@@ -35,10 +35,19 @@
                             </ng-container>
                           </strong>
                         </h4>
-                        <a *ngIf="user?.active_order" class="btn btn-md btn-danger do-order-btn margin-top-10" routerLink="/govt/orders/{{ user.active_order }}">
-                          {{ 'Активный заказ' | i18n }} #{{ user.active_order }}
-                        </a>
-                        <a *ngIf="!user?.active_order" class="btn btn-md btn-danger do-order-btn margin-top-10 disabled"><i class="fas fa-ban"></i></a>
+                        <div class="flex margin-top-10">
+                          <div class="column">
+                            <a *ngIf="user?.active_order" class="btn btn-md btn-success do-order-btn" routerLink="/govt/orders/{{ user.active_order }}">
+                              <i class="fas fa-chart-line"></i> {{ 'Заказ' | i18n }} #{{ user.active_order }}
+                            </a>
+                            <a *ngIf="!user?.active_order" class="btn btn-md btn-success do-order-btn disabled"><i class="fas fa-ban"></i></a>                            
+                          </div>
+                          <div class="column shrink">
+                            <a class="btn btn-md btn-info do-order-btn" (click)="openModal($event, txModal, 'modal-lg')">
+                              <i class="fas fa-calendar-plus"></i> {{ 'Финансы' | i18n }}
+                            </a>                            
+                          </div>
+                        </div>
                       </div>
                       <div class="carousel-inner">
                         <div class="item active">     
@@ -76,6 +85,18 @@
                           <a (click)="activeTab = 3">
                             <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Трансакции' | i18n }}
                             <span class="badge bg-color-blue txt-color-white" *ngIf="txs?.length">{{ txs?.length }}</span> 
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 4">
+                          <a (click)="activeTab = 4">
+                            <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Отзывы' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="reviews?.length">{{ reviews?.length }}</span> 
+                          </a>
+                        </li>
+                        <li [class.active]="activeTab == 5">
+                          <a (click)="activeTab = 5">
+                            <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Логи' | i18n }}
+                            <span class="badge bg-color-blue txt-color-white" *ngIf="logs?.length">{{ logs?.length }}</span> 
                           </a>
                         </li>
                       </ul>
@@ -518,6 +539,7 @@
                                 <th><i class="text-muted fas fa-hashtag"></i> {{ 'Номер трансакции' | i18n }}</th>
                                 <th>{{ 'Тип' | i18n }}</th>
                                 <th><i class="text-muted fas fa-dollar-sign"></i> {{ 'Сумма' | i18n }}</th>
+                                <th><i class="text-muted fas fa-comment"></i> {{ 'Комментарий' | i18n }}</th>
                                 <th><i class="text-muted fas fa-calendar-alt"></i> {{ 'Дата' | i18n }}</th>
                                 <th><i class="text-muted glyphicon glyphicon-send"></i> {{ 'Статус' | i18n }}</th>
                               </tr>
@@ -533,6 +555,7 @@
                                   </div>
                                   {{ Math.abs(tx.amount)?.toFixed(2) }} {{ tx.currency_name }}
                                 </td>
+                                <td>{{ tx.comment }}</td>
                                 <td>{{ tx.created_at | moment: 'D.MM.YY HH:mm:ss' }}</td>
                                 <td>
                                   <span class="label label-default fs-11" *ngIf="tx.status == 1">{{ tx.status_name }}</span>  
@@ -548,6 +571,67 @@
                                </tbody>
                             </table>
                           </div>
+                        </tab>
+                        <tab [active]="activeTab == 4">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <div class="panel panel-default">
+                                <div class="panel-body status">
+                                  <div class="who clearfix">
+                                    <h4>{{ 'Отзывы' | i18n }}</h4>
+                                  </div>
+                                  <div class="reviews-list">
+                                    <div class="who clearfix" *ngFor="let review of reviewsShown">
+                                      <img src="{{_service.store_avatars}}{{review.author_avatar}}" alt="img" class="online">
+                                      <span class="name fs-13"> 
+                                        <span class="text-muted">{{ 'Автор' | i18n }}</span>  
+                                        <b><span> {{review.author_name}} </span></b>
+                                        <span class="text-muted">{{ 'Заказ' | i18n }}</span>
+                                        <b><span> #{{review.order_number}} </span></b>
+                                        <span class="pull-right font-xs text-muted"><i>{{review.created_at | momentFromNow : 'DD.MM.YYYY HH:mm'}}</i></span> 
+                                        <p class="fs-15">
+                                          <span>{{review.comment}}</span>
+                                          <span class="nowrap pull-right">
+                                              <i class="fas fa-star text-muted" [class.text-primary]="review.mark > 0"></i>
+                                              <i class="fas fa-star text-muted" [class.text-primary]="review.mark > 1"></i>
+                                              <i class="fas fa-star text-muted" [class.text-primary]="review.mark > 2"></i>
+                                              <i class="fas fa-star text-muted" [class.text-primary]="review.mark > 3"></i>
+                                              <i class="fas fa-star text-muted" [class.text-primary]="review.mark > 4"></i>                              
+                                          </span>
+                                        </p> 
+                                      </span>
+                                    </div>                                  
+                                  </div>
+                                  <div class="text-center padding-10">
+                                    <button class="btn btn-sm btn-primary btn-loader" (click)="loadMoreReviews()" [attr.disabled]="!reviews?.length ? true : null">
+                                      <i class="fas fa-sync-alt"></i> {{ 'Загрузить еще' | i18n }} ({{reviews?.length}})
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>                          
+                        </tab>
+                        <tab [active]="activeTab == 5">
+                          <div class="row logs-list">
+                            <div class="who clearfix col-xs-12 col-sm-12 col-md-6 col-lg-4" *ngFor="let log of logsShown">
+                              <div class="col-xs-3 col-sm-2 col-md-2 col-lg-4">
+                                <time datetime="2014-09-20" class="icon w-100">
+                                  <strong>{{ log.created_at | moment : 'DD.MM.YY' }}</strong>
+                                  <span>{{ log.created_at | moment : 'HH:mm:ss' }}</span>
+                                </time>
+                              </div>
+                              <div class="col-xs-9 col-sm-10 col-md-10 col-lg-8">
+                                <h6 class="no-margin">{{ log.details }}</h6>
+                                <p><strong *ngIf="log.order_number">{{log.order_number}}</strong>  {{ log.message }}</p>
+                              </div>                                  
+                            </div>                                  
+                          </div>
+                          <div class="text-center padding-10">
+                            <button class="btn btn-sm btn-primary btn-loader" (click)="loadMoreLogs()" [attr.disabled]="!logs?.length ? true : null">
+                              <i class="fas fa-sync-alt"></i> {{ 'Загрузить еще' | i18n }} ({{logs?.length}})
+                            </button>
+                          </div>                          
                         </tab>
                       </tabset>
                     </div>
@@ -568,4 +652,8 @@
 
 <ng-template #lanesModal>
   <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes" [selected]="user.lanes" title="Выбор линий"></lane-modal>
+</ng-template>
+
+<ng-template #txModal>
+  <tx-new-modal (close)="modalClose()" (changed)="txCreated($event)" [user_id]="user.id" [order_id]="user.active_order_id" [currency_id]="user.currency_id" [type]="4" [status]="3"></tx-new-modal>
 </ng-template>

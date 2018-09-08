@@ -1,0 +1,46 @@
+<div id="main" role="main">
+
+  <!-- MAIN CONTENT -->
+
+  <div class="lockscreen animated flipInY">
+    <div class="logo">
+      <h1 class="semi-bold"><img src="assets/img/logo-blue.png" style="width: 100px"> {{ 'Восстановление доступа' | i18n }} </h1>
+    </div>
+    <div>
+      <img src="{{ service.store_avatars }}{{ user?.avatar || 'mock.png' }}" alt="" width="120" height="120">
+      <div>
+        <h1>
+          <i class="fa fa-user fa-3x text-muted air air-top-right hidden-mobile"></i>{{ user?.nick_name || '&nbsp;' }} <br>
+          <span class="fs-12 txt-color-teal">{{ user?.first_name || '&nbsp;' }} {{ user?.last_name || '&nbsp;' }}</span> 
+          <small [class.txt-color-red]="success == false" [class.txt-color-green]="success == true">
+            <i class="fa fa-sync-alt" [ngClass]="{
+            'loading': loading, 
+            'fa-sync-alt': success == null, 
+            'fa-ban': success == false,
+            'fa-check': success == true
+          }"></i> &nbsp;{{ message || 'Проверяем' | i18n}}</small>
+        </h1>
+      </div>
+    </div>
+      <div class="smart-form client-form no-margin margin-top-5" *ngIf="success">
+        <div *ngIf="!allowAuth">
+          <section>
+            <label class="label">{{'Новый пароль'|i18n}}</label>
+            <label class="input"> <i class="icon-append fa fa-key"></i>
+              <input type="password" [(ngModel)]="recovery.password" #password (keydown.enter)="recover()">
+              <b class="tooltip tooltip-top-right">{{'Новый пароль от аккаунта должен быть не короче 8 символов'|i18n}}</b> 
+            </label>
+            <label class="label">{{'Подтверждение'|i18n}}</label>
+            <label class="input"> <i class="icon-append fa fa-key"></i>
+              <input type="password" [(ngModel)]="recovery.passwordc" #passwordc (keydown.enter)="recover()">
+              <b class="tooltip tooltip-top-right">{{'Подтвердите что запомнили свой новый пароль'|i18n}}</b> 
+            </label>
+          </section>
+          <a class="btn btn-primary btn-sm btn-block" (click)="recover()"><i class="fas fa-save"></i> {{ 'Сохранить' | i18n}}</a>            
+        </div>
+      </div>
+      <div *ngIf="allowAuth">
+        <a class="btn btn-primary btn-sm btn-block" routerLink="/auth/login"><i class="fas fa-sign-in"></i> {{ 'Авторизация' | i18n}}</a>            
+      </div>
+  </div>
+</div>

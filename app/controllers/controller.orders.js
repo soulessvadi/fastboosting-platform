@@ -325,7 +325,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})
@@ -460,7 +460,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})
@@ -596,7 +596,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})
@@ -681,7 +681,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})
@@ -760,7 +760,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})
@@ -867,7 +867,7 @@ module.exports = (db) => {
 				})
 			},
 			services: (cb) => {
-				Models.TrainingService.findAll({raw: true, attributes: ['id', 'name']})
+				Models.BoosterTrainingService.findAll({raw: true, attributes: ['id', 'name']})
 				.then((results) => {
 					cb(null, results);
 				})

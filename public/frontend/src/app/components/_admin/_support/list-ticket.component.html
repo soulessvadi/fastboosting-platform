@@ -69,18 +69,32 @@
 		          <tabset class="padding-10">
 		            <tab [active]="activeTab == 1">
 						<div class="smart-form" [class.submitted]="responseMessage">
-						    <fieldset style="padding: 5px 15px 5px;">
-						    	<div class="row">
-							        <section class="col col-6">
-	                            	<label class="label">{{ 'Автор тикета' | i18n }}</label>
-		                            <label class="select">
-		                              <select class="input-sm" [(ngModel)]="ticket.user_id" (change)="ticket.author_name = getUserName()">
-		                                <option *ngFor="let user of authors" [ngValue]="user.id">{{ user.nick_name }} [{{ user.type }}] [ID {{ user.id }}]</option>
-		                              </select>
-		                              <i></i>
-		                            </label>
-							        </section>								    		
-							        <section class="col col-6">
+						    <fieldset style="padding: 5px 15px 5px;">			
+							    <div class="flex">
+								    <section class="column shrink">
+								        <label class="label font-md">{{'Группа пользователя'|i18n}}</label>
+						                <div class="radio-select pull-left">
+						                    <label>
+						                      <input type="radio" name="type" [(ngModel)]="ticket.user_type" [value]="3" (change)="users = boosters"><b>{{ 'Бустеры' | i18n }}</b>
+						                    </label>
+						                    <label>
+						                      <input type="radio" name="type" [(ngModel)]="ticket.user_type" [value]="4" (change)="users = clients"><b>{{ 'Клиенты' | i18n }}</b>
+						                    </label>
+						                    <label>
+						                      <input type="radio" name="type" [(ngModel)]="ticket.user_type" [value]="99" (change)="users = partners"><b>{{ 'Партнеры' | i18n }}</b>
+						                    </label>
+						                </div>
+								    </section>
+								    <section class="column padding-left-10">
+								        <label class="label font-md">{{'Пользователь'|i18n}}</label>
+						                <label class="select">
+						                  <select class="input-sm" [(ngModel)]="ticket.user_id" #user_id (change)="ticket.author_name = getUserName()">
+						                    <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }} [{{ user.type_name }}] [ID {{ user.id }}]</option>
+						                  </select>
+						                  <i></i>
+						                </label>
+								    </section>				    		
+							        <section class="column padding-left-10">
 							            <label class="label">{{ 'Статус тикета' | i18n }}</label>
 							            <div class="radio-select pull-left">
 						                    <label *ngFor="let status of statuses">
@@ -92,8 +106,8 @@
 						        		(click)="ticket.pinned = !ticket.pinned"><i class="glyphicon glyphicon-pushpin"></i>	
 						        		{{ (ticket.pinned ? 'Снять отметку важный' : 'Отметить как важный') | i18n }}
 						        		</button>
-							        </section>		
-						    	</div>					    		
+							        </section>
+							    </div>		
 						        <section>
 						            <label class="label">{{ 'Тема тикета' | i18n }}</label>
 						            <label class="textarea textarea-resizable">

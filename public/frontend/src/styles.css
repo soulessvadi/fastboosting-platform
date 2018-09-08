@@ -9,6 +9,14 @@ body::-webkit-scrollbar-thumb {background: #fb3c4a;}
 .flex .shrink {-ms-flex: 0 0 auto;flex: 0 0 auto;max-width: 100%;}
 .flex .column .odd{background: #fafcff;}
 .flex .column .even{background: #f9f9f9;}
+.border-box{box-sizing: border-box!important;}
+.inline-block{display: inline-block;}
+.block{display: block;}
+table.va-m td, table.va-m th{vertical-align: middle!important;}
+.va-m{vertical-align: middle!important;}
+.va-t{vertical-align: top!important;}
+.va-b{vertical-align: bottom!important;}
+.no-radius{border-radius: 0!important;}
 .fs-8{font-size: 8px!important;}
 .fs-9{font-size: 9px!important;}
 .fs-10{font-size: 10px!important;}
@@ -47,18 +55,12 @@ body::-webkit-scrollbar-thumb {background: #fb3c4a;}
 .h-50px{height: 50px;}
 .h-29px{height: 29px;}
 .h-100{height: 100%;}
-.inline-block{display: inline-block;}
-.block{display: block;}
-table.va-m td, table.va-m th{vertical-align: middle!important;}
-.va-m{vertical-align: middle!important;}
-.va-t{vertical-align: top!important;}
-.va-b{vertical-align: bottom!important;}
-.no-radius{border-radius: 0!important;}
 .margin-left-10{margin-left: 10px;}
 .margin-right-10{margin-right: 10px;}
 .margin-top-10{margin-top: 10px;}
 .margin-top-5{margin-top: 5px;}
 .margin-bottom-5{margin-bottom: 5px;}
+.margin-10-0{margin:10px 0;}
 .nowrap{white-space: nowrap;}
 .no-padding{padding: 0!important;}
 .padding-left-10{padding-left: 10px!important;}
@@ -109,10 +111,16 @@ body:not(.menu-on-top).desktop-detected{min-height: 100vh!important;}
 .profile-pic>label{cursor: pointer;position: relative;}
 .profile-pic>label>input{display: none;visibility: hidden;opacity: 0;}
 .profile-pic>label>i{transition: all .2s; position: absolute;left: 20px;top: -20px;color: #fff;z-index: 4;text-shadow: 0px 0px 1px #20004a;}
+.image-uploader{    position: relative;cursor: pointer;min-height: 200px;width: 100%;display: block;background: #1b1e24;}
+.image-uploader>input{display: none;visibility: hidden;opacity: 0;}
+.image-uploader>i{transition: all .2s; position: absolute;left: 10px;top: 10px;color: #fff;z-index: 4;text-shadow: 1px 0 black;font-size: 24px;}
+.image-uploader:hover>i{text-shadow: 3px 0 black;}
 .profile-pic>label:hover>i{color: #fb3c4a;}
 .edit-button{border: none;outline: none;background: none;font-size: 14px;color: #110027;font-weight: 400;vertical-align: middle;}
 .edit-button i{transition: all .2s; }
 .edit-button:hover i{color: #fb3c4a;}
+.iframe-inside-16-9{position: relative;padding-bottom: 56.25%;padding-top: 25px;height: 0;}
+.iframe-inside-16-9 iframe{ position: absolute;top: 0;left: 0;width: 100%;height: 100%;}
 .heroes-list{}
 .heroes-list input{display: none;visibility: hidden;opacity: 0;}
 .heroes-list li{width: 12.5%;margin: 0;margin-right: 0;margin-bottom: 0;padding: 2px;}
@@ -164,7 +172,7 @@ body:not(.menu-on-top).desktop-detected{min-height: 100vh!important;}
 .chat-body li.message .message-text time{font-size: 12px;color: #008235;letter-spacing: .5px;}
 .chat-body li.message .message-text{min-height: 45px;min-width: 80%;}
 .chat-body li.message .message-text i{color: #058236;font-weight: 900;font-style: normal;padding-right: 5px;}
-.chat-body li.message .message-text i:before{font-family: 'Glyphicons Halflings';content: "\e258";font-size: 10px;margin-right: 2px;}
+.chat-body li.message .message-text-content i:before{font-family: 'Glyphicons Halflings';content: "\e258";font-size: 10px;margin-right: 2px;}
 .active-order-holder time.icon{width: 100%;}
 .active-order-holder .statistic-box{height: 400px;}
 .active-order-holder .statistic-box .fill-height{height: 100%;overflow-y: scroll;overflow-x: hidden;}
@@ -372,3 +380,11 @@ i.loading{animation: rotate ease-in-out 1.5s infinite;animation-direction: rever
   -webkit-transition: all 300ms;-moz-transition: all 300ms;transition: all 300ms;}
 .ezswitch input:checked + div {background: #3477b1;-webkit-transform: translate3d(100%, 0, 0);-moz-transform: translate3d(100%, 0, 0);transform: translate3d(100%, 0, 0);}
 .ezswitch input:checked + div.red{background-color: #fb3c4a;}
+
+.jarvismetro-tile .iconbox span {text-align: center; line-height: 14px;text-shadow: -1px -1px 1px #000;}
+.jarvismetro-tile .iconbox i{height: 65px;text-shadow: -1px -1px 1px #000;}
+.menu-on-top nav ul ul li:hover>a:after, 
+.menu-on-top nav>ul ul>li a:after, 
+.menu-on-top nav>ul ul>li a:hover:after, 
+.menu-on-top nav>ul>li>a:after,
+.demo label:hover input[type=checkbox].checkbox+span:before{font-weight: 900;}

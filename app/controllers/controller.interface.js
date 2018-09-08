@@ -15,9 +15,41 @@ module.exports = (db) => {
 		res.json('interface');
 	};
 
+	controller.bonusesAndPenalties = (req, res, next) => {
+		Models.UserBonusPenalty.findAll({attributes: ['id','type','name','description','amount'], raw: true}).then(bonuses => {
+			res.status(200).json({bonuses: bonuses});
+		}).catch(e => {
+			res.status(202).json({'error':'internal_error'});
+		});
+	};
+
+	controller.setBonusesAndPenalties = (req, res, next) => {
+		let prices = req.body;
+		let data = [];
+		prices.forEach(e => {
+			data.push({ 
+				name: e.name || null, 
+				description: e.description || null, 
+				amount: e.amount || 0, 
+				type: e.type || 1 
+			});
+		});
+		data = data.sort((a,b) => a.id > b.id ? 1 : -1);
+		Models.UserBonusPenalty.destroy({truncate: true}).then(() => {
+			Models.UserBonusPenalty.bulkCreate(data).then(() => {
+				res.status(200).json({'status':'ok'});
+			}).catch(err => res.status(500).json({"error": "internal_error"}));
+		}).catch(err => res.status(500).json({"error": "internal_error"}));		
+	};
+
 	controller.pricelists = (req, res, next) => {
 		let user = req.app.user;
 		async.parallel({
+			order_categories: (cb) => {
+				Models.OrderPriceCategory.findAll({attributes: ['id','from','till','name','factor'], raw: true})
+				.then(results => cb(null, results))
+				.catch(e => cb(null, []))
+			},
 			categories: (cb) => {
 				Models.BoosterPriceCategory.findAll({attributes: ['id','from','till','name','factor'], raw: true})
 				.then(results => cb(null, results))
@@ -34,15 +66,42 @@ module.exports = (db) => {
 				.catch(e => cb(null, []))
 			},
 			calibration: (cb) => {
-				cb(null, []);
+				Models.BoosterPricelistCalibration.findAll({attributes: ['id','name','rub','usd'], raw: true})
+				.then(results => cb(null, results))
+				.catch(e => cb(null, []))
 			},
 			training: (cb) => {
-				cb(null, []);
+				Models.BoosterPricelistTraining.findAll({attributes: ['id','hours','rub','usd'], raw: true})
+				.then(results => cb(null, results))
+				.catch(e => cb(null, []))
+			},
+			training_services: (cb) => {
+				Models.BoosterTrainingService.findAll({attributes: ['id','name','rub','usd'], raw: true})
+				.then(results => cb(null, results))
+				.catch(e => cb(null, []))
 			}
 		}, (error, stack) => {
 			res.status(200).json(stack);
 		});
-	}
+	};
+
+	controller.setCalibrationPricelist = (req, res, next) => {
+		let prices = req.body;
+		let data = [];
+		prices.forEach(e => {
+			data.push({ 
+				name: e.name || null, 
+				rub: e.rub || 0, 
+				usd: e.usd || 0 
+			});
+		});
+		data = data.sort((a,b) => a.id > b.id ? 1 : -1);
+		Models.BoosterPricelistCalibration.destroy({truncate: true}).then(() => {
+			Models.BoosterPricelistCalibration.bulkCreate(data).then(() => {
+				res.status(200).json({'status':'ok'});
+			}).catch(err => res.status(500).json({"error": "internal_error"}));
+		}).catch(err => res.status(500).json({"error": "internal_error"}));		
+	};
 
 	controller.setMedalPricelist = (req, res, next) => {
 		let prices = req.body;
@@ -55,6 +114,42 @@ module.exports = (db) => {
 			}
 		});
 		return res.status(200).json({'status':'ok'});
+	};
+
+	controller.setTrainingPricelist = (req, res, next) => {
+		let prices = req.body;
+		let data = [];
+		prices.forEach(e => {
+			data.push({ 
+				hours: e.hours || 0, 
+				rub: e.rub || 0, 
+				usd: e.usd || 0 
+			});
+		});
+		data = data.sort((a,b) => a.id > b.id ? 1 : -1);
+		Models.BoosterPricelistTraining.destroy({truncate: true}).then(() => {
+			Models.BoosterPricelistTraining.bulkCreate(data).then(() => {
+				res.status(200).json({'status':'ok'});
+			}).catch(err => res.status(500).json({"error": "internal_error"}));
+		}).catch(err => res.status(500).json({"error": "internal_error"}));	
+	};
+
+	controller.setTrainingServicePricelist = (req, res, next) => {
+		let prices = req.body;
+		let data = [];
+		prices.forEach(e => {
+			data.push({ 
+				name: e.name || null, 
+				rub: e.rub || 0, 
+				usd: e.usd || 0 
+			});
+		});
+		data = data.sort((a,b) => a.id > b.id ? 1 : -1);
+		Models.BoosterTrainingService.destroy({truncate: true}).then(() => {
+			Models.BoosterTrainingService.bulkCreate(data).then(() => {
+				res.status(200).json({'status':'ok'});
+			}).catch(err => res.status(500).json({"error": "internal_error"}));
+		}).catch(err => res.status(500).json({"error": "internal_error"}));	
 	};
 
 	controller.setBoostPricelist = (req, res, next) => {
@@ -72,6 +167,25 @@ module.exports = (db) => {
 		data = data.sort((a,b) => a.from > b.from ? 1 : -1);
 		Models.BoosterPricelistBoosting.destroy({truncate: true}).then(() => {
 			Models.BoosterPricelistBoosting.bulkCreate(data).then(() => {
+				res.status(200).json({'status':'ok'});
+			}).catch(err => res.status(500).json({"error": "internal_error"}));
+		}).catch(err => res.status(500).json({"error": "internal_error"}));
+	};
+
+	controller.setPricelistOrderCategories = (req, res, next) => {
+		let prices = req.body;
+		let data = [];
+		prices.forEach(e => {
+			data.push({ 
+				from: e.from || 0, 
+				till: e.till || 0, 
+				name: e.name || null, 
+				factor: e.factor || 0 
+			});
+		});
+		data = data.sort((a,b) => a.from > b.from ? 1 : -1);
+		Models.OrderPriceCategory.destroy({truncate: true}).then(() => {
+			Models.OrderPriceCategory.bulkCreate(data).then(() => {
 				res.status(200).json({'status':'ok'});
 			}).catch(err => res.status(500).json({"error": "internal_error"}));
 		}).catch(err => res.status(500).json({"error": "internal_error"}));
@@ -108,7 +222,7 @@ module.exports = (db) => {
 			if(!user) return res.status(500).json('user_absent');
 			let allowed = Object.keys(user.permissions).join(',') || 0;
 			connection.execute(`
-				select m.id, m.name, m.link, m.icon  from menus m
+				select m.id, m.name, m.link, m.icon, m.shortcut from menus m
 				where m.display = 1 and m.nested_in = 0 and m.id in (${allowed})
 				order by m.display_id`, {raw: true})
 			.then(parents => {
@@ -116,7 +230,7 @@ module.exports = (db) => {
 					if(x < 0) return res.status(200).json({list: parents});
 					try {
 						parents[x].nestings = await connection.execute(`
-							select m.id, m.name, m.link, m.icon from menus m
+							select m.id, m.name, m.link, m.icon, m.shortcut from menus m
 							where m.display = 1 and m.nested_in = ${parents[x].id} and m.id in (${allowed})
 							order by m.display_id`,{raw: true});
 					} catch(e) {

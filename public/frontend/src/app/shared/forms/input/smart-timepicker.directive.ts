@@ -1,10 +1,12 @@
-import {Directive, ElementRef, OnInit} from '@angular/core';
+import {Directive, ElementRef, OnInit, Output, EventEmitter} from '@angular/core';
 
 
 @Directive({
   selector: '[smartTimepicker]'
 })
 export class SmartTimepickerDirective implements OnInit{
+
+  @Output() change = new EventEmitter();
 
   constructor(private el: ElementRef) { }
 
@@ -14,8 +16,14 @@ export class SmartTimepickerDirective implements OnInit{
     })
   }
 
-
-  render(){
-    $(this.el.nativeElement).timepicker();
+  render() {
+    var self = this;
+    $(this.el.nativeElement).timepicker({
+      showSeconds: true,
+      showMeridian: false,
+    });
+    $(this.el.nativeElement).on('changeTime.timepicker', function(e) {
+      self.change.emit(e.time);
+    });
   }
 }

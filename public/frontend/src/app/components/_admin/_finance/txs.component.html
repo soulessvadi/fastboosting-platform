@@ -10,7 +10,7 @@
            <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
               <div class="dt-toolbar">
                 <div class="row">
-                  <div class="col-xs-12 col-sm-8">
+                  <div class="col-xs-12 col-sm-9">
                     <div class="dataTables_filter">
                       <button class="btn btn-default btn-sm txt-color-blue pull-left margin-right-10" 
                         [ngClass]="{'bg-color-blue':showFilters,'txt-color-white':showFilters}" (click)="showFilters = !showFilters">
@@ -26,8 +26,10 @@
                       </button>
                     </div>
                   </div>
-                  <div class="col-sm-4 hidden-xs text-right">
-                    <img src="assets/img/logo-blue.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;">
+                  <div class="col-xs-12 col-sm-3 text-right">
+                    <a class="btn btn-md btn-primary do-order-btn" (click)="openModal($event, newTxModal, 'modal-lg')">
+                      <i class="fas fa-plus"></i> {{ 'Создать трансакцию' | i18n }}
+                    </a>
                   </div>                        
                 </div>
                 <div class="smart-form orders-form" *ngIf="showFilters">
@@ -130,4 +132,6 @@
   <tx-modal (close)="modalClose()" (txSave)="txSave($event)" [tx]="txEdit" [types]="types" [statuses]="statuses" [currencies]="currencies"></tx-modal>
 </ng-template>
 
-
+<ng-template #newTxModal>
+  <tx-new-modal (close)="modalClose()" (changed)="txCreated($event)" [type]="1" [status]="1"></tx-new-modal>
+</ng-template>

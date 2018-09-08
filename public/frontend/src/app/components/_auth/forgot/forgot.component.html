@@ -6,7 +6,7 @@
     <span id="logo"> <img src="assets/img/logo-blue.png" alt="logo"> </span>
   </div>
 
-  <span id="extr-page-header-space"> <span class="hidden-mobile hiddex-xs">Нет аккаунта?</span> <a routerLink="/auth/register" class="btn btn-danger">Регистрация</a> </span>
+  <span id="extr-page-header-space"> <span class="hidden-mobile hiddex-xs">{{'Нет аккаунта?'|i18n}}</span> <a routerLink="/auth/register" class="btn btn-danger">{{'Регистрация'|i18n}}</a> </span>
 
 </header>
 <div id="main" role="main" class="animated fadeInDown">
@@ -15,75 +15,64 @@
 
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
-        <h1 class="txt-color-red login-header-big">Lorem ipsum</h1>
+        <h1 class="txt-color-red login-header-big">{{'Восстановление заголовок 1'|i18n}}</h1>
+
         <div class="hero">
-
           <div class="pull-left login-desc-box-l">
-            <h4 class="paragraph-header">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, officiis quam debitis incidunt possimus error ratione temporibus aliquid vero tenetur ad veritatis laboriosam repellat illum quis, dolore atque maiores? Rem!</h4>
-            <div class="login-app-icons">
-              <a href="#" class="btn btn-danger btn-sm">Lorem ipsum</a>
-            </div>
+            <h4 class="paragraph-header">{{'Восстановление текст 1'|i18n}}</h4>
           </div>
-
           <img src="assets/img/axe.png" class="pull-right" alt="" style="width:50%">
-
         </div>
-
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <h5 class="about-heading">Lorem ipsum</h5>
-            <p>
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa.
-            </p>
+            <h5 class="about-heading">{{'Восстановление заголовок 2'|i18n}}</h5>
+            <p>{{'Восстановление текст 2'|i18n}}</p>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <h5 class="about-heading">Lorem ipsum</h5>
-            <p>
-              Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi voluptatem accusantium!
-            </p>
+            <h5 class="about-heading">{{'Восстановление заголовок 3'|i18n}}</h5>
+            <p>{{'Восстановление текст 3'|i18n}}</p>
           </div>
         </div>
-
       </div>
       <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
         <div class="well no-padding">
           <div id="login-form" class="smart-form client-form" #form>
             <header>
-              Восстановление пароля
+              {{'Восстановление пароля'|i18n}}
             </header>
 
             <fieldset>
 
               <section>
-                <label class="label">Ваш логин <sup>(email)</sup></label>
+                <label class="label">{{'Ваш логин'|i18n}} <sup>({{'email'|i18n}})</sup></label>
                 <label class="input"> <i class="icon-append fa fa-envelope"></i>
                   <input type="email" name="email" [(ngModel)]="recovery.email" #email (keydown.enter)="recover($event)">
-                  <b class="tooltip tooltip-top-right"><i class="fa fa-envelope txt-color-teal"></i> Введите email который вы указывали при регистрации</b></label>
+                  <b class="tooltip tooltip-top-right"><i class="fa fa-envelope txt-color-teal"></i> {{'Введите email который вы указывали при регистрации'|i18n}}</b></label>
               </section>
               <section>
-										<span class="timeline-seperator text-center text-primary"> <span class="font-sm">или</span>
+										<span class="timeline-seperator text-center text-primary"> <span class="font-sm">{{'или'|i18n}}</span>
               </span></section>
               <section>
-                <label class="label">Ваше имя пользователя</label>
+                <label class="label">{{'Ваше имя пользователя'|i18n}}</label>
                 <label class="input"> <i class="icon-append fa fa-user"></i>
                   <input type="text" name="username" [(ngModel)]="recovery.username" #username (keydown.enter)="recover($event)">
-                  <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Имя пользователя которое вы использовали последнее время</b> </label>
+                  <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> {{'Имя пользователя которое вы использовали последнее время'|i18n}}</b> </label>
                 <div class="note">
-                  <a routerLink="/auth/login">Я вспомнил свой пароль</a>
+                  <a routerLink="/auth/login">{{'Я вспомнил свой пароль'|i18n}}</a>
                 </div>
               </section>
 
             </fieldset>
             <footer>
               <button (click)="recover($event)" class="btn btn-primary">
-                <i class="fa fa-refresh"></i> Восстановить
+                <i class="fa fa-refresh"></i> {{'Восстановить'|i18n}}
               </button>
             </footer>
 
             <div class="message" [class.error]="!responseSuccess">
               <i class="fas fa-check" *ngIf="responseSuccess"></i>
               <i class="fas fa-exclamation-triangle" *ngIf="!responseSuccess"></i>
-              <p [innerHTML]="responseMessage"></p>
+              <p *ngIf="responseMessage">{{responseMessage|i18n}}</p>
             </div>
           </div>
 

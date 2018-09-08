@@ -39,7 +39,7 @@
                     <div class="col-sm-3 profile-pic">
                       <img src="{{_service.store_avatars}}{{user.avatar ? user.avatar : 'mock.png'}}" [alt]="user.nick_name">
                       <div class="padding-10">
-                        <h4 class="font-md"><strong>{{ user.rating || 0 }}</strong>
+                        <h4 class="font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Рейтинг' | i18n }}</small>
                         </h4>
@@ -49,7 +49,7 @@
                           <small>{{ 'Отзывы' | i18n }}</small>
                         </h4>
                         <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 }}</strong>
+                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Средняя оценка' | i18n }}</small>
                         </h4>
@@ -197,7 +197,13 @@
                         <small>{{ 'Линии' | i18n }}</small>
                       </h1>
                       <ul class="list-inline friends-list">
-                        <li *ngFor="let lane of lanes_checked"><div class="img">{{ lane }}</div></li>
+                        <ng-container *ngFor="let olane of user.lanes">
+                          <ng-container *ngFor="let lane of lanes">
+                            <li *ngIf="lane.id == olane">
+                              <div class="img">{{ lane.name }}</div>                              
+                            </li>
+                          </ng-container>
+                        </ng-container> 
                       </ul>
                     </div>
                   </div>
@@ -232,7 +238,7 @@
                     <div class="col-sm-3 profile-pic">
                       <label><img src="{{_service.store_avatars}}{{user.avatar ? user.avatar : 'mock.png'}}" [alt]="user.nick_name" #avatarimg><i class="fas fa-pen"></i><input type="file" (change)="onimgloaded($event)"></label>
                       <div class="padding-10">
-                        <h4 class="font-md"><strong>{{ user.rating || 0 }}</strong>
+                        <h4 class="font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Рейтинг' | i18n }}</small>
                         </h4>
@@ -242,7 +248,7 @@
                           <small>{{ 'Отзывы' | i18n }}</small>
                         </h4>
                         <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 }}</strong>
+                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Средняя оценка' | i18n }}</small>
                         </h4>
@@ -393,7 +399,13 @@
                         <small>{{ 'Линии' | i18n }}</small><button class="edit-button" (click)="openModal($event, lanesModal)"><i class="fas fa-pen"></i></button>
                       </h1>
                       <ul class="list-inline friends-list">
-                        <li *ngFor="let lane of lanes_checked"><div class="img">{{ lane }}</div></li>
+                        <ng-container *ngFor="let olane of user.lanes">
+                          <ng-container *ngFor="let lane of lanes">
+                            <li *ngIf="lane.id == olane">
+                              <div class="img">{{ lane.name }}</div>                              
+                            </li>
+                          </ng-container>
+                        </ng-container> 
                       </ul>
                     </div>
                   </div>
@@ -439,7 +451,7 @@
                                 </div>
                                 <div class="text-center padding-10">
                                   <button class="btn btn-sm btn-primary btn-loader" (click)="loadMoreLogs()" [attr.disabled]="!logs?.length ? true : null">
-                                    <i class="fas fa-sync-alt"></i>{{ 'Загрузить еще' | i18n }} ({{logs?.length}})
+                                    <i class="fas fa-sync-alt"></i> {{ 'Загрузить еще' | i18n }} ({{logs?.length}})
                                   </button>
                                 </div>
                               </div>
@@ -505,9 +517,9 @@
 </ng-template>
 
 <ng-template #heroModal>
-  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes"></hero-modal>
+  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes" [selected]="user.heroes" title="Выбор героев"></hero-modal>
 </ng-template>
 
 <ng-template #lanesModal>
-  <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes"></lane-modal>
+  <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes" [selected]="user.lanes" title="Выбор линий"></lane-modal>
 </ng-template>

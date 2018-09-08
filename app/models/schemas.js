@@ -8,7 +8,9 @@ let Post = connection.define('posts', {
   cover: {type: Sequelize.TEXT, defaultValue: ''},
   title: {type: Sequelize.TEXT, defaultValue: ''},
   preview: {type: Sequelize.TEXT, defaultValue: ''},
+  tags: {type: Sequelize.TEXT, defaultValue: ''},
   text: {type: Sequelize.TEXT, defaultValue: ''},
+  video: {type: Sequelize.TEXT, defaultValue: null},
   publish: {type: Sequelize.BOOLEAN, defaultValue: false},
   published_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
   expires_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
@@ -44,6 +46,7 @@ let Menu = connection.define('menu', {
   icon: {type: Sequelize.STRING(64), defaultValue:null},
   nested_in: {type: Sequelize.INTEGER, defaultValue:0},
   display: {type: Sequelize.BOOLEAN, defaultValue:true},
+  shortcut: {type: Sequelize.BOOLEAN, defaultValue:false},
   display_id: {type: Sequelize.INTEGER, defaultValue:0},
 }, {
   underscored: true
@@ -168,7 +171,9 @@ let User = connection.define('user', {
   },
   mmr_solo: {type: Sequelize.INTEGER, defaultValue: 0},
   mmr_party: {type: Sequelize.INTEGER, defaultValue: 0},
-  recovery_hash: {type: Sequelize.STRING(24), defaultValue: null},
+  referrer_hash: {type: Sequelize.STRING(64), defaultValue: () => { return String(randstr.generate(4) + Math.floor(Date.now()/1000)).hexval(false) }},
+  referred_by: {type: Sequelize.STRING(64), defaultValue: null},
+  recovery_hash: {type: Sequelize.STRING(64), defaultValue: () => { return String(randstr.generate(4) + Math.floor(Date.now()/1000)).hexval(false) }},
 }, {
   underscored: true
 });
@@ -230,6 +235,8 @@ let UserArchive = connection.define('users_archives', {
   },
   mmr_solo: {type: Sequelize.INTEGER, defaultValue: 0},
   mmr_party: {type: Sequelize.INTEGER, defaultValue: 0},
+  referrer_hash: {type: Sequelize.STRING(24), defaultValue: null},
+  referred_by: {type: Sequelize.STRING(24), defaultValue: null},
   recovery_hash: {type: Sequelize.STRING(24), defaultValue: null},
 }, {
   underscored: true
@@ -299,6 +306,41 @@ let BoosterPricelistMedal = connection.define('users_pricelists_medal', {
   underscored: true
 });
 
+let BoosterPricelistBoosting = connection.define('users_pricelists_boosting', {
+  from: {type: Sequelize.INTEGER, defaultValue:0},
+  till: {type: Sequelize.INTEGER, defaultValue:0},
+  volume: {type: Sequelize.INTEGER, defaultValue:0},
+  rub: {type: Sequelize.DOUBLE, defaultValue:0},
+  usd: {type: Sequelize.DOUBLE, defaultValue:0},
+}, {
+  underscored: true
+});
+
+let BoosterPricelistCalibration = connection.define('users_pricelists_calibration', {
+  name: {type: Sequelize.STRING(64), defaultValue:''},
+  rub: {type: Sequelize.DOUBLE, defaultValue:0},
+  usd: {type: Sequelize.DOUBLE, defaultValue:0},
+}, {
+  underscored: true
+});
+
+let BoosterTrainingService = connection.define('users_pricelists_training_services', {
+  name: {type: Sequelize.STRING(64), defaultValue:''},
+  title: {type: Sequelize.STRING(64), defaultValue:''},
+  rub: {type: Sequelize.DOUBLE, defaultValue:0},
+  usd: {type: Sequelize.DOUBLE, defaultValue:0},
+}, {
+  underscored: true
+});
+
+let BoosterPricelistTraining = connection.define('users_pricelists_training', {
+  hours: {type: Sequelize.INTEGER, defaultValue:1},
+  rub: {type: Sequelize.DOUBLE, defaultValue:0},
+  usd: {type: Sequelize.DOUBLE, defaultValue:0},
+}, {
+  underscored: true
+});
+
 let PartnerPricelistBoosting = connection.define('partners_pricelists_boost', {
   partner_id: {type: Sequelize.INTEGER, defaultValue:0},
   from: {type: Sequelize.INTEGER, defaultValue:0},
@@ -310,17 +352,8 @@ let PartnerPricelistBoosting = connection.define('partners_pricelists_boost', {
   underscored: true
 });
 
-let BoosterPricelistBoosting = connection.define('users_pricelists_boosting', {
-  from: {type: Sequelize.INTEGER, defaultValue:0},
-  till: {type: Sequelize.INTEGER, defaultValue:0},
-  volume: {type: Sequelize.INTEGER, defaultValue:0},
-  rub: {type: Sequelize.DOUBLE, defaultValue:0},
-  usd: {type: Sequelize.DOUBLE, defaultValue:0},
-}, {
-  underscored: true
-});
-
 let SupportTicket = connection.define('tickets', {
+  user_type: {type: Sequelize.INTEGER, defaultValue:0},
   user_id: {type: Sequelize.INTEGER, defaultValue:0},
   order_id: {type: Sequelize.INTEGER, defaultValue:0},
   tx_id: {type: Sequelize.INTEGER, defaultValue:0},
@@ -335,7 +368,7 @@ let SupportTicket = connection.define('tickets', {
   system_number: {
     type: Sequelize.STRING(64),
     unique: true,
-    set(id) { return this.setDataValue('system_number',  id + 's' + Math.round(Date.now() / 1000)) },
+    set(id) { return this.setDataValue('system_number', 's' + id + Date.now()) },
   },
 }, {
   underscored: true
@@ -385,13 +418,6 @@ let OrderStatus = connection.define('orders_statuses', {
 
 let OrderServer = connection.define('orders_servers', {
   name: {type: Sequelize.STRING(64), defaultValue:''},
-}, {
-  underscored: true
-});
-
-let TrainingService = connection.define('orders_training_services', {
-  name: {type: Sequelize.STRING(64), defaultValue:''},
-  title: {type: Sequelize.STRING(64), defaultValue:''},
 }, {
   underscored: true
 });
@@ -480,12 +506,6 @@ let OrderReminder = connection.define('orders_reminders', {
 });
 
 let OrderReminderType = connection.define('orders_reminders_types', {
-  name: {type: Sequelize.STRING(64), defaultValue:''},
-}, {
-  underscored: true
-});
-
-let OrderCalibrationType = connection.define('orders_calibration_types', {
   name: {type: Sequelize.STRING(64), defaultValue:''},
 }, {
   underscored: true
@@ -688,10 +708,12 @@ module.exports = {
   BoosterPriceCategory,
   BoosterPricelistBoosting,
   BoosterPricelistMedal,
+  BoosterTrainingService,
+  BoosterPricelistTraining,
+  BoosterPricelistCalibration,
   Post,
   PostComment,
   Order, 
-  OrderCalibrationType,
   OrderType, 
   OrderStatus, 
   OrderServer, 
@@ -711,7 +733,6 @@ module.exports = {
   PayProp, 
   PayoutRequest,
   PayoutRequestStatus,
-  TrainingService,
   ChatMessage,
   LogAction,
   Log,

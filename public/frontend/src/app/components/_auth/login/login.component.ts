@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
 
 	login(event){
 	    event.preventDefault();
-	    if(this.user.login.length < 5) return this.username.nativeElement.focus(); 
+	    if(!this.service.isEmail(this.user.login)) return this.username.nativeElement.focus(); 
 	    if(this.user.password.length < 8) return this.password.nativeElement.focus();
 
 	    this.service.login(this.user).subscribe((res) => { 
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
 	      	this.service.storeToken(res.body._token);
 	      	this.service._user = res.body.user;
 	        this.responseSuccess = true;
-	        this.responseMessage = `Привет, <b>${this.service._user.nick_name}</b>!`;
+	        this.responseMessage = ` привет!`;
 	        setTimeout(() => {
 	        	let return_url = this.service._user.is_configured ? this.service.storage.fetch('redirect_to') : '/profile/configure';
 	        	if(return_url) {
@@ -54,15 +54,15 @@ export class LoginComponent implements OnInit {
 	      }  
 	      if(res.status == 202) {
 	      	if(res.body.error == 'user_blocked') {
-	          	this.router.navigate(['/auth/blocked']);
+	          	this.router.navigate(['/auth/locked/' + res.body.id]);
 	      	} else if(res.body.error == 'user_not_approved') {
-		        this.responseMessage = 'Аккаунт не подтвержден. О статусе проверки мы оповестим на указанный при регистрации email.';
+		        this.responseMessage = ' Аккаунт не подтвержден. О статусе проверки мы оповестим на указанный при регистрации email.';
 		        setTimeout(() => {
 		          this.form.nativeElement.classList.remove('submited');
 		          this.username.nativeElement.focus();
 		        }, 3000);
 	      	} else {
-		        this.responseMessage = 'Не авторизован. Проверьте свой логин или пароль.';
+		        this.responseMessage = ' Вы не авторизованы. Проверьте свой логин или пароль.';
 		        setTimeout(() => {
 		          this.form.nativeElement.classList.remove('submited');
 		          this.username.nativeElement.focus();

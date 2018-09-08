@@ -19,23 +19,16 @@ export class LogoutComponent implements OnInit {
   constructor(
     private _service: ComponentService,
     private router: Router,
-    private notificationService: NotificationService
   ) {
   }
 
   showPopup() {
-    this.notificationService.smartMessageBox(
-      {
-        title:
-          "<i class='fas fa-sign-out-alt txt-color-orangeDark'></i> Выйти из системы <span class='txt-color-orangeDark'><strong>" + this._service._user.nick_name + "</strong></span> ?",
-        content:
-          "Для безопасности, после выхода, закройте вкладку с приложением.",
+    this._service.smartMessageBox({
+        title:"<i class='fas fa-sign-out-alt txt-color-orangeDark'></i> Выйти из системы <span class='txt-color-orangeDark'><strong>" + this._service._user.nick_name + "</strong></span> ?",
+        content:"Для безопасности, после выхода, закройте вкладку с приложением.",
         buttons: "[Нет][Да]"
-      },
-      ButtonPressed => {
-        if (ButtonPressed == "Да") {
-          this.logout();
-        }
+      }, (a, b, c) => {
+        if (c == 1) this.logout();
       }
     );
   }
@@ -43,6 +36,14 @@ export class LogoutComponent implements OnInit {
   logout() {
     this.router.navigate(["/auth/login"]);
     this._service.logout();
+    this._service.smallBox({
+      title: "Возвращайтесь",
+      content: "&nbsp;",
+      color: "#df4a3a",
+      icon: "fas fa-sign-out-alt bounce animated",
+      iconSmall: false,
+      timeout: 5000
+    });
   }
 
   ngOnInit() {}

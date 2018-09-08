@@ -6,6 +6,30 @@
 
   <div class="row">
     <div class="col-sm-12">
+	    <div class="well well-light shadow-md">
+		    <article class="col-xs-12">
+				<table class="table table-hover table-bordered">
+	              <caption><h1 class="txt-color-teal">{{ 'Контакты сайта' | i18n }}</h1></caption>
+	              <thead>
+	              <tr>
+	                <th>#</th>
+	                <th>{{ 'Название' | i18n }}</th>
+	                <th>{{ 'Описание' | i18n }}</th>
+	                <th>{{ 'Контактный адресс' | i18n }}</th>
+	              </tr>
+	              </thead>
+	              <tbody>
+	              <tr *ngFor="let item of contacts; let i = index">
+	                <td>{{ i + 1 }}</td>
+	                <td>{{ item.name }}</td>
+	                <td>{{ item.description }}</td>
+	                <td>{{ item.contact }}</td>
+	              </tr>
+	              </tbody>
+	            </table>
+		    </article>       
+		    <br clear="both">      		
+	    </div>
     	<div *ngIf="!tickets?.length" class="well well-light well-lg shadow-md text-center">
     		<button [routerLink]="['/support/newissue']" class="btn btn-primary btn-lg">{{ 'Создать новый тикет' | i18n }}</button>
     	</div>
@@ -13,11 +37,11 @@
 	        <table class="table table-striped table-forum">
 	          <thead>
 	          <tr>
-	            <th class="" colspan="2" style="width: 20%;"><strong>{{ 'Тема' | i18n }}</strong></th>
-	            <th class="text-center"><strong>{{ 'Описание проблемы' | i18n }}</strong></th>
-	            <th class="text-center"><strong>{{ 'Номер заказа или трансакции' | i18n }}</strong></th>
-	            <th class="" style="width: 100px;"><strong>{{ 'Статус' | i18n }}</strong></th>
-	            <th class="" style="width: 150px;"><strong>{{ 'Ответ' | i18n }}</strong></th>
+	            <th class="fs-14 " colspan="2" style="width: 20%;"><strong>{{ 'Тема' | i18n }}</strong></th>
+	            <th class="fs-14 text-center"><strong>{{ 'Описание проблемы' | i18n }}</strong></th>
+	            <th class="fs-14 text-center"><strong>{{ 'Номер заказа или трансакции' | i18n }}</strong></th>
+	            <th class="fs-14 " style="width: 100px;"><strong>{{ 'Статус' | i18n }}</strong></th>
+	            <th class="fs-14 " style="width: 150px;"><strong>{{ 'Перейти' | i18n }}</strong></th>
 	          </tr>
 	          </thead>
 	          <tbody>
@@ -28,25 +52,26 @@
 	                <small><strong class="txt-color-blue">{{ ticket.creator }}</strong> &nbsp; <em>{{ ticket.created_at | moment : 'DD.MM.YYYY HH:mm' }}</em></small>
 	              </h4>
 	            </td>
-	            <td class="text-center hidden-xs hidden-sm">
+	            <td class="text-center hidden-xs">
 	              <h5>{{ ticket.description }}</h5>
 	            </td>
-	            <td class="text-center hidden-xs hidden-sm">
+	            <td class="text-center hidden-xs va-m">
 	              <strong class="txt-color-blue"> {{ ticket.order_number ? ticket.order_number : (ticket.tx_number ? ticket.tx_number : '-') }} </strong>
 	            </td>
-	            <td class="text-center hidden-xs hidden-sm">
+	            <td class="text-center hidden-xs va-m">
 	             	<span *ngIf="ticket.status == 1" class="label label-primary">{{ ticket.status_name }}</span>
 	             	<span *ngIf="ticket.status == 2" class="label label-success">{{ ticket.status_name }}</span>
 	             	<span *ngIf="ticket.status == 3" class="label label-danger">{{ ticket.status_name }}</span>
 	             	<span *ngIf="ticket.status == 4" class="label label-default">{{ ticket.status_name }}</span>
 	            </td>
-	            <td class="hidden-xs hidden-sm">
-	            	<span *ngIf="ticket.message_author && ticket.message_date">
-	              		<a routerLink="/support/issues/{{ticket.system_number}}">
-	              			<i class="fas fa-comments"></i> {{ ticket.message_author }}
-	              		</a><br>
+	            <td class="hidden-xs va-m">
+	            	<a *ngIf="ticket.message_author" routerLink="/support/issues/{{ticket.system_number}}" class="btn btn-primary btn-xs btn-block">
+	              		<span class="fs-14"><i class="fas fa-comments"></i> {{ ticket.message_author }}</span><br>
 	              		<small><i>{{ ticket.message_date | moment : 'DD.MM.YY HH:mm' }}</i></small>
-	            	</span>
+	            	</a>
+	            	<a *ngIf="!ticket.message_author" routerLink="/support/issues/{{ticket.system_number}}" class="btn btn-primary btn-xs btn-block">
+	              		<span class="fs-14"><i class="fas fa-comments"></i> {{ 'Подробно' | i18n }}</span><br>
+	            	</a>
 	            </td>
 	          </tr>
 	          </tbody>

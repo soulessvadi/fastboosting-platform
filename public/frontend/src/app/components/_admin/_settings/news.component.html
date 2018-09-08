@@ -1,0 +1,133 @@
+<div id="content" class="animated fadeInUp">
+  <div class="row">
+    <sa-big-breadcrumbs [items]="['Настройки', 'Новости']" icon="fas fa-newspaper" class="col-xs-12"></sa-big-breadcrumbs>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-9">
+      <div class="well padding-10">
+        <ng-container *ngFor="let post of news">
+          <div class="row">
+            <div class="col-md-4">
+              <img src="{{ _service.store_shared + post.cover }}" class="img-responsive" alt="{{ post.title }}">
+              <ul class="list-inline padding-10">
+                <li>
+                  <i class="fa fa-calendar"></i>
+                  <a (click)="(null)"> {{ post.published_at | momentFromNow : 'DD.MM.YYYY HH:mm' }} </a>
+                </li>
+                <li>
+                  <i class="fa fa-comments"></i>
+                  <a (click)="post.show_comments = !post.show_comments"> 
+                  <span> {{ 'Комментарии' | i18n }}: {{ post.comments?.length || 'нет' }}</span>  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-8 padding-left-0">
+              <h3 class="margin-top-0"><a (click)="(null)"> {{ post.title }} </a><br><small class="font-xs"><i>{{'Автор'|i18n}} <a routerLink="/govt/users/{{post.author_id}}">{{ post.author }}</a></i></small></h3>
+              <p [innerHTML]="post.preview"></p>
+              <p *ngIf="!post.full_view" [innerHTML]="post.preview"></p>
+              <p *ngIf="post.full_view" [innerHTML]="post.text"></p>
+              <a class="btn btn-primary" (click)="post.full_view = true" *ngIf="!post.full_view">{{ 'Полный текст' | i18n }}</a>
+              <a class="btn btn-primary" (click)="post.full_view = false" *ngIf="post.full_view">{{ 'Превью' | i18n }}</a>
+              <a class="btn btn-success" (click)="publish(post)">{{ post.publish ? 'Снять с публикации' : 'Публиковать' | i18n }}</a>
+              <a class="btn btn-warning" routerLink="/govt/settings/news/{{post.id}}">{{ 'Изменить' | i18n }}</a>
+              <a class="btn btn-danger" (click)="remove(post)">{{ 'Удалить' | i18n }}</a>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xs-12 replies" *ngIf="post.show_comments">
+            <div class="chat-body no-padding profile-message">
+              <div class="timeline-seperator text-center"><span>{{ 'КОММЕНТАРИИ' | i18n }}</span></div>
+              <ul *ngIf="!post.comments?.length">
+                <li class="message" style="opacity: 0.5;">
+                  <img src="{{_service.store_avatars}}{{_service.user.avatar ? _service.user.avatar : 'mock.png'}}" class="online" alt="{{ _service.user.author }}">
+                  <span class="message-text">
+                    <a class="username" style="width: 100%;">{{ _service.user.nick_name }}</a>
+                    <span>{{ 'Ваше сообщение будет первым' | i18n }}</span>
+                  </span>
+                </li>
+              </ul>
+              <ul class="custom-scroll" style="min-height: 20px;max-height: 100vh;">
+                <li class="message" *ngFor="let message of post.comments">
+                  <img src="{{_service.store_avatars}}{{message.avatar ? message.avatar : 'mock.png'}}" class="online" alt="{{ message.author }}">
+                  <span class="message-text"> 
+                    <a class="username" style="width: 100%;">{{ message.author }} 
+                      <time class="text-muted pull-right ultra-light"><i class="fas fa-user-clock"></i>&nbsp; {{ message.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</time>
+                    </a> 
+                    <span class="message-text-content" [innerHTML]="message.text"></span>
+                  </span>
+                  <ul class="list-inline font-xs">
+                    <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> {{ 'Ответить' | i18n }}</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+
+            <div class="well padding-bottom-10 margin-top-10 chat-form">
+              <textarea rows="2" class="form-control" [placeholder]="'Ваш комментарий, соблюдайте правила приличия' | i18n" [(ngModel)]="post.new_message" #message></textarea>
+              <div class="note"> {{ 'Сообщение не может быть слишком коротким' | i18n }}</div>
+              <div class="margin-top-10">
+                <button type="button" class="btn btn-sm btn-warning" (click)="post.show_comments = false">{{ 'Скрыть' | i18n }}</button>
+                <button type="button" class="btn btn-sm btn-primary pull-right" (click)="postMessage($event, post)">{{ 'Опубликовать' | i18n }}</button>
+                <br clear="both">
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="text-right">
+          <ul *ngIf="pagination" class="pagination pagination-md no-margin">
+            <li><a (click)="pageChange(pagination.prev)"><i class="fas fa-chevron-left"></i></a></li>
+            <li *ngFor="let p of pagination.pages" [class.active]="p == filters.page"><a (click)="pageChange(p)">{{ p }}</a></li>
+            <li><a (click)="pageChange(pagination.next)"><i class="fas fa-chevron-right"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well padding-10">
+        <h5 class="margin-top-0"><i class="fa fa-search"></i> {{ 'Поиск' | i18n}}</h5>
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="filters.keyword" (keyup.enter)="fetch()">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" (click)="fetch()">
+                <i class="fa fa-search"></i>
+            </button> 
+          </span>
+        </div>
+      </div>
+      <div class="well padding-10">
+        <button class="btn btn-md btn-primary btn-block" (click)="addPost()"><i class="fas fa-plus"></i> {{ 'Создать новость' | i18n }}</button>
+      </div>
+      <div class="well padding-10">
+        <h5 class="margin-top-0"><i class="fa fa-tags"></i> {{ 'Хештэги' | i18n}}</h5>
+        <div class="row">
+          <div class="col-lg-12">
+            <ul class="list-unstyled">
+              <li *ngFor="let tag of tags" class="pull-left padding-5">
+                <a (click)="this.filters.keyword=tag; fetch()"><span class="badge bg-color-blue">{{ tag }}</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="well padding-10">
+        <h5 class="margin-top-0"><i class="fas fa-video"></i> {{ 'Видео' | i18n}}</h5>
+        <div class="row">
+          <div class="col-lg-12">
+            <ul class="list-group no-margin">
+              <li class="list-group-item" *ngFor="let video of videos">
+                <a> <span class="badge bg-color-blue pull-right" (click)="loadedVideo = video">{{ 'Смотреть' | i18n }}</span> {{ video.title }} </a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-12" *ngIf="loadedVideo">
+            <div class="margin-top-10">
+              <iframe frameborder="0" height="210" width="100%" [src]="loadedVideo.video | safeUrl" webkitallowfullscreen  mozallowfullscreen allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

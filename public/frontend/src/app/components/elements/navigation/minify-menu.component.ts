@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromLayout from '@app/core/store/layout';
+import { LayoutService } from '@app/core/services/layout.service';
 
 @Component({
   selector: 'sa-minify-menu',
@@ -9,9 +10,9 @@ import * as fromLayout from '@app/core/store/layout';
 
 export class MinifyMenuComponent {
 
-  constructor(private store: Store<any>) {}
+  constructor(private store: Store<any>, private layoutService: LayoutService) {}
 
   toggle() {
-    this.store.dispatch(new fromLayout.MinifyMenu())
+    this.layoutService.onMinifyMenu();
   }
 }

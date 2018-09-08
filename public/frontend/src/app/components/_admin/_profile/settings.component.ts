@@ -46,22 +46,10 @@ export class SettingsComponent implements OnInit {
 		    		this.paymethods = methods;
 		    	});
 		    	this._service._heroes.then((heroes) => { 
-		    		this.heroes = heroes;
-		    		for(let x in this.heroes) {
-		    			if(this.user.heroes.includes(heroes[x].id))
-		    				this.heroes[x].checked = true;
-		    			else
-		    				this.heroes[x].checked = false;
-		    		}		    		
+		    		this.heroes = heroes;		    		
 		    	});
 		    	this._service._lanes.then((lanes) => {
 		    		this.lanes = lanes;
-		    		for(let x in this.lanes) {
-		    			if(this.user.lanes.includes(lanes[x].id))
-		    				this.lanes[x].checked = true, this.lanes_checked.push(this.lanes[x].name);
-		    			else
-		    				this.lanes[x].checked = false;
-		    		}
 		    	});
 		    }
     	}, (e) => {
@@ -121,23 +109,19 @@ export class SettingsComponent implements OnInit {
 		this.bsModalRef.hide();
 	}
 
-	heroesChanged(hero) {
-		hero.checked = !hero.checked;
+	public heroesChanged(hero) {
 		if(hero.checked) 
 			this.user.heroes.push(hero.id);
 		else if (this.user.heroes.indexOf(hero.id) !== -1)
-	        this.user.heroes.splice(this.user.heroes.indexOf(hero.id), 1);
-  	}
+			this.user.heroes.splice(this.user.heroes.indexOf(hero.id), 1);
+	}
 
-	lanesChanged(lane) {
-		lane.checked = !lane.checked;
+	public lanesChanged(lane) {
 		if(lane.checked) 
-			this.user.lanes.push(lane.id), 
-			this.lanes_checked.push(lane.name);
-		else
-	        this.user.lanes = this.user.lanes.filter(e => e != lane.id),
-	        this.lanes_checked = this.lanes_checked.filter(e => e != lane.name);
-  	}
+			this.user.lanes.push(lane.id);
+		else 
+			this.user.lanes = this.user.lanes.filter(e => e != lane.id);
+	}  	
 
   	addProp() {
   		this.user.props.push({id: 0, prop: "", method_id: 0, method: "", country: this.user.country});

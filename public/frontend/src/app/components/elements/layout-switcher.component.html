@@ -2,18 +2,18 @@
   class="fa fa-cog txt-color-blueDark"></i></span>
 
   <form>
-    <legend class="no-padding margin-bottom-10">Настройки отображения</legend>
+    <legend class="no-padding margin-bottom-10">{{ 'Настройки отображения' | i18n }}</legend>
     <section>
       <label><input type="checkbox" (click)="onFixedHeader()" [(ngModel)]="store.fixedHeader" name="fixedHeader"
-                    class="checkbox style-0"><span>Фиксированная шапка</span></label>
+                    class="checkbox style-0"><span>{{ 'Фиксированная шапка' | i18n }}</span></label>
       <label><input type="checkbox"
                     (click)="onFixedNavigation()" [(ngModel)]="store.fixedNavigation" name="fixedNavigation"
-                    class="checkbox style-0"><span>Фиксированная навигация</span></label>
+                    class="checkbox style-0"><span>{{ 'Фиксированная навигация' | i18n }}</span></label>
       <label><input type="checkbox"
                     (click)="onMenuOnTop()" [(ngModel)]="store.menuOnTop" name="menuOnTop"
-                    class="checkbox style-0"><span>Меню <b>сверху</b></span></label><span id="smart-bgimages"></span></section>
+                    class="checkbox style-0"><span>{{ 'Меню сверху' | i18n }}</span></label><span id="smart-bgimages"></span></section>
 
-    <h6 class="margin-top-10 semi-bold margin-bottom-5">Цветовые схемы</h6>
+    <h6 class="margin-top-10 semi-bold margin-bottom-5">{{ 'Цветовые схемы' | i18n }}</h6>
 
     <section id="smart-styles">
           <a *ngFor="let skin of store.skins"

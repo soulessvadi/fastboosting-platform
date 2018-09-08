@@ -12,25 +12,25 @@
             <div class="well well-light well-sm no-margin no-padding">
               <div class="jarviswidget">
               <header>
-                <h2>Пошаговая настройка аккаунта игрока</h2>
+                <h2>{{ 'Пошаговая настройка аккаунта игрока' | i18n }}</h2>
               </header>
               <div style="border:none;">
                 <div class="widget-body fuelux configure">
-                  <fuel-ux-wizard (complete)="onWizardComplete($event)">
+                  <fuel-ux-wizard (complete)="onWizardComplete($event)" (changed)="onWizardChanged($event)" >
                     <div class="wizard">
                       <div class="steps-container">
                         <ul class="steps">
                           <li data-step="1" class="active">
-                            <span class="badge badge-info">1</span><span class="title">Игровые данные</span><span class="chevron"></span>
+                            <span class="badge badge-info">1</span><span class="title">{{ 'Игровые данные' | i18n }}</span><span class="chevron"></span>
                           </li>
                           <li data-step="2">
-                            <span class="badge">2</span><span class="title">Платежные данные</span><span class="chevron"></span>
+                            <span class="badge">2</span><span class="title">{{ 'Платежные данные' | i18n }}</span><span class="chevron"></span>
                           </li>
                           <li data-step="3">
-                            <span class="badge">3</span><span class="title">Личные данные и контакты</span><span class="chevron"></span>
+                            <span class="badge">3</span><span class="title">{{ 'Личные данные и контакты' | i18n }}</span><span class="chevron"></span>
                           </li>
                           <li data-step="4">
-                            <span class="badge">4</span><span class="title">Подтверждение</span><span class="chevron"></span>
+                            <span class="badge">4</span><span class="title">{{ 'Подтверждение' | i18n }}</span><span class="chevron"></span>
                           </li>
                         </ul>
                       </div>
@@ -39,10 +39,10 @@
                       <div class="form-horizontal" *ngIf="user">
 
                         <div class="step-pane active" data-step="1">
-                          <h3><strong>Ваши игровые данные</strong></h3>
+                          <h3><strong>{{ 'Игровые данные' | i18n }}</strong></h3>
                           <fieldset>
                             <div class="form-group">
-                              <label class="control-label col-md-3">Ссылка на профиль dotabuff.com</label>
+                              <label class="control-label col-md-3">{{ 'Ссылка на профиль dotabuff.com' | i18n }}</label>
                               <div class="col-md-8">
                                 <div class="row">
                                   <div class="col-sm-12">
@@ -56,7 +56,7 @@
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-md-3">Максимальный MMR соло / группа</label>
+                              <label class="control-label col-md-3"> {{ 'Максимальный MMR' | i18n }}</label>
                               <div class="col-md-4">
                                 <div class="row">
                                   <div class="col-sm-12">
@@ -68,23 +68,12 @@
                                   </div>
                                 </div>
                               </div>
-                              <div class="col-md-4">
-                                <div class="row">
-                                  <div class="col-sm-12">
-                                    <div class="input-icon-left">
-                                      <i class="fa fa-check txt-color-green" *ngIf="user.mmr_party"></i>
-                                      <i class="fa fa-times txt-color-red" *ngIf="!user.mmr_party"></i>
-                                      <input class="form-control" type="number" [(ngModel)]="user.mmr_party">
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-md-3">Предпочтительные герои 
-                                    <button class="edit-button pull-right" (click)="openModal($event, heroModal)" style="font-size: 18px;line-height: 0;">
-                                      <i class="fas fa-plus-circle"></i>
-                                    </button>
+                              <label class="control-label col-md-3"> {{ 'Предпочтительные герои' | i18n }}
+                                <button class="edit-button pull-right" (click)="openModal($event, heroModal)" style="font-size: 18px;line-height: 0;">
+                                  <i class="fas fa-plus-circle"></i>
+                                </button>
                               </label>
                               <div class="col-md-8">
                                 <div class="row">
@@ -97,16 +86,22 @@
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-md-3">Предпочтительные линии 
-                                    <button class="edit-button pull-right" (click)="openModal($event, lanesModal)" style="font-size: 18px;line-height: 0;">
-                                      <i class="fas fa-plus-circle"></i>
-                                    </button>
+                              <label class="control-label col-md-3"> {{ 'Предпочтительные линии' | i18n }}
+                                <button class="edit-button pull-right" (click)="openModal($event, lanesModal)" style="font-size: 18px;line-height: 0;">
+                                  <i class="fas fa-plus-circle"></i>
+                                </button>
                               </label>
                               <div class="col-md-8">
                                 <div class="row">
                                   <div class="col-sm-12">
                                     <ul class="list-inline friends-list" style="margin-left: 0;">
-                                      <li *ngFor="let lane of lanes_checked"><div class="img">{{ lane }}</div></li>
+                                      <ng-container *ngFor="let olane of user.lanes">
+                                        <ng-container *ngFor="let lane of lanes">
+                                          <li *ngIf="lane.id == olane">
+                                            <div class="img">{{ lane.name }}</div>                              
+                                          </li>
+                                        </ng-container>
+                                      </ng-container> 
                                     </ul>
                                   </div>
                                 </div>
@@ -117,17 +112,17 @@
                         </div>
 
                         <div class="step-pane" data-step="2">
-                          <h3><strong>Платежные данные</strong></h3>
+                          <h3><strong>{{ 'Платежные данные' | i18n }}</strong></h3>
                           <div class="row">
                             <div class="col-xs-12 col-sm-8 col-md-offset-2">
                               <div class="no-padding">
                                 <alert *ngIf="!user.props.length" type="info" dismissible="true">
-                                  <h4 class="alert-heading">Внимание!</h4>
-                                  Будьте предельно внимательны при указании реквизитов. <br>
-                                  Сохраненные данные будут использоваться при оплате работы за выполненные заказы и начисление бонусных средств. 
+                                  <h4 class="alert-heading">{{ 'Внимание' | i18n }}</h4>
+                                  {{ 'Будьте предельно внимательны при указании реквизитов' | i18n }}<br>
+                                  {{ 'Сохраненные данные будут использоваться при оплате работы за выполненные заказы и начисление бонусных средств' | i18n }}
                                 </alert>
                                 <p class="font-md">
-                                  <button class="edit-button" (click)="addProp()"><i>Добавить</i>&nbsp;<i class="fas fa-plus"></i></button>
+                                  <button class="edit-button" (click)="addProp()"><i>Добавить{{ '' | i18n }}</i>&nbsp;<i class="fas fa-plus"></i></button>
                                 </p>
 
                                 <div class="table-responsive" style="box-shadow: 0px 0px 5px 1px #ddd;">
@@ -135,9 +130,9 @@
                                     <thead>
                                       <tr>
                                         <th>#</th>
-                                        <th>Способ оплаты</th>
-                                        <th>Реквизит</th>
-                                        <th>Страна</th>
+                                        <th>{{ 'Способ оплаты' | i18n }}</th>
+                                        <th>{{ 'Реквизит' | i18n }}</th>
+                                        <th>{{ 'Страна' | i18n }}</th>
                                         <th></th>
                                       </tr>
                                     </thead>
@@ -160,10 +155,10 @@
                         </div>
 
                         <div class="step-pane" data-step="3">
-                          <h3><strong>Личные данные и контактная информация </strong></h3>
+                          <h3><strong>{{ 'Личные данные и контактная информация' | i18n }}</strong></h3>
                             <fieldset>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Аватар</label>
+                                <label class="control-label col-md-3">{{ 'Аватар' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12 profile-pic" style="text-align: left;">
@@ -176,7 +171,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Email</label>
+                                <label class="control-label col-md-3">{{ 'Email' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -190,7 +185,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Имя / Фамилия</label>
+                                <label class="control-label col-md-3">{{ 'Имя' | i18n }} / {{ 'Фамилия' | i18n }}</label>
                                 <div class="col-md-4">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -215,7 +210,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Никнейм</label>
+                                <label class="control-label col-md-3">{{ 'Никнейм' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -229,7 +224,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Страна / телефон</label>
+                                <label class="control-label col-md-3">{{ 'Страна' | i18n }} / {{ 'Телефон' | i18n }}</label>
                                 <div class="col-md-4">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -254,7 +249,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Discord / Skype</label>
+                                <label class="control-label col-md-3">{{ 'Discord' | i18n }} / {{ 'Skype' | i18n }}</label>
                                 <div class="col-md-4">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -279,7 +274,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Vkontakte</label>
+                                <label class="control-label col-md-3">{{ 'Vkontakte' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -293,7 +288,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Facebook</label>
+                                <label class="control-label col-md-3">{{ 'Facebook' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -307,7 +302,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Twitter</label>
+                                <label class="control-label col-md-3">{{ 'Twitter' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -321,7 +316,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Instagram</label>
+                                <label class="control-label col-md-3">{{ 'Instagram' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -335,7 +330,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label class="control-label col-md-3">Youtube</label>
+                                <label class="control-label col-md-3">{{ 'Youtube' | i18n }}</label>
                                 <div class="col-md-8">
                                   <div class="row">
                                     <div class="col-sm-12">
@@ -356,7 +351,7 @@
                             <br>
                             <br>
                             <h1 class="text-center text-success">
-                              <i class="fas fa-exclamation-circle"></i> Убедитесь что заполнили все поля верно
+                              <i class="fas fa-exclamation-circle"></i> {{ 'Убедитесь что информация заполнена верно' | i18n }}
                             </h1>
                             <br>
                             <br>
@@ -364,55 +359,51 @@
                               <table class="table table-bordered">
                                 <tbody>
                                   <tr>
-                                    <th class="text-right">Имя Фамилия</th>
+                                    <th class="text-right">{{ 'Имя Фамилия' | i18n }}</th>
                                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Никнейм</th>
+                                    <th class="text-right">{{ 'Никнейм' | i18n }}</th>
                                     <td>{{ user.nick_name }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Страна / телефон</th>
+                                    <th class="text-right">{{ 'Страна' | i18n }} / {{ 'Телефон' | i18n }}</th>
                                     <td>{{ user.country }} / {{ user.phone }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Discord / Skype</th>
+                                    <th class="text-right">{{ 'Discord' | i18n }} / {{ 'Skype' | i18n }}</th>
                                     <td>{{ user.discord }} / {{ user.skype }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Vkontakte</th>
+                                    <th class="text-right">{{ 'Vkontakte' | i18n }}</th>
                                     <td>{{ user.vkontakte }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Facebook</th>
+                                    <th class="text-right">{{ 'Facebook' | i18n }}</th>
                                     <td>{{ user.facebook }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Twitter</th>
+                                    <th class="text-right">{{ 'Twitter' | i18n }}</th>
                                     <td>{{ user.twitter }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Instagram</th>
+                                    <th class="text-right">{{ 'Instagram' | i18n }}</th>
                                     <td>{{ user.instagram }}</td>
                                   </tr>
                                   <tr>
-                                    <th class="text-right">Youtube</th>
+                                    <th class="text-right">{{ 'Youtube' | i18n }}</th>
                                     <td>{{ user.youtube }}</td>
                                   </tr>  
                                   <tr>
-                                    <th class="text-right">Профиль dotabuff</th>
+                                    <th class="text-right">{{ 'Профиль dotabuff' | i18n }}</th>
                                     <td>{{ user.dotabuff }}</td>
                                   </tr>  
                                   <tr>
-                                    <th class="text-right">MMR соло</th>
+                                    <th class="text-right">{{ 'Максимальный MMR' | i18n }}</th>
                                     <td>{{ user.mmr_solo }}</td>
                                   </tr>  
                                   <tr>
-                                    <th class="text-right">MMR группа</th>
-                                    <td>{{ user.mmr_party }}</td>
-                                  </tr>  
-                                  <tr>
-                                    <th class="text-right">Герои</th>
+                                    <th class="text-right">{{ 'Герои' | i18n }}</th>
                                     <td>
                                       <ul class="list-inline friends-list">
                                         <li *ngFor="let hero of user.heroes"><img src="{{ _service.store_heroes }}{{ hero }}_md.png"></li>
@@ -420,10 +411,16 @@
                                     </td>
                                   </tr> 
                                   <tr>
-                                    <th class="text-right">Линии</th>
+                                    <th class="text-right">{{ 'Линии' | i18n }}</th>
                                     <td>
                                       <ul class="list-inline friends-list">
-                                        <li *ngFor="let lane of lanes_checked"><div class="img">{{ lane }}</div></li>
+                                        <ng-container *ngFor="let olane of user.lanes">
+                                          <ng-container *ngFor="let lane of lanes">
+                                            <li *ngIf="lane.id == olane">
+                                              <div class="img">{{ lane.name }}</div>                              
+                                            </li>
+                                          </ng-container>
+                                        </ng-container> 
                                       </ul>
                                     </td>
                                   </tr>                               
@@ -437,9 +434,9 @@
                                 <thead>
                                   <tr>
                                     <th>#</th>
-                                    <th>Способ оплаты</th>
-                                    <th>Реквизит</th>
-                                    <th>Страна</th>
+                                    <th>{{ 'Способ оплаты' | i18n }}</th>
+                                    <th>{{ 'Реквизит' | i18n }}</th>
+                                    <th>{{ 'Страна' | i18n }}</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -458,8 +455,8 @@
                             <br>
                             <br>
                             <h1 class="text-center text-success">
-                              <i class="fa fa-check"></i> Информация сохранена<br>
-                              <small>Вы будете перенаправлены автоматически</small>
+                              <i class="fa fa-check"></i> {{ 'Информация сохранена' | i18n }}<br>
+                              <small>{{ 'Вы будете перенаправлены автоматически' | i18n }}</small>
                             </h1>
                             <br>
                             <br>
@@ -470,21 +467,17 @@
 
                       <div class="actions pull-right" #wizardControls>
                         <button type="button" class="btn btn-lg btn-primary btn-prev">
-                          <i class="fas fa-angle-double-left"></i>назад
+                          <i class="fas fa-angle-double-left"></i> {{ 'Назад' | i18n }}
                         </button>
-                        <button type="button" class="btn btn-lg btn-success btn-next" data-last="сохранить">
-                          продолжить<i class="fas fa-angle-double-right"></i>
+                        <button type="button" class="btn btn-lg btn-success btn-next">
+                          {{ (step < 4 ? 'Продолжить' : 'Сохранить') | i18n }} <i class="fas" [class.fa-angle-double-right]="step < 4" [class.fa-check]="step >= 4"></i>
                         </button>
                       </div>
 
                     </div>
                   </fuel-ux-wizard>
                 </div>
-                <!-- end widget content -->
-
               </div>
-              <!-- end widget div -->
-
             </div>
 
             </div>
@@ -497,9 +490,9 @@
 
 
 <ng-template #heroModal>
-  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes"></hero-modal>
+  <hero-modal (close)="modalClose()" (changed)="heroesChanged($event)" [heroes]="heroes" [selected]="user.heroes"></hero-modal>
 </ng-template>
 
 <ng-template #lanesModal>
-  <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes"></lane-modal>
+  <lane-modal (close)="modalClose()" (changed)="lanesChanged($event)" [lanes]="lanes" [selected]="user.lanes"></lane-modal>
 </ng-template>

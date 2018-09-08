@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit, AfterContentInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit, AfterContentInit, Renderer2, Input } from '@angular/core';
 import { Router} from "@angular/router";
 import { LayoutService } from "@app/core/services/layout.service";
 import { ComponentService } from "@app/components/components.service";
@@ -23,11 +23,10 @@ import { trigger, state, style, transition, animate} from '@angular/animations'
 })
 export class ShortcutComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
 
-
   public state:string = 'out';
-
   private layoutSub:Subscription;
   private documentSub:any;
+  @Input('shortcuts') shortcuts: any; 
 
   constructor(private layoutService:LayoutService,
               private router:Router,
@@ -46,9 +45,17 @@ export class ShortcutComponent implements OnInit, AfterViewInit, AfterContentIni
   }
 
   ngOnInit() {
-
   }
 
+  public colorify() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+  
   listen() {
     this.layoutSub = this.layoutService.subscribe((store)=> {
       this.state = store.shortcutOpen ? 'in' : 'out'

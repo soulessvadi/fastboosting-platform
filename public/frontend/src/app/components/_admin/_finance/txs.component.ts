@@ -81,14 +81,24 @@ export class TxsComponent implements OnInit {
     this.bsModalRef = this.modalService.show(template, {class: 'modal-lg'});
   }
 
-  public modalClose() {
-    this.bsModalRef.hide();
-  }
-
   public pageChange(page:number) {
     if(page != this.filters.page) {
       this.filters.page = page;
       this.fetch();
     }
   }
+
+  public txCreated(tx) {
+    if(tx) this.txs.unshift(tx);
+  }
+  
+  public openModal(event, template: TemplateRef<any>, className?) {
+    event.preventDefault();
+    this.bsModalRef = this.modalService.show(template, {class: className || ''});
+  }
+
+  public modalClose() {
+    this.bsModalRef.hide();
+  }
+
 }

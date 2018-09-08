@@ -16,6 +16,7 @@ export class ListComponent implements OnInit {
     message: null,
   };
   public tickets;
+  public contacts;
   public pagination;
   public page:number = 1;
 
@@ -32,6 +33,9 @@ export class ListComponent implements OnInit {
   }
 
   public fetch() {
+    this._service.getContacts().subscribe(res => {
+      this.contacts = res.body.contacts;
+    })
     this._service.getSelfTickets({page: this.page}).subscribe(res => {
       this.tickets = res.body.tickets;
       this.pagination = res.body.pagination;

@@ -1,5 +1,5 @@
 <div *ngIf="!tickets.list?.length">
-  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Нет ответов</h2>
+  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Нет ответов{{ 'КОММЕНТАРИИ' | i18n }}</h2>
   <hr>
 </div>
 <div class="row" *ngIf="tickets.list?.length">
@@ -8,9 +8,9 @@
       <table class="table table-striped table-forum">
         <thead>
           <tr>
-            <th class="text-center"><strong>Номер тикета</strong></th>
-            <th class=""><strong>Тема</strong></th>
-            <th class="text-center"><strong>Сообщение</strong></th>
+            <th class="text-center"><strong>{{ 'Номер тикета' | i18n }}</strong></th>
+            <th class=""><strong>{{ 'Тема' | i18n }}</strong></th>
+            <th class="text-center"><strong>{{ 'Сообщение' | i18n }}</strong></th>
             <th class=""></th>
           </tr>
         </thead>
@@ -27,11 +27,11 @@
               <h5 class="no-margin">{{ ticket.message_text }}</h5>
               <span>
                   <strong class="txt-color-blue"><i class="fas fa-comments"></i> {{ ticket.message_author }}</strong>&nbsp;
-                  <small><i>{{ ticket.message_date | moment : 'DD.MM.YY HH:mm' }}</i></small>
+                  <small><i>{{ ticket.message_date | momentFromNow : 'DD.MM.YY HH:mm' }}</i></small>
               </span>
             </td>
             <td class="hidden-xs hidden-sm" style="vertical-align: middle;">
-              <a routerLink="/support/issues/{{ ticket.system_number }}" class="btn btn-primary btn-sm">Перейти</a>
+              <a routerLink="/support/issues/{{ ticket.system_number }}" class="btn btn-primary btn-sm">{{ 'Перейти' | i18n }}</a>
             </td>
           </tr>
         </tbody>

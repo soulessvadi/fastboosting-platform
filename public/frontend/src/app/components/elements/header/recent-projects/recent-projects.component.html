@@ -14,6 +14,6 @@
   </ul>
 </div>
 
-<a routerLink="/orders/active" class="btn btn-labeled btn-md btn-success bg-color-blueDark" style="margin: 8px 10px;" *ngIf="_service.user.is_busy">
-  <span class="btn-label">Активный заказ</span> #{{ _service.user.active_order }}
+<a routerLink="/orders/active" class="btn btn-labeled btn-md btn-success bg-color-blueDark" style="margin: 8px 10px;" *ngIf="_service?.user?.is_busy">
+  <span class="btn-label">{{ 'Активный заказ' | i18n }}</span> #{{ _service.user.active_order }}
 </a>

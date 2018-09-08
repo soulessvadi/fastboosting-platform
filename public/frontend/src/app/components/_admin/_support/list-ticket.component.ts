@@ -18,7 +18,10 @@ export class TicketComponent implements OnInit, OnDestroy {
   };
   public system_number: string;
   public ticket: any = null;
-  public authors: any = [];
+  public clients: any = [];
+  public boosters: any = [];
+  public partners: any = [];
+  public users: any = [];
   public statuses: any = [];
   public types: any = [];
   public activeTab = 1;
@@ -53,8 +56,8 @@ export class TicketComponent implements OnInit, OnDestroy {
   }
 
   public getUserName() {
-    let author = this.authors.find(e => e.id == this.ticket.user_id);
-    return author ? author.nick_name : '';
+    let author = this.users.find(e => e.id == this.ticket.user_id);
+    return author ? author.name : '';
   }
 
   private joinToChat(): void {
@@ -110,9 +113,12 @@ export class TicketComponent implements OnInit, OnDestroy {
   public fetch() {
     this._service.getTicketByNumber(this.system_number).subscribe((res: any) => {
       this.ticket = res.body.ticket;
-      this.authors = res.body.authors;
+      this.partners = res.body.partners;
+      this.clients = res.body.clients;
+      this.boosters = res.body.boosters;
+      this.users = this.boosters;
       if(!this.ticket) {
-        this.router.navigate(['/gowt/sundry/404']);
+        this.router.navigate(['/404']);
       } else {
         this.chat.room = this.system_number;
         this.joinToChat();

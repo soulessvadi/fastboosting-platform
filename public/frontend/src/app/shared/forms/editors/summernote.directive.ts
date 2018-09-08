@@ -14,6 +14,8 @@ import "summernote/dist/summernote.min.js";
 })
 export class SummernoteDirective implements OnInit {
   @Input() summernote = {};
+  @Input() placeholder:string = null;
+  @Input() content:string = null;
   @Output() change = new EventEmitter();
 
   constructor(private el: ElementRef) {}
@@ -22,12 +24,14 @@ export class SummernoteDirective implements OnInit {
     $(this.el.nativeElement).summernote(
       Object.assign(this.summernote, {
         tabsize: 2,
+        placeholder: this.placeholder,
         callbacks: {
-          onChange: (we, contents, $editable) => {
+          onChange: (contents, $editable) => {
             this.change.emit(contents);
           }
         }
       })
     );
+    if(this.content) $(this.el.nativeElement).summernote('code', this.content);
   }
 }

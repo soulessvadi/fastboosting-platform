@@ -48,6 +48,7 @@ export class ListComponent implements OnInit {
         if(res.status == 200) {
           let user = this._service._user;
           user.is_busy = true;
+          user.active_order =  order.system_number;
           this._service._user = user;
           this.router.navigate(['/orders/active']);
         }

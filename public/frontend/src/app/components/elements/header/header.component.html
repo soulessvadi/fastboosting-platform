@@ -1,61 +1,58 @@
 <header id="header">
-  
   <div id="logo-group">
     <span id="logo"><img src="assets/img/logo-blue.png" alt="Fastboosting Platform"></span>
     <sa-activities></sa-activities>
   </div>
-
   <sa-recent-projects></sa-recent-projects>
-
   <div class="pull-right">
-
     <sa-collapse-menu></sa-collapse-menu>
-
     <!-- #MOBILE -->
     <!-- Top menu profile link : this shows only when top menu is active -->
     <ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5">
       <li class="">
         <a href="#" class="dropdown-toggle no-margin userdropdown" data-toggle="dropdown">
-          <img src="{{ _service.store_avatars }}{{_service._user.avatar ? _service._user.avatar : 'mock.png'}}" alt="{{ _service._user.nick_name }}" class="online"/>
+          <img *ngIf="_service?._user" src="{{ _service.store_avatars }}{{_service._user.avatar}}" alt="{{ _service._user.nick_name }}" class="online"/>
+          <img *ngIf="!_service?._user" src="{{ _service.store_avatars }}mock.png" alt="user" class="online"/>
         </a>
         <ul class="dropdown-menu pull-right">
           <li>
-            <a (click)="(null)" class="padding-10 padding-top-0 padding-bottom-0"><i
-              class="fa fa-cog"></i> Setting</a>
+            <a (click)="(null)" class="padding-10 padding-top-0 padding-bottom-0">
+              <i class="fa fa-cog"></i> Settings
+            </a>
           </li>
           <li class="divider"></li>
           <li>
-            <a routerLink="/app-views/profile" class="padding-10 padding-top-0 padding-bottom-0"> <i
-              class="fa fa-user"></i>
-              <u>P</u>rofile</a>
+            <a routerLink="/app-views/profile" class="padding-10 padding-top-0 padding-bottom-0"> 
+              <i class="fa fa-user"></i>
+              <u>P</u>rofile
+            </a>
           </li>
           <li class="divider"></li>
           <li>
-            <a (click)="(null)" class="padding-10 padding-top-0 padding-bottom-0"
-               data-action="toggleShortcut"><i class="fa fa-arrow-down"></i> <u>S</u>hortcut</a>
+            <a (click)="(null)" class="padding-10 padding-top-0 padding-bottom-0" data-action="toggleShortcut">
+              <i class="fa fa-arrow-down"></i> 
+              <u>S</u>hortcut
+            </a>
           </li>
           <li class="divider"></li>
           <li>
-            <a routerLink="/auth/logout" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout"><i
-              class="fas fa-lg fa-sign-out-alt"></i> <strong><u>L</u>ogout</strong></a>
+            <a routerLink="/auth/logout" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout">
+              <i class="fas fa-lg fa-sign-out-alt"></i> 
+              <strong><u>L</u>ogout</strong>
+            </a>
           </li>
         </ul>
       </li>
     </ul>
-
     <sa-logout></sa-logout>
-
     <div *ngIf="false" id="search-mobile" class="btn-header transparent pull-right">
       <span> <a (click)="toggleSearchMobile()" title="Search"><i class="fa fa-search"></i></a> </span>
     </div>
-
     <form *ngIf="false" #searchForm="ngForm" (ngSubmit)="onSubmit()" class="header-search pull-right">
       <input id="search-fld" type="text" name="param" required placeholder="">
       <button type="submit"><i class="fa fa-search"></i></button>
       <a id="cancel-search-js" (click)="toggleSearchMobile()" title="Cancel Search"><i class="fa fa-times"></i></a>
     </form>
-
     <sa-language-selector></sa-language-selector>
-
   </div>
 </header>

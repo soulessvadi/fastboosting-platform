@@ -3,36 +3,24 @@
 </div>
 <div class="modal-body custom-scroll terms-body no-padding">
   <div class="smart-form" id="left" #form>
-    <fieldset>  
-      <section>
+    <fieldset class="padding-top-10">  
+      <section class="margin-top-5 margin-bottom-5">
         <div class="flex">
           <div class="column">
-            <label class="label">{{ 'Клиент' | i18n }}</label>
+            <label class="label">{{ 'Пользователь' | i18n }}</label>
             <label class="input">
               <input type="text" [(ngModel)]="tx.user_name" readonly disabled>
             </label>
-          </div>
-          <div class="column">
-            <div class="flex">
-              <div class="column shrink padding-left-10">
-                <label class="label">{{ 'Сумма' | i18n }}</label>
-                <label class="input">
-                  <input type="number" [(ngModel)]="tx.amount" step="100">
-                </label>
-              </div>
-              <div class="column shrink padding-left-10">
-                <label class="label">{{ 'Валюта' | i18n }}</label>
-                <div class="radio-select">
-                  <label *ngFor="let currency of currencies">
-                    <input type="radio" name="currency" [(ngModel)]="tx.currency_id" [value]="currency.id" (change)="tx.currency_name = currency.name"><b>{{ currency.name | i18n }}</b>
-                  </label>
-                </div>          
-              </div>              
-            </div>              
-          </div>        
+          </div>  
+          <div class="column padding-left-10">
+            <label class="label">{{ 'Заказ' | i18n }}</label>
+            <label class="input">
+              <input type="text" [(ngModel)]="tx.order_number" readonly disabled>
+            </label>
+          </div>      
         </div>
       </section>
-      <section>
+      <section class="margin-top-5 margin-bottom-5">
         <div class="flex">
           <div class="column">
             <label class="label">{{ 'Статус' | i18n }}</label>
@@ -52,9 +40,29 @@
           </div>
         </div>
       </section>
-      <section>
+      <section class="margin-top-5 margin-bottom-5">
+        <div class="column">
+          <div class="flex">
+            <div class="column shrink">
+              <label class="label">{{ 'Сумма' | i18n }}</label>
+              <label class="input">
+                <input type="number" [(ngModel)]="tx.amount" step="100">
+              </label>
+            </div>
+            <div class="column shrink padding-left-10">
+              <label class="label">{{ 'Валюта' | i18n }}</label>
+              <div class="radio-select">
+                <label *ngFor="let currency of currencies">
+                  <input type="radio" name="currency" [(ngModel)]="tx.currency_id" [value]="currency.id" (change)="tx.currency_name = currency.name" disabled><b>{{ currency.name | i18n }}</b>
+                </label>
+              </div>          
+            </div>              
+          </div>              
+        </div>         
+      </section>
+      <section class="margin-top-5 margin-bottom-5">
         <div>
-          <label class="label">{{ 'Комметарий' | i18n }}</label>
+          <label class="label">{{ 'Комментарий' | i18n }}</label>
           <label class="textarea">
             <textarea rows="2" #message [(ngModel)]="tx.comment"></textarea>
           </label>

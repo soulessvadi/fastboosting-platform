@@ -8,11 +8,14 @@ import { ComponentService } from '@app/components/components.service';
 
 export class PricelistsComponent implements OnInit {
 
+  public activeTab = 1;
+
   public pricelists = {
     boosting: null,
     medal_boost: null,
     calibration: null,
     training: null,
+    training_services: null,
   };
 
   public currency = '';

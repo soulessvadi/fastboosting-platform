@@ -1,5 +1,5 @@
 <div *ngIf="!news.list?.length">
-  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">Ожидаются горячие новости</h2>
+  <h2 class="txt-color-teal" style="margin: 40px 0;text-align: center;">{{ 'Новостей нет' | i18n }}</h2>
   <hr>
 </div>
 <div *ngIf="news.list?.length">
@@ -17,7 +17,7 @@
           <li> 
             <a class="txt-color-blue" class="txt-color-blue" (click)="post.show_comments = true">
               <i class="fas fa-comment-dots"></i> 
-              <span> комментарии: {{ post.comments?.length || 'нет' }}</span>
+              <span> {{ 'комментарии' | i18n }}: {{ post.comments?.length || 'нет' }}</span>
             </a>
           </li>
         </ul>
@@ -25,22 +25,22 @@
       <div class="col-sm-6 col-md-8 col-lg-10 padding-left-0">
         <h3 class="margin-top-0 margin-bottom-10">
           <strong class="txt-color-blue">{{ post.title }}</strong><br>
-          <small class="font-xs"><i>Создатель: <strong class="txt-color-blue">{{ post.author }}</strong></i></small>
+          <small class="font-xs"><i>{{ 'Создатель' | i18n }}: <strong class="txt-color-blue">{{ post.author }}</strong></i></small>
         </h3>
         <p *ngIf="!post.full_view">{{ post.preview }}</p>
         <p *ngIf="post.full_view">{{ post.text }}</p>
-        <a class="btn btn-info btn-xs" (click)="post.full_view = true" *ngIf="!post.full_view">читать полностью <i class="fas fa-chevron-down fs-8 va-m"></i></a>
+        <a class="btn btn-info btn-xs" (click)="post.full_view = true" *ngIf="!post.full_view">{{ 'читать полностью' | i18n }} <i class="fas fa-chevron-down fs-8 va-m"></i></a>
       </div>
 
       <div class="col-xs-12 replies" *ngIf="post.show_comments">
         <div class="chat-body no-padding profile-message">
-          <div class="timeline-seperator text-center"><span>КОММЕНТАРИИ</span></div>
+          <div class="timeline-seperator text-center"><span>{{ 'КОММЕНТАРИИ' | i18n }}</span></div>
           <ul *ngIf="!post.comments?.length">
             <li class="message" style="opacity: 0.5;">
               <img src="{{_service.store_avatars}}{{_service.user.avatar ? _service.user.avatar : 'mock.png'}}" class="online" alt="{{ _service.user.author }}">
               <span class="message-text">
                 <a class="username" style="width: 100%;">{{ _service.user.nick_name }}</a>
-                <span>Ваше сообщение будет первым</span>
+                <span>{{ 'Ваше сообщение будет первым' | i18n }}</span>
               </span>
             </li>
           </ul>
@@ -51,10 +51,10 @@
                 <a class="username" style="width: 100%;">{{ message.author }} 
                   <time class="text-muted pull-right ultra-light"><i class="fas fa-user-clock"></i>&nbsp; {{ message.created_at | momentFromNow : 'DD.MM.YY HH:mm' }}</time>
                 </a> 
-                <span [innerHTML]="message.text"></span>
+                <span class="message-text-content" [innerHTML]="message.text"></span>
               </span>
               <ul class="list-inline font-xs">
-                <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> Ответить</a></li>
+                <li><a class="text-info" (click)="addRecipient($event, message.author)"><i class="fas fa-reply-all"></i> {{ 'Ответить' | i18n }}</a></li>
               </ul>
             </li>
           </ul>
@@ -62,10 +62,10 @@
 
         <div class="well padding-bottom-10 margin-top-10 chat-form">
           <textarea rows="2" class="form-control" placeholder="Ваш комментарий, соблюдайте правила приличия." [(ngModel)]="post.new_message" #message></textarea>
-          <div class="note">Обратите внимание, что ваше сообщение не может быть слишком коротким</div>
+          <div class="note"> {{ 'Сообщение не может быть слишком коротким' | i18n }}</div>
           <div class="margin-top-10">
-            <button type="button" class="btn btn-sm btn-warning" (click)="post.show_comments = false">Скрыть</button>
-            <button type="button" class="btn btn-sm btn-primary pull-right" (click)="postMessage($event, post)">Опубликовать</button>
+            <button type="button" class="btn btn-sm btn-warning" (click)="post.show_comments = false">{{ 'Скрыть' | i18n }}</button>
+            <button type="button" class="btn btn-sm btn-primary pull-right" (click)="postMessage($event, post)">{{ 'Опубликовать' | i18n }}</button>
             <br clear="both">
           </div>
         </div>

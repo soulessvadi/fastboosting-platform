@@ -1,6 +1,6 @@
 <div id="content" class="animated fadeInUp">
   <div class="row">
-    <sa-big-breadcrumbs [items]="['Настройки', 'Прайслисты']" icon="fas fa-user-cog" class="col-xs-12"></sa-big-breadcrumbs>
+    <sa-big-breadcrumbs [items]="['Настройки', 'Прайс-листы']" icon="fas fa-hand-holding-usd" class="col-xs-12"></sa-big-breadcrumbs>
   </div>
 
   <div>
@@ -14,34 +14,77 @@
                   <article class="col-xs-12 margin-top-10">
                     <div class="widget-body">
                       <ul id="myTab1" class="nav nav-tabs bordered">
+                        <li [class.active]="activeTab == 5">
+                          <a (click)="activeTab = 5">
+                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'Рейтинги заказов' | i18n }}
+                          </a>
+                        </li>
                         <li [class.active]="activeTab == 0">
                           <a (click)="activeTab = 0">
-                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Рейтинги бустеров' | i18n }}
+                            <i class="fas fa-fw fa-lg fa-users"></i> {{ 'Рейтинги бустеров' | i18n }}
                           </a>
                         </li>
                         <li [class.active]="activeTab == 1">
                           <a (click)="activeTab = 1">
-                            <i class="fas fa-fw fa-lg fa-cogs"></i> {{ 'Буст MMR' | i18n }}
+                            <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Буст MMR' | i18n }}
                           </a>
                         </li>
                         <li [class.active]="activeTab == 2">
                           <a (click)="activeTab = 2">
-                            <i class="fas fa-fw fa-lg fa-key"></i> {{ 'Буст медали' | i18n }}
+                            <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Буст медали' | i18n }}
                           </a>
                         </li>
                         <li [class.active]="activeTab == 3">
                           <a (click)="activeTab = 3">
-                            <i class="fas fa-fw fa-lg fa-shopping-cart"></i> {{ 'Калибровка' | i18n }}
+                            <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Калибровка' | i18n }}
                           </a>
                         </li>
                         <li [class.active]="activeTab == 4">
                           <a (click)="activeTab = 4">
-                            <i class="fas fa-fw fa-lg fa-chart-line"></i> {{ 'Тренинг' | i18n }}
+                            <i class="fas fa-fw fa-lg fa-cog"></i> {{ 'Тренинг' | i18n }}
                           </a>
                         </li>
                       </ul>
 
                       <tabset class="padding-10">
+                        <tab [active]="activeTab == 5">
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto">
+                              <thead>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="ocatReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Группа' | i18n }}</th>
+                                  <th>{{ 'Рейтинг' | i18n }}</th>
+                                  <th>{{ 'Коэф. оплаты' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="ocatAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of order_categories;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td><label class="input"><input type="text" class="form-control padding-6" [(ngModel)]="item.name" placeholder="Название группы"></label></td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.from" step="0.1" min="0"></label> 
+                                    <strong> &ndash; </strong> 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.till" step="0.1" min="0"></label>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.factor" step="0.1" min="0"></label>                                
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="ocatRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </article>  
+                          <div class="smart-form margin-top-5">                          
+                            <footer>
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="ocatSave()">
+                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                              </button>
+                            </footer>
+                          </div>                        
+                        </tab>
                         <tab [active]="activeTab == 0">
                           <article>
                             <table class="table table-hover table-bordered table-prices td-h-auto">
@@ -113,11 +156,6 @@
                               <thead>
                                 <tr>
                                   <td colspan="4">
-                                    <div class="margin-top-10">
-                                      <div class="form-group" style="padding: 0px 10px;">
-                                        <input *ngIf="pricelists.boosting?.length" ionSlider type="text" data-type="double" data-postfix=" MMR" data-hasgrid="true" data-min_interval="25" data-min="0" data-max="8000" data-from="0" data-to="8000" data-step="25" (change)="onSlide($event)">
-                                      </div>
-                                    </div>
                                     <div class="flex">
                                       <div class="column shrink">
                                         <h4 class="fs-21 fw-500 lh-30 padding-0-10">{{ 'Рейтинг' | i18n }}</h4>
@@ -135,6 +173,11 @@
                                             {{price.v | number : '1.2-2'}}{{price.c}} <sup style="font-size:.5em;top: -.75em;">{{price.v * factor | number : '1.2-2'}}</sup>
                                           </h4>
                                         </div>
+                                      </div>
+                                    </div>
+                                    <div class="margin-top-10">
+                                      <div class="form-group" style="padding: 0px 10px;">
+                                        <input *ngIf="pricelists.boosting?.length" ionSlider type="text" data-type="double" data-postfix=" MMR" data-hasgrid="true" data-min_interval="25" data-min="0" data-max="8000" data-from="0" data-to="8000" data-step="25" (change)="onSlide($event)">
                                       </div>
                                     </div>
                                   </td>
@@ -268,24 +311,117 @@
                           </div> 
                         </tab>
                         <tab [active]="activeTab == 3">
-                          <div class="smart-form margin-top-5">
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto">
+                              <thead>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="caliReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Название' | i18n }}</th>
+                                  <th>{{ 'Цена' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="caliAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of pricelists.calibration;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td>
+                                    <label class="input w-100"><input type="text" class="form-control" [(ngModel)]="item.name" step="100"></label>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.rub"></label> <strong> RUB </strong> &nbsp; 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.usd"></label> <strong> USD </strong>                                     
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="caliRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </article>  
+                          <div class="smart-form margin-top-5">                          
                             <footer>
-                              <button class="btn btn-success" [class.loading]="loading" type="button">
+                              <button class="btn btn-success" [class.loading]="loading" type="button" (click)="caliSave()">
                                 <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
                                 {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
                               </button>
                             </footer>
-                          </div>    
+                          </div>   
                         </tab>
                         <tab [active]="activeTab == 4">
-                          <div class="smart-form margin-top-5">
-                            <footer>
-                              <button class="btn btn-success" [class.loading]="loading" type="button">
-                                <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
-                                {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
-                              </button>
-                            </footer>
-                          </div>    
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto margin-bottom-5">
+                              <thead>
+                                <tr>
+                                  <th colspan="4">
+                                    <span class="fs-16 txt-color-teal">{{ 'Стоимость игровых часов' | i18n }}</span>
+                                  </th>
+                                </tr>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="trainingReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Кол-во часов' | i18n }}</th>
+                                  <th>{{ 'Цена' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="trainingAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of pricelists.training;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.hours" step="1" min="0"></label>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.rub"></label> <strong> RUB </strong> &nbsp; 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.usd"></label> <strong> USD </strong>                                     
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="trainingRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <div class="smart-form margin-bottom-10">                          
+                              <footer>
+                                <button class="btn btn-success" [class.loading]="loading" type="button" (click)="trainingSave()">
+                                  <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                  {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                                </button>
+                              </footer>
+                            </div>    
+                          </article>  
+                          <article>
+                            <table class="table table-hover table-bordered table-prices td-h-auto margin-bottom-5">
+                              <thead>
+                                <tr>
+                                  <th colspan="4">
+                                    <span class="fs-16 txt-color-teal">{{ 'Дополнительные услуги' | i18n }}</span>
+                                  </th>
+                                </tr>
+                                <tr>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="trainingServiceReorder()"><i class="fas fa-sync"></i></button></th>
+                                  <th>{{ 'Название' | i18n }}</th>
+                                  <th>{{ 'Цена' | i18n }}</th>
+                                  <th><button class="btn btn-xs btn-primary do-order-btn" (click)="trainingServiceAdd()"><i class="fas fa-plus"></i></button></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of pricelists.training_services;">
+                                  <td class="w-75px"><label class="input"><input type="number" class="form-control padding-6" [(ngModel)]="item.id"></label></td>
+                                  <td>
+                                    <label class="input w-100"><input type="text" class="form-control" [(ngModel)]="item.name"></label>
+                                  </td>
+                                  <td>
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.rub"></label> <strong> RUB </strong> &nbsp; 
+                                    <label class="input mw-100px"><input type="number" class="form-control" [(ngModel)]="item.usd"></label> <strong> USD </strong>                                     
+                                  </td>
+                                  <td class="w-50px"><button class="btn btn-xs btn-danger do-order-btn" (click)="trainingServiceRemove(item)"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <div class="smart-form">                          
+                              <footer>
+                                <button class="btn btn-success" [class.loading]="loading" type="button" (click)="trainingServiceSave()">
+                                  <i class="fas" [class.fa-sync-alt]="loading"  [class.fa-check]="!loading"></i>
+                                  {{ (responseMessage ? responseMessage : 'Сохранить') | i18n }} 
+                                </button>
+                              </footer>
+                            </div>    
+                          </article>  
                         </tab>
                       </tabset>
                     </div>

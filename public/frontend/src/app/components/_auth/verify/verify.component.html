@@ -1,0 +1,37 @@
+<div id="main" role="main">
+
+  <!-- MAIN CONTENT -->
+
+  <form class="lockscreen animated flipInY">
+    <div class="logo">
+      <h1 class="semi-bold"><img src="assets/img/logo-blue.png" style="width: 100px"> {{ 'Активация аккаунта' | i18n }} </h1>
+    </div>
+    <div>
+      <img src="{{ service.store_avatars }}{{ user?.avatar || 'mock.png' }}" alt="" width="120" height="120">
+      <div>
+        <h1>
+          <i class="fa fa-user fa-3x text-muted air air-top-right hidden-mobile"></i>{{ user?.nick_name || '&nbsp;' }} <br>
+          <span class="fs-12 txt-color-teal">{{ user?.first_name || '&nbsp;' }} {{ user?.last_name || '&nbsp;' }}</span> 
+          <small [class.txt-color-red]="success == false" [class.txt-color-green]="success == true">
+            <i class="fa fa-sync-alt" [ngClass]="{
+            'loading': loading, 
+            'fa-sync-alt': success == null, 
+            'fa-ban': success == false,
+            'fa-check': success == true
+          }"></i> &nbsp;{{ message || 'Проверяем' | i18n}}</small>
+        </h1>
+        <div class="input-group" *ngIf="false">
+          <p class="text-muted"><a href="mailto:{{ user?.email }}">{{ user?.email }}</a></p>
+          <input class="form-control" type="password" placeholder="Password">
+          <div class="input-group-btn">
+            <button class="btn btn-primary" (clcik)="unlock($event)"><i class="fa fa-key"></i></button>
+          </div>
+        </div>
+        <p class="no-margin margin-top-5" *ngIf="success"><a class="btn btn-primary btn-sm btn-block" routerLink="/auth/login"><i class="fas fa-sign-in-alt"></i> {{'Авторизация' | i18n}}</a></p>
+      </div>
+
+    </div>
+    <p class="font-xs margin-top-5"></p>
+  </form>
+
+</div>

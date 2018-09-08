@@ -14,12 +14,21 @@
                 <div class="col-sm-12">
                   <div id="myCarousel" class="carousel fade profile-carousel">
                     <div class="air air-bottom-right padding-10">
+                      <popover-content #referralPopover title="{{ 'ССЫЛКА ДЛЯ РЕГИСТРАЦИИ' | i18n }}" [closeOnClickOutside]="true">
+                        <div class="input-group input-group-md">
+                          <input class="form-control" type="text" value="{{referrer_link}}" #referrer>
+                          <span class="input-group-btn"><button class="btn btn-primary" (click)="copyInputValue(referrer)"><i class="fas fa-clone"></i></button></span>
+                        </div>
+                      </popover-content>
+                      <button class="btn txt-color-white bg-color-darken btn-md" popoverPlacement="left" [popover]="referralPopover">
+                        <i class="fas fa-user-friends"></i> {{ 'ПРИВЕСТИ ДРУГА БУСТЕРА' | i18n }}
+                      </button>&#xA0;                    
                       <button class="btn txt-color-white bg-color-darken btn-md w-175px" (click)="openModal($event, passwordModal)">
                         <i class="fas fa-user-lock"></i> {{ 'ИЗМЕНИТЬ ПАРОЛЬ' | i18n }}
                       </button>&#xA0;
                       <button class="btn txt-color-white bg-color-red btn-md w-175px" (click)="switchMode(false)">
                         <i class="fas fa-edit"></i> {{ 'РЕДАКТИРОВАТЬ' | i18n }}
-                      </button>&#xA0;
+                      </button>
                     </div>
                     <div class="air air-top-left padding-10">
                       <h4 class="txt-color-white font-md">{{ 'Зарегистрирован в системе' | i18n }}
@@ -39,17 +48,27 @@
                     <div class="col-sm-3 profile-pic">
                       <img src="{{_service.store_avatars}}{{user.avatar ? user.avatar : 'mock.png'}}" [alt]="user.nick_name">
                       <div class="padding-10">
-                        <h4 class="font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
                           <br>
-                          <small>{{ 'Рейтинг' | i18n }}</small>
+                          <small>{{ 'Рейтинг текущий' | i18n }}</small>
                         </h4>
-                        <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_total || 0 }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.orders_rank || 0 | number : '1.2-2' }}</strong>
+                          <br>
+                          <small>{{ 'Рейтинг заказов' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ (user.is_active ? 'Активный' : 'Неактивный') | i18n }}</strong>
+                          <br>
+                          <small>{{ 'Активность' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.orders_last ? (user.orders_last | moment : 'D.MM.YYYY') : ('Нет данныx' | i18n) }}</strong>
+                          <br>
+                          <small>{{ 'Последний заказ' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.reviews_total || 0 }}</strong>
                           <br>
                           <small>{{ 'Отзывы' | i18n }}</small>
                         </h4>
-                        <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Средняя оценка' | i18n }}</small>
                         </h4>
@@ -72,26 +91,31 @@
                             <li>
                               <p class="text-muted">
                                 <i class="fa fa-envelope"></i>&#xA0;&#xA0;<a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.email?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-skype"></i>&#xA0;&#xA0;<span class="txt-color-darken">{{ user.skype }}</span>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.skype?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-discord"></i>&#xA0;&#xA0;<span class="txt-color-darken">{{ user.discord }}</span>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.discord?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fa fa-phone"></i>&#xA0;&#xA0;<a href="tel:{{ user.phone }}">{{ user.phone }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.phone?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fa fa-globe-americas"></i>&#xA0;&#xA0;<span class="txt-color-darken">{{ user.country }}</span>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.country?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                           </ul>                        
@@ -106,26 +130,31 @@
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-vk"></i>&#xA0;&#xA0;<a href="{{ user.vkontakte }}" target="_blank">{{ user.vkontakte }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.vkontakte?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-facebook"></i>&#xA0;&#xA0;<a href="{{ user.facebook }}" target="_blank">{{ user.facebook }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.facebook?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-twitter"></i>&#xA0;&#xA0;<a href="{{ user.twitter }}" target="_blank">{{ user.twitter }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.twitter?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-instagram"></i>&#xA0;&#xA0;<a href="{{ user.instagram }}" target="_blank">{{ user.instagram }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.instagram?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                             <li>
                               <p class="text-muted">
                                 <i class="fab fa-youtube"></i>&#xA0;&#xA0;<a href="{{ user.youtube }}" target="_blank">{{ user.youtube }}</a>
+                                <i class="txt-color-darken fs-13" *ngIf="!user.youtube?.length">{{('Не указан' |  i18n)}}</i>
                               </p>
                             </li>
                           </ul>                        
@@ -139,8 +168,7 @@
                           </p>
                           <div class="no-padding">
                             <alert *ngIf="!user.props.length" type="info" dismissible="true">
-                              <h4 class="alert-heading">{{ 'Важно' | i18n }}</h4>
-                              {{ 'Для удобства мы рекомендуем создать платежные шаблоны для вывода средств' | i18n }}
+                              <h4 class="alert-heading fs-14">{{ 'Важно' | i18n }} <span class="fw-500">{{ 'для удобства мы рекомендуем добавить платежные шаблоны вывода средств' | i18n }}</span></h4>
                             </alert>
 
                             <div class="table-responsive" style="box-shadow: 0px 0px 5px 1px #ddd;">
@@ -179,13 +207,18 @@
                         <small>{{ 'Профиль Dotabuff' | i18n }}</small>
                       </h1>
                       <ul class="list-inline friends-list">
-                        <li class="font-md"><strong><a href="{{ user.dotabuff }}">{{ user.dotabuff }}</a></strong></li>
+                        <li class="font-md">
+                          <strong><a href="{{ user.dotabuff }}">{{ user.dotabuff }}</a></strong>
+                          <i class="txt-color-darken fs-13" *ngIf="!user.dotabuff?.length">{{('Не указан' |  i18n)}}</i>
+                        </li>
                       </ul>
                       <h1>
                         <small>{{ 'MMR' | i18n }}</small>
                       </h1>
                       <ul class="list-inline friends-list">
-                        <li class="font-md"><strong>{{ user.mmr_solo }}</strong></li>
+                        <li class="font-md">
+                          <strong>{{ user.mmr_solo }}</strong>
+                        </li>
                       </ul>
                       <h1>
                         <small>{{ 'Герои' | i18n }}</small>
@@ -218,7 +251,7 @@
                       </button>&#xA0;
                       <button class="btn txt-color-white bg-color-red btn-md w-175px" (click)="switchMode(true)">
                         <i class="fa fa-undo"></i> {{ 'ОТМЕНА' | i18n }}
-                      </button>&#xA0;
+                      </button>
                     </div>
                     <div class="air air-top-left padding-10">
                       <h4 class="txt-color-white font-md">{{ 'Зарегистрирован в системе' | i18n }}
@@ -238,17 +271,27 @@
                     <div class="col-sm-3 profile-pic">
                       <label><img src="{{_service.store_avatars}}{{user.avatar ? user.avatar : 'mock.png'}}" [alt]="user.nick_name" #avatarimg><i class="fas fa-pen"></i><input type="file" (change)="onimgloaded($event)"></label>
                       <div class="padding-10">
-                        <h4 class="font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.rating || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Рейтинг' | i18n }}</small>
                         </h4>
-                        <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_total || 0 }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.orders_rank || 0 | number : '1.2-2' }}</strong>
+                          <br>
+                          <small>{{ 'Рейтинг заказов' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ (user.is_active ? 'Активный' : 'Неактивный') | i18n }}</strong>
+                          <br>
+                          <small>{{ 'Активность' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.orders_last ? (user.orders_last | moment : 'D.MM.YYYY') : ('Нет данныx' | i18n) }}</strong>
+                          <br>
+                          <small>{{ 'Последний заказ' | i18n }}</small>
+                        </h4>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.reviews_total || 0 }}</strong>
                           <br>
                           <small>{{ 'Отзывы' | i18n }}</small>
                         </h4>
-                        <br>
-                        <h4 class="font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
+                        <h4 class="margin-top-5 font-md"><strong>{{ user.reviews_mark || 0 | number : '1.2-2' }}</strong>
                           <br>
                           <small>{{ 'Средняя оценка' | i18n }}</small>
                         </h4>
@@ -417,10 +460,13 @@
                   <div class="padding-10">
                     <ul class="nav nav-tabs tabs-pull-left">
                       <li [class.active]="activeTab == 1">
-                        <a data-toggle="tab" (click)="activeTab = 1">{{ 'Действия аккаунта' | i18n }}</a>
+                        <a data-toggle="tab" (click)="activeTab = 1"><i class="fas fa-directions"></i> {{ 'Активность аккаунта' | i18n }}</a>
                       </li>
                       <li [class.active]="activeTab == 2">
-                        <a data-toggle="tab" (click)="activeTab = 2">{{ 'Отзывы' | i18n }}</a>
+                        <a data-toggle="tab" (click)="activeTab = 2"><i class="fas fa-comments"></i> {{ 'Отзывы' | i18n }}</a>
+                      </li>
+                      <li [class.active]="activeTab == 3">
+                        <a data-toggle="tab" (click)="activeTab = 3"><i class="fas fa-key"></i> {{ 'Права доступа' | i18n }}</a>
                       </li>
                       <li class="pull-right" *ngIf="activeTab == 1">
                         <span class="margin-top-10 display-inline"><i class="fa fa-rss text-success"></i> {{ 'Активность' | i18n }}</span>
@@ -498,6 +544,81 @@
                             </div>
                           </div>
                         </div>
+                      </div>
+                      <div class="tab-pane fade in" [class.active]="activeTab == 3">
+                        <div class="row">
+                          <div class="table-responsive col-xs-12">
+                            <div role="alert" class="alert alert-info margin-bottom-10">
+                              <h4 class="alert-heading fs-14">{{ 'Хотите получить доступ к другим заказам?' | i18n }} 
+                                <a class="txt-color-red" routerLink="/support/newissue">{{'Создайте тикет с сообщением «хочу получить доступ к заказам»'|i18n}}</a>
+                              </h4>
+                            </div>
+                            <table class="table table-bordered table-striped table-hover va-m td-h-auto">
+                              <tbody *ngIf="user?.order_permissions">
+                                <tr>
+                                  <th>{{ 'Тип заказа' | i18n }}</th>
+                                  <td>
+                                    <div class="radio-select column shrink fs-11">
+                                      <label *ngFor="let type of otypes">
+                                        <input type="checkbox" name="type" [checked]="user.order_permissions?.type?.includes(type.id)" 
+                                        [value]="type.id" disabled readonly><b>{{ type.name | i18n }}</b>
+                                      </label>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>{{ 'Источник заказа' | i18n }}</th>
+                                  <td>
+                                    <div class="radio-select column shrink fs-11">
+                                      <label *ngFor="let source of osources">
+                                        <input type="checkbox" name="source" [checked]="user.order_permissions?.source_id?.includes(source.id)" 
+                                        [value]="source.id" disabled readonly><b>{{ source.name }}</b>
+                                      </label>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>{{ 'Макс. MMR' | i18n }}</th>
+                                  <td>
+                                    <div>
+                                      <span>{{ user.order_permissions.mmr_finish }}</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>{{ 'Макс. стоимость заказа' | i18n }}</th>
+                                  <td>
+                                    <div>
+                                      <span>{{ user.order_permissions.amount }}</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>{{ 'Макс. медаль' | i18n }}</th>
+                                  <td>
+                                    <div class="medals-selector row">
+                                      <div class="item">
+                                        <div class="medal le-dr-selector">
+                                          <div class="medal-rank driven">
+                                            <div class="list">
+                                              <div data-le="1" class="active">
+                                                <div *ngFor="let medal of medals; let i = index" 
+                                                  [class.active]="medal.id == (user.order_permissions.medal_finish || 1)" 
+                                                  [attr.data-dr]="medal.id">
+                                                  <span class="title">{{medal.title}} <sup>{{medal.rank}}</sup></span>
+                                                  <img src="{{_service.store_medals}}{{medal.image}}">
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>                         
                       </div>
                     </div>
                   </div>

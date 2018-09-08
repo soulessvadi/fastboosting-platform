@@ -36,7 +36,6 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
       this.reminders = reminders; this.countAll();
     });
     this.socketio.onEvent(SocketEvent.NTFMESSAGES).subscribe((messages) => {
-      console.log(messages)
       this.messages = messages; this.countAll();
     });
     this.update();

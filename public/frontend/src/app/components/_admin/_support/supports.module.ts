@@ -23,5 +23,5 @@ import { NewComponent } from './new.component';
   ]
 })
 
-export class SupportModule {
+export class SupportsModule {
 }

@@ -43,6 +43,7 @@ const booster_permissions = {
 const admin_permissions = {
 	1: 	{c:1,r:1,u:1,d:1},
 	3: 	{c:1,r:1,u:1,d:1},
+	21: {c:1,r:1,u:1,d:1},
 	22: {c:1,r:1,u:1,d:1},
 	23: {c:1,r:1,u:1,d:1},
 	24: {c:1,r:1,u:1,d:1},

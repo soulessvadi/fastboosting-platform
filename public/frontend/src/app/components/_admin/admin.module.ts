@@ -6,6 +6,7 @@ import { BoostersModule } from './_users/boosters/boosters.module';
 import { OrdersModule } from './_orders/orders.module';
 import { ClientsModule } from './_users/clients/clients.module';
 import { SettingsModule } from './_settings/settings.module';
+import { SupportsModule } from './_support/supports.module';
 import { AdminComponent } from './admin.component';
 
 @NgModule({
@@ -16,6 +17,8 @@ import { AdminComponent } from './admin.component';
     BoostersModule,
     OrdersModule,
     SettingsModule,
+    SupportsModule,
+    ClientsModule,
   ],
   exports: [
   ],

@@ -8,7 +8,7 @@ export const routes: Routes = [
     pathMatch: "full"
   },{
     path: "support",
-    loadChildren: "./_support/support.module#SupportModule",
+    loadChildren: "./_support/supports.module#SupportsModule",
     data: { pageTitle: "Поддержка" }
   },{
     path: "sundry",
